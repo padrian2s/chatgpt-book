@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is ChatGPT Doing and Why Does It Work? - Complete Analysis</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.8;
+            color: var(--gray-800);
+            background: var(--gray-50);
+            font-size: 18px;
+        }
+
+        /* Navigation Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--dark);
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 30px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .nav-section {
+            padding: 15px 20px 5px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gray-500);
+            font-weight: 600;
+            font-family: system-ui, sans-serif;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px 20px;
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-family: system-ui, sans-serif;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: var(--gray-800);
+            color: white;
+            border-left-color: var(--accent);
+        }
+
+        .sidebar a.active {
+            background: var(--gray-800);
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        .sidebar a .chapter-num {
+            display: inline-block;
+            width: 25px;
+            color: var(--gray-600);
+            font-size: 0.8rem;
+        }
+
+        /* Mobile Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            min-height: 100vh;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--gray-900) 100%);
+            color: white;
+            padding: 100px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%233b82f6' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: var(--gray-400);
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+            color: var(--gray-400);
+            font-family: system-ui, sans-serif;
+        }
+
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-meta .icon {
+            color: var(--accent);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--gray-800);
+            padding: 30px 80px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            border-bottom: 1px solid var(--gray-700);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: system-ui, sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Content Area */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Chapter Sections */
+        .chapter {
+            margin-bottom: 80px;
+            scroll-margin-top: 20px;
+        }
+
+        .chapter-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 16px 16px 0 0;
+            margin-bottom: 0;
+        }
+
+        .chapter-number {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .chapter-title {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        /* Different chapter colors */
+        .chapter:nth-child(4n+2) .chapter-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #7c3aed 100%);
+        }
+        .chapter:nth-child(4n+3) .chapter-header {
+            background: linear-gradient(135deg, #0891b2 0%, var(--accent) 100%);
+        }
+        .chapter:nth-child(4n+4) .chapter-header {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        }
+
+        .chapter-content {
+            background: white;
+            padding: 40px;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        /* Paragraph Blocks */
+        .paragraph-block {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--gray-200);
+            padding-left: 25px;
+            transition: border-color 0.3s;
+        }
+
+        .paragraph-block:hover {
+            border-left-color: var(--primary);
+        }
+
+        .paragraph-block.expanded {
+            border-left-color: var(--accent);
+        }
+
+        .original-text {
+            color: var(--gray-700);
+            margin-bottom: 15px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .original-text::after {
+            content: '+ Click for commentary';
+            display: block;
+            font-size: 0.75rem;
+            color: var(--primary);
+            margin-top: 10px;
+            font-family: system-ui, sans-serif;
+            font-style: italic;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .paragraph-block.expanded .original-text::after {
+            content: '- Hide commentary';
+            color: var(--accent);
+        }
+
+        .original-text:hover::after {
+            opacity: 1;
+        }
+
+        /* Commentary Section */
+        .commentary {
+            display: none;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 15px;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            animation: slideDown 0.3s ease;
+        }
+
+        .paragraph-block.expanded .commentary {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .commentary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .commentary-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .commentary-title {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .commentary h4 {
+            color: var(--primary-dark);
+            margin: 20px 0 10px;
+            font-size: 1rem;
+        }
+
+        .commentary p {
+            color: var(--gray-700);
+            margin-bottom: 12px;
+        }
+
+        .commentary ul, .commentary ol {
+            margin: 10px 0 15px 20px;
+            color: var(--gray-700);
+        }
+
+        .commentary li {
+            margin-bottom: 8px;
+        }
+
+        .commentary code {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--primary-dark);
+        }
+
+        /* Key Concept Box */
+        .key-concept {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--gray-800) 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            font-family: system-ui, sans-serif;
+        }
+
+        .key-concept-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .key-concept-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Image Placeholder */
+        .image-block {
+            background: var(--gray-100);
+            border: 2px dashed var(--gray-300);
+            border-radius: 12px;
+            padding: 40px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .image-block-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .image-block-title {
+            font-family: system-ui, sans-serif;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 10px;
+        }
+
+        .image-block-desc {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Technical Box */
+        .technical-box {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .technical-box .label {
+            color: var(--accent);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: block;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 25px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: system-ui, sans-serif;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: var(--gray-100);
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        /* PRD Section */
+        .prd-section {
+            background: var(--dark);
+            color: white;
+            margin: 0 -40px;
+            padding: 60px 40px;
+        }
+
+        .prd-section h2 {
+            color: white;
+            border-bottom-color: var(--accent);
+        }
+
+        .prd-section h3 {
+            color: var(--accent);
+        }
+
+        .prd-section p {
+            color: var(--gray-300);
+        }
+
+        .prd-section table {
+            background: var(--gray-800);
+        }
+
+        .prd-section th {
+            background: var(--gray-700);
+            color: white;
+            border-bottom-color: var(--gray-600);
+        }
+
+        .prd-section td {
+            color: var(--gray-300);
+            border-bottom-color: var(--gray-700);
+        }
+
+        .prd-section tr:hover {
+            background: var(--gray-700);
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin: 60px 0 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+
+        .section-header p {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+
+        /* Module Cards */
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .module-card {
+            background: var(--gray-800);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .module-num {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 15px 20px;
+            font-weight: 700;
+            font-family: system-ui, sans-serif;
+        }
+
+        .module-body {
+            padding: 20px;
+        }
+
+        .module-body h4 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .module-body p {
+            font-size: 0.9rem;
+        }
+
+        .module-body ul {
+            margin: 10px 0 0 20px;
+            font-size: 0.85rem;
+        }
+
+        /* Specs Box */
+        .specs-box {
+            background: var(--gray-800);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .specs-box h4 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .specs-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-700);
+            font-family: 'Consolas', monospace;
+        }
+
+        .specs-row:last-child {
+            border-bottom: none;
+        }
+
+        .specs-label {
+            color: var(--gray-400);
+        }
+
+        .specs-value {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Glossary */
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .glossary-item {
+            background: var(--gray-800);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .glossary-term {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .glossary-def {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Reading Progress */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 300px;
+            right: 0;
+            height: 4px;
+            background: var(--gray-200);
+            z-index: 999;
+        }
+
+        .reading-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .hero {
+                padding: 80px 30px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .stats-bar {
+                padding: 30px;
+            }
+
+            .content {
+                padding: 40px 20px;
+            }
+
+            .reading-progress {
+                left: 0;
+            }
+
+            .prd-section {
+                margin: 0 -20px;
+                padding: 40px 20px;
+            }
+        }
+
+        /* Print */
+        @media print {
+            .sidebar, .menu-toggle, .back-to-top, .reading-progress {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .chapter {
+                break-inside: avoid;
+            }
+            .commentary {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Reading Progress -->
+    <div class="reading-progress">
+        <div class="reading-progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>What Is ChatGPT Doing?</h1>
+            <p>Stephen Wolfram &bull; Complete Analysis</p>
+        </div>
+
+        <div class="nav-section">Part 1: Original Essay</div>
+        <a href="#ch1"><span class="chapter-num">01</span> Adding One Word at a Time</a>
+        <a href="#ch2"><span class="chapter-num">02</span> Where Probabilities Come From</a>
+        <a href="#ch3"><span class="chapter-num">03</span> What Is a Model?</a>
+        <a href="#ch4"><span class="chapter-num">04</span> Models for Human Tasks</a>
+        <a href="#ch5"><span class="chapter-num">05</span> Neural Nets</a>
+        <a href="#ch6"><span class="chapter-num">06</span> Machine Learning & Training</a>
+        <a href="#ch7"><span class="chapter-num">07</span> Practice and Lore</a>
+        <a href="#ch8"><span class="chapter-num">08</span> Network Size Limits</a>
+        <a href="#ch9"><span class="chapter-num">09</span> The Concept of Embeddings</a>
+        <a href="#ch10"><span class="chapter-num">10</span> Inside ChatGPT</a>
+        <a href="#ch11"><span class="chapter-num">11</span> The Training of ChatGPT</a>
+        <a href="#ch12"><span class="chapter-num">12</span> Beyond Basic Training</a>
+        <a href="#ch13"><span class="chapter-num">13</span> What Really Lets It Work?</a>
+        <a href="#ch14"><span class="chapter-num">14</span> Meaning Space</a>
+        <a href="#ch15"><span class="chapter-num">15</span> Semantic Grammar</a>
+        <a href="#ch16"><span class="chapter-num">16</span> Conclusion</a>
+
+        <div class="nav-section">Part 2: PRD</div>
+        <a href="#prd-exec">Executive Summary</a>
+        <a href="#prd-audience">Target Audiences</a>
+        <a href="#prd-modules">Content Modules</a>
+        <a href="#prd-specs">Technical Specs</a>
+        <a href="#prd-glossary">Glossary</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-content">
+                <h1>What Is ChatGPT Doing &hellip; and Why Does It Work?</h1>
+                <p class="subtitle">A comprehensive analysis with paragraph-by-paragraph commentary</p>
+                <div class="hero-meta">
+                    <span><span class="icon">&#128100;</span> Stephen Wolfram</span>
+                    <span><span class="icon">&#128197;</span> February 2023</span>
+                    <span><span class="icon">&#128214;</span> 16 Chapters</span>
+                    <span><span class="icon">&#128172;</span> Click paragraphs for commentary</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">175B</div>
+                <div class="stat-label">Parameters</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">12,288</div>
+                <div class="stat-label">Embedding Dims</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">96</div>
+                <div class="stat-label">Attention Heads</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">~300B</div>
+                <div class="stat-label">Training Words</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">~50K</div>
+                <div class="stat-label">Vocabulary</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Introduction -->
+            <div class="section-header">
+                <h2>Part 1: The Original Essay with Commentary</h2>
+                <p>Click on any paragraph to expand detailed explanations, context, and technical insights</p>
+            </div>
+
+            <!-- Chapter 1 -->
+            <section class="chapter" id="ch1">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 1</div>
+                    <h2 class="chapter-title">It's Just Adding One Word at a Time</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            That ChatGPT can automatically generate something that reads even superficially like human-written text is remarkable, and unexpected. But how does it do it? And why does it work? My purpose here is to give a rough outline of what's going on inside ChatGPT—and then to explore why it is that it can do so well in producing what we might consider to be meaningful text.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Why This Opening Matters</h4>
+                            <p>Wolfram begins by acknowledging what many felt in early 2023: genuine surprise that a machine could produce coherent, meaningful text. This sets up the essay's central question&mdash;not just "how" but "why" it works.</p>
+                            <h4>Key Insight</h4>
+                            <p>The word "unexpected" is crucial. Even AI researchers were surprised by how well large language models performed. This wasn't a foregone conclusion but a genuine discovery about the nature of language.</p>
+                            <h4>What to Watch For</h4>
+                            <ul>
+                                <li>Wolfram will argue that ChatGPT's success reveals something fundamental about language itself</li>
+                                <li>The "rough outline" approach means accessible explanations over mathematical rigor</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            The first thing to explain is that what ChatGPT is always fundamentally trying to do is to produce a "reasonable continuation" of whatever text it's got so far, where by "reasonable" we mean "what one might expect someone to write after seeing what people have written on billions of webpages, etc."
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Core Mechanism Revealed</h4>
+                            <p>This single sentence captures ChatGPT's entire purpose: <strong>produce reasonable continuations</strong>. Not "understand," not "think," not "reason"&mdash;simply continue text in a statistically plausible way.</p>
+                            <h4>What "Reasonable" Means</h4>
+                            <p>Reasonable = statistically likely based on training data. If billions of web pages show certain patterns after certain phrases, ChatGPT learns these patterns.</p>
+                            <h4>Important Distinction</h4>
+                            <p>This is fundamentally different from how humans write. We have intentions, knowledge, and goals. ChatGPT has statistical patterns. Yet the outputs can be remarkably similar.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            So let's say we've got the text "The best thing about AI is its ability to". Imagine scanning billions of pages of human-written text (say on the web and in digitized books) and finding all instances of this text—then seeing what word comes next what fraction of the time.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Conceptual Model</h4>
+                            <p>Wolfram introduces a simplified mental model: imagine literally counting what words follow this exact phrase in all text ever written. This isn't exactly how ChatGPT works, but it's the right intuition.</p>
+                            <h4>Why This Example?</h4>
+                            <p>The phrase "The best thing about AI is its ability to" sets up natural continuations like:</p>
+                            <ul>
+                                <li>"learn" (very common)</li>
+                                <li>"adapt" (common)</li>
+                                <li>"process" (common)</li>
+                                <li>"dance" (very rare)</li>
+                            </ul>
+                            <h4>Scale Matters</h4>
+                            <p>"Billions of pages" emphasizes the massive scale. ChatGPT was trained on roughly 300 billion words&mdash;more than any human could read in thousands of lifetimes.</p>
+                        </div>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">ChatGPT operates by repeatedly asking: "Given all the text so far, what should the next word be?" It answers this by computing probabilities based on patterns learned from training data.</div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            ChatGPT effectively does something like this, except that (as I'll explain) it doesn't look at literal text; it looks for things that in a certain sense "match in meaning". But the end result is that it produces a ranked list of words that might follow, together with "probabilities".
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>"Match in Meaning"</h4>
+                            <p>This is a crucial distinction. ChatGPT doesn't do literal string matching. Instead, it uses <strong>embeddings</strong>&mdash;numerical representations where semantically similar text has similar numbers.</p>
+                            <h4>The Output: Probabilities</h4>
+                            <p>For any context, ChatGPT outputs roughly 50,000 probabilities (one for each token in its vocabulary). These probabilities sum to 1.0, forming a complete probability distribution.</p>
+                            <h4>Example Output</h4>
+                            <p>For "The best thing about AI is its ability to":</p>
+                            <ul>
+                                <li>"learn" &rarr; 0.15 (15%)</li>
+                                <li>"adapt" &rarr; 0.08 (8%)</li>
+                                <li>"process" &rarr; 0.06 (6%)</li>
+                                <li>... thousands more options with smaller probabilities</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="image-block">
+                        <div class="image-block-icon">&#128202;</div>
+                        <div class="image-block-title">Probability Distribution Visualization</div>
+                        <div class="image-block-desc">The original article shows a bar chart of word probabilities for the next token. Words like "learn," "help," and "solve" have higher bars, while unusual continuations have tiny probabilities.</div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            And the remarkable thing is that when ChatGPT does something like write an essay what it's essentially doing is just asking over and over again "given the text so far, what should the next word be?"—and each time adding a word.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Iterative Process</h4>
+                            <p>This reveals the autoregressive nature of language models. Each word depends only on previous words. There's no "planning ahead" or "thinking about the whole essay."</p>
+                            <h4>Step by Step</h4>
+                            <ol>
+                                <li>Start with prompt: "Write an essay about..."</li>
+                                <li>Compute probabilities for next word</li>
+                                <li>Select a word (we'll see how)</li>
+                                <li>Add it to the context</li>
+                                <li>Repeat from step 2</li>
+                            </ol>
+                            <h4>Why This Is Remarkable</h4>
+                            <p>This simple loop produces coherent essays, code, poetry, and more. The complexity emerges from the 175 billion parameters, not from sophisticated reasoning algorithms.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            But, OK, at each step it gets a list of words with probabilities. But which one should it actually pick to add to the essay (or whatever) that it's writing? One might think it should be the "highest-ranked" word (i.e. the one to which the highest "probability" was assigned). But this is where a bit of voodoo begins to creep in.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Selection Problem</h4>
+                            <p>Here Wolfram identifies a key design decision: given probabilities, how do we choose? The naive answer (always pick the highest) turns out to be wrong.</p>
+                            <h4>"Voodoo"</h4>
+                            <p>Wolfram's use of "voodoo" signals that the solution lacks rigorous theoretical justification. It works empirically, but we don't fully understand why.</p>
+                            <h4>Why Not Always Pick the Top?</h4>
+                            <p>If you always pick the highest probability word, you get:</p>
+                            <ul>
+                                <li>Repetitive text ("the the the...")</li>
+                                <li>Boring, predictable outputs</li>
+                                <li>Getting stuck in loops</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            Because it turns out that if we always pick the highest-ranked word, we'll typically get a very "flat" essay, that never seems to "show any creativity" (and even sometimes repeats word for word). But if sometimes (at random) we pick lower-ranked words, we get a "more interesting" essay.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Creativity Paradox</h4>
+                            <p>This is counterintuitive: adding <em>randomness</em> makes text <em>better</em>. Randomness introduces variety, surprise, and the appearance of creativity.</p>
+                            <h4>Human Parallel</h4>
+                            <p>Humans don't always choose the most obvious word either. Sometimes we use unexpected vocabulary, make creative leaps, or introduce variety for its own sake.</p>
+                            <h4>The Balance</h4>
+                            <p>Too deterministic = boring and repetitive<br>
+                            Too random = nonsensical and incoherent<br>
+                            The sweet spot = "creative" and "interesting"</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            There's a particular so-called "temperature" parameter that determines how often lower-ranked words will be used, and for essay generation, it turns out that a "temperature" of 0.8 seems best.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Temperature Explained</h4>
+                            <p>Temperature is a hyperparameter that controls the "sharpness" of the probability distribution:</p>
+                            <ul>
+                                <li><strong>T = 0:</strong> Always pick the highest probability (deterministic)</li>
+                                <li><strong>T = 1:</strong> Sample directly from the distribution</li>
+                                <li><strong>T > 1:</strong> Flatten the distribution (more random)</li>
+                                <li><strong>T = 0.8:</strong> Slight preference for high-probability, with some randomness</li>
+                            </ul>
+                            <h4>Mathematical Definition</h4>
+                            <p>New probability = original_probability^(1/T) / sum of all adjusted probabilities</p>
+                            <h4>Why 0.8?</h4>
+                            <p>Empirically determined through experimentation. Different tasks may benefit from different temperatures (code generation often uses lower temperatures for accuracy).</p>
+                        </div>
+                    </div>
+
+                    <div class="technical-box">
+                        <span class="label">Technical Detail: Temperature Sampling</span>
+                        <pre>
+# Simplified temperature sampling
+def sample_with_temperature(logits, temperature=0.8):
+    # Adjust logits by temperature
+    adjusted = logits / temperature
+
+    # Convert to probabilities
+    probs = softmax(adjusted)
+
+    # Sample from distribution
+    return random_choice(vocabulary, probabilities=probs)</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 2 -->
+            <section class="chapter" id="ch2">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 2</div>
+                    <h2 class="chapter-title">Where Do the Probabilities Come From?</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            OK, so ChatGPT always picks its next word based on probabilities. But where do those probabilities come from? Let's start with a simpler problem. Let's consider generating English text one letter (rather than word) at a time.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Pedagogical Strategy</h4>
+                            <p>Wolfram starts with letters instead of words to build intuition. Letters are simpler: only 26 options vs. ~50,000 tokens. The principles transfer directly.</p>
+                            <h4>Why This Matters</h4>
+                            <p>Understanding how letter-level models fail helps us appreciate why word-level models with billions of parameters are necessary.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            How can we work out what the probability for each letter should be? A very minimal thing we could do is just take a sample of English text, and calculate how often different letters occur in it. So, for example, this is a histogram of letter frequencies in the Wikipedia article on "cats":
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Frequency Analysis</h4>
+                            <p>The simplest possible language model: count letter frequencies. In English:</p>
+                            <ul>
+                                <li>'e' appears ~12% of the time</li>
+                                <li>'t' appears ~9% of the time</li>
+                                <li>'z' appears ~0.1% of the time</li>
+                            </ul>
+                            <h4>Practical Example</h4>
+                            <p>The "cats" Wikipedia article provides real data. Different articles have slightly different distributions, but large samples converge to consistent English letter frequencies.</p>
+                        </div>
+                    </div>
+
+                    <div class="image-block">
+                        <div class="image-block-icon">&#128202;</div>
+                        <div class="image-block-title">Letter Frequency Histogram</div>
+                        <div class="image-block-desc">The original shows a bar chart with 'e', 'a', 't', 'o', 'i' having the tallest bars, while 'z', 'q', 'x' have very short bars. This reflects standard English letter frequencies.</div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            And here's a sample of "random text" we get by just picking each letter independently with the same probability that it appears in the Wikipedia article on cats: "tletoramsleraunsouemrctacosyfmtsalrceapmsyaefpnte..."
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Result: Gibberish</h4>
+                            <p>This random string has the right letter frequencies but is completely unreadable. Why? Because English isn't just about individual letter frequencies&mdash;it's about how letters combine.</p>
+                            <h4>What's Missing</h4>
+                            <ul>
+                                <li>No word boundaries</li>
+                                <li>No common letter combinations ("th", "er", "ing")</li>
+                                <li>No prohibition of impossible sequences ("qx", "zz" at start)</li>
+                            </ul>
+                            <p>This demonstrates that <strong>context matters</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            We can add a bit more "Englishness" by considering not just how probable each individual letter is on its own, but how probable pairs of letters ("2-grams") are. We know, for example, that if we have a "q", the next letter basically has to be "u".
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Introducing N-grams</h4>
+                            <p>N-grams capture sequential patterns:</p>
+                            <ul>
+                                <li><strong>1-gram (unigram):</strong> Individual letter frequencies</li>
+                                <li><strong>2-gram (bigram):</strong> Pairs like "th", "qu", "er"</li>
+                                <li><strong>3-gram (trigram):</strong> Triples like "the", "ing", "tion"</li>
+                            </ul>
+                            <h4>The "qu" Example</h4>
+                            <p>In English, 'q' is almost always followed by 'u'. A bigram model captures this: P(u|q) ≈ 0.99. This single rule dramatically improves text generation.</p>
+                        </div>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">N-gram models improve by considering context, but face a fundamental problem: the number of possible n-grams grows exponentially. With 40,000 words, there are 1.6 billion possible 2-grams and 60 trillion possible 3-grams—far more than we can observe in any corpus.</div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            If we take a large enough corpus of English text we can get a pretty good estimate of the probability for any pair of letters. And with those estimates we can start generating text by picking pairs of letters according to their "2-gram probabilities".
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Bigram Text Generation</h4>
+                            <p>Process:</p>
+                            <ol>
+                                <li>Start with a random letter (weighted by frequency)</li>
+                                <li>Look up probabilities for next letter given current letter</li>
+                                <li>Sample from those probabilities</li>
+                                <li>Repeat</li>
+                            </ol>
+                            <h4>Improvement</h4>
+                            <p>Bigram-generated text looks more English-like: "theres" might appear, common patterns like "th" and "er" emerge naturally.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            Well, we can get more and more "Englishy" by using longer and longer n-grams. And with sufficiently long n-grams we can start generating text that looks quite convincingly like English.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Pattern</h4>
+                            <p>Longer context = better predictions:</p>
+                            <ul>
+                                <li>3-grams: Recognizable fragments emerge</li>
+                                <li>5-grams: Some real words appear</li>
+                                <li>10-grams: Sentences start forming</li>
+                            </ul>
+                            <h4>But There's a Catch...</h4>
+                            <p>The exponential explosion makes long n-grams impractical with direct counting. This motivates the need for models that can <em>generalize</em> rather than memorize.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            Let's go back to words now. English has around 40,000 "reasonably commonly used" words. And by looking at a large enough corpus of English text (say a few million books, or a few billion webpages), we can get fairly good estimates of how common each word is.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Word-Level Statistics</h4>
+                            <p>Moving from letters to words dramatically increases vocabulary size: 26 letters → 40,000+ words.</p>
+                            <h4>Word Frequencies</h4>
+                            <p>Common words in English:</p>
+                            <ul>
+                                <li>"the" ~7% of all words</li>
+                                <li>"be" ~4%</li>
+                                <li>"to" ~3%</li>
+                                <li>Most words < 0.01%</li>
+                            </ul>
+                            <h4>Zipf's Law</h4>
+                            <p>Word frequencies follow a power law: a few words are very common, most words are rare. This pattern appears in all human languages.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            But how about "2-grams" for words? In principle there are about 40,000×40,000 ≈ 1.6 billion possible 2-grams. And of these, there actually appear in reasonable English text the order of a million or so. But even so, we can get good estimates for their relative frequencies.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Combinatorial Explosion</h4>
+                            <p>This is the critical insight: <strong>1.6 billion possible word pairs</strong>, but only about a million commonly appear. This means:</p>
+                            <ul>
+                                <li>Most combinations never occur in training data</li>
+                                <li>Direct counting fails for rare combinations</li>
+                                <li>We need models that generalize</li>
+                            </ul>
+                            <h4>Practical Implication</h4>
+                            <p>Even with billions of pages of text, most possible word sequences have never been observed. Yet ChatGPT must assign probabilities to all of them.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            But how about "3-grams" for words? There are about 60 trillion of these that can be formed, and again only a tiny fraction appear in actual texts. And for 4-grams, or 5-grams, and more, the situation is vastly worse. So we've run out of data to get "empirical" estimates.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Data Crisis</h4>
+                            <table style="margin: 15px 0;">
+                                <tr><th>N-gram</th><th>Possible Combinations</th><th>Observed</th></tr>
+                                <tr><td>2-gram</td><td>1.6 billion</td><td>~1 million</td></tr>
+                                <tr><td>3-gram</td><td>60 trillion</td><td>~few million</td></tr>
+                                <tr><td>4-gram</td><td>2.4 quadrillion</td><td>~tens of millions</td></tr>
+                                <tr><td>5-gram</td><td>10^20</td><td>impossibly few</td></tr>
+                            </table>
+                            <h4>The Solution</h4>
+                            <p>We can't count our way to language understanding. We need <strong>models that generalize</strong>—neural networks that learn underlying patterns rather than memorizing specific sequences.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            The idea is to make a model that lets us estimate the probabilities of sequences we've never explicitly seen. And at the core of ChatGPT is precisely a so-called "large language model" (LLM) that's been built to do a good job of estimating these probabilities.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The LLM Solution</h4>
+                            <p>Large Language Models solve the data problem by learning <strong>patterns</strong> rather than <strong>instances</strong>. Key capabilities:</p>
+                            <ul>
+                                <li>Generalize from seen to unseen sequences</li>
+                                <li>Capture long-range dependencies</li>
+                                <li>Learn hierarchical representations of language</li>
+                            </ul>
+                            <h4>How It Works</h4>
+                            <p>Instead of storing "P(word|context)" directly, LLMs learn functions that compute these probabilities from learned representations of words and contexts.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 3 -->
+            <section class="chapter" id="ch3">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 3</div>
+                    <h2 class="chapter-title">What Is a Model?</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            Say we want to know (as Galileo did back in the late 1500s) how long it takes a cannon ball to fall from each floor of the Tower of Pisa. Well, we could just measure it in each case and make a table of the results.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Galileo Analogy</h4>
+                            <p>Wolfram uses this historical example to contrast two approaches:</p>
+                            <ul>
+                                <li><strong>Empirical:</strong> Measure every case, store in a table</li>
+                                <li><strong>Theoretical:</strong> Find a formula that predicts all cases</li>
+                            </ul>
+                            <h4>The Parallel to Language</h4>
+                            <p>N-gram counting = measuring each floor<br>
+                            Neural networks = finding the underlying formula</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            Or we can do what is the essence of theoretical science: make a model that gives us a procedure for computing the answer, rather than just measuring and remembering each case.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Power of Models</h4>
+                            <p>Models compress knowledge. Instead of storing millions of measurements, we store a few parameters and a procedure. For falling objects: t = √(2h/g)</p>
+                            <h4>Neural Networks as Models</h4>
+                            <p>ChatGPT's 175 billion parameters encode a "procedure" for computing word probabilities. It's astronomically more complex than t = √(2h/g), but the principle is the same: compress patterns into computable functions.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            There's never a "model-less model". Any model you use has some particular underlying structure—then a certain set of "knobs you can turn" (i.e. parameters you can set) to fit your data.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Model = Structure + Parameters</h4>
+                            <p>Every model has two components:</p>
+                            <ol>
+                                <li><strong>Structure:</strong> The architecture (linear, polynomial, neural network)</li>
+                                <li><strong>Parameters:</strong> The adjustable values (weights, biases)</li>
+                            </ol>
+                            <h4>ChatGPT's Structure</h4>
+                            <p><strong>Structure:</strong> Transformer architecture with attention mechanisms<br>
+                            <strong>Parameters:</strong> 175 billion weights learned from training</p>
+                        </div>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">A model provides a procedure for computing answers rather than storing every case. ChatGPT's 175 billion parameters encode patterns from training data, allowing it to generalize to sequences it has never seen.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 4 -->
+            <section class="chapter" id="ch4">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 4</div>
+                    <h2 class="chapter-title">Models for Human-Like Tasks</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            So far our examples of tasks have involved fairly simple, numerical data. But what about tasks that we humans consider, well, "human tasks"—like recognizing images, or understanding text? The key idea is that for such tasks, there typically isn't any obvious set of simple underlying equations.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Leap to Human Tasks</h4>
+                            <p>Physics has equations like F=ma. What's the equation for "this image contains a cat"? There isn't one we can write down simply.</p>
+                            <h4>Why This Matters</h4>
+                            <p>For centuries, science progressed by finding simple equations. Human-like tasks require a different approach: learn the pattern from examples rather than deriving it from first principles.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            But it turns out that a crucial fact—that is at the core of the success of neural nets—is that neural nets are somehow successful at implicitly doing this kind of thing. And with "enough examples" they can be made to produce what would seem like useful "human-like" outputs.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Empirical Discovery</h4>
+                            <p>Neural networks weren't proven to work theoretically first—they were discovered to work empirically. Given enough data and parameters, they produce human-like outputs.</p>
+                            <h4>"Somehow"</h4>
+                            <p>Wolfram's use of "somehow" acknowledges our incomplete understanding. We know neural nets work, but explaining <em>why</em> they work as well as they do remains an open research question.</p>
+                        </div>
+                    </div>
+
+                    <div class="image-block">
+                        <div class="image-block-icon">&#128396;</div>
+                        <div class="image-block-title">Handwritten Digit Recognition</div>
+                        <div class="image-block-desc">The original shows examples of handwritten digits (0-9) in various styles. A neural network must recognize "2" whether written in cursive, block letters, or with flourishes—capturing the essence of "two-ness" rather than matching exact pixels.</div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            But wait: are we sure the neural net can learn to recognize all the 2s we might care about? The answer is basically no. We don't have a mathematical theorem that tells us this. All we can do is try it out—and it seems to work.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>No Guarantees</h4>
+                            <p>This is a crucial admission: there's no mathematical proof that neural networks will work for any particular task. We rely on:</p>
+                            <ul>
+                                <li>Empirical testing</li>
+                                <li>Historical success on similar tasks</li>
+                                <li>Faith in the generalization ability of large models</li>
+                            </ul>
+                            <h4>Practical Implications</h4>
+                            <p>This explains why AI systems can fail unexpectedly on edge cases—there's no theoretical guarantee they handle all inputs correctly.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 5 -->
+            <section class="chapter" id="ch5">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 5</div>
+                    <h2 class="chapter-title">Neural Nets</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            OK, so how do neural nets actually work? At their core they're based on simple idealizations of how brains seem to work. In a human brain there are about 100 billion neurons, each capable of producing an electrical pulse up to perhaps a thousand times a second.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Biological Inspiration</h4>
+                            <p>Key parallels between brains and neural networks:</p>
+                            <ul>
+                                <li><strong>Brain:</strong> 100 billion neurons, ~1000 activations/second</li>
+                                <li><strong>ChatGPT:</strong> 175 billion parameters, billions of operations/second</li>
+                            </ul>
+                            <h4>Important Caveat</h4>
+                            <p>Modern neural networks are <em>inspired by</em> but not <em>faithful to</em> biological neurons. Real neurons are far more complex, with dendritic computation, timing effects, and biochemical processes that artificial neurons don't model.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            The neurons are connected in a complicated net, with each neuron effectively getting input from thousands of others—with the outputs of the neurons affected by different "weights".
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Connection Weights</h4>
+                            <p>The "weights" are the learnable parameters:</p>
+                            <ul>
+                                <li>Higher weight = stronger connection</li>
+                                <li>Negative weight = inhibitory connection</li>
+                                <li>Learning = adjusting weights</li>
+                            </ul>
+                            <h4>Scale</h4>
+                            <p>In ChatGPT, 175 billion weights encode all learned knowledge. Each weight is a single number (typically 16 or 32 bits).</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            A typical neural net might have perhaps just a few layers, and perhaps just a few thousand neurons. But ChatGPT has about 400 layers, with a total of nearly 200 billion neurons.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Scale Comparison</h4>
+                            <table style="margin: 15px 0;">
+                                <tr><th>Model</th><th>Layers</th><th>Parameters</th></tr>
+                                <tr><td>Simple classifier</td><td>2-3</td><td>thousands</td></tr>
+                                <tr><td>ResNet-50 (images)</td><td>50</td><td>25 million</td></tr>
+                                <tr><td>GPT-2</td><td>~50</td><td>1.5 billion</td></tr>
+                                <tr><td>GPT-3/ChatGPT</td><td>~400</td><td>175 billion</td></tr>
+                            </table>
+                            <h4>Why So Deep?</h4>
+                            <p>Deeper networks can learn more abstract representations. Layer 1 might detect basic patterns; layer 100 might represent concepts; layer 400 might encode complex reasoning patterns.</p>
+                        </div>
+                    </div>
+
+                    <div class="technical-box">
+                        <span class="label">Single Neuron Computation</span>
+                        <pre>
+output = f(w · x + b)
+
+Where:
+  x = input vector (from previous layer)
+  w = weights (learned parameters)
+  b = bias term (learned threshold)
+  f = activation function (e.g., ReLU)
+
+Example with ReLU:
+  inputs: [0.5, -0.3, 0.8]
+  weights: [0.2, 0.5, -0.1]
+  bias: 0.1
+
+  weighted_sum = (0.5×0.2) + (-0.3×0.5) + (0.8×-0.1) + 0.1
+               = 0.1 - 0.15 - 0.08 + 0.1 = -0.03
+
+  output = max(0, -0.03) = 0  (ReLU sets negatives to 0)</pre>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            The function f is usually the same for all neurons. In earlier days it was typically a sigmoid or tanh function. But nowadays it's more often a ReLU—which just takes the input and sets any negative value to zero.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Activation Functions Evolution</h4>
+                            <ul>
+                                <li><strong>Sigmoid:</strong> σ(x) = 1/(1+e^-x), outputs in (0,1)</li>
+                                <li><strong>Tanh:</strong> Similar shape, outputs in (-1,1)</li>
+                                <li><strong>ReLU:</strong> f(x) = max(0,x), simple and fast</li>
+                            </ul>
+                            <h4>Why ReLU Won</h4>
+                            <ul>
+                                <li>Computationally simple (just a comparison)</li>
+                                <li>No "vanishing gradient" problem</li>
+                                <li>Sparse activation (many zeros = efficient)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 6 -->
+            <section class="chapter" id="ch6">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 6</div>
+                    <h2 class="chapter-title">Machine Learning, and the Training of Neural Nets</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            We've seen that neural nets can do some remarkable things. But how do we get them to do what we want? The basic idea of "machine learning" is to have a procedure that progressively adjusts the parameters ("weights") of the neural net to make it do better.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Learning = Parameter Adjustment</h4>
+                            <p>The network structure is fixed. Learning means finding the right weights. For ChatGPT, this means finding 175 billion numbers that make it good at predicting text.</p>
+                            <h4>The Training Loop</h4>
+                            <ol>
+                                <li>Make a prediction</li>
+                                <li>Compare to correct answer</li>
+                                <li>Adjust weights to reduce error</li>
+                                <li>Repeat billions of times</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            At the core of machine learning is the idea of "gradient descent". One imagines one's parameters as defining a position on a "landscape"—defined by the loss function. Then the idea is to progressively follow the path of steepest descent down this landscape to its minimum.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Landscape Metaphor</h4>
+                            <p>Imagine the loss as height on a mountain range:</p>
+                            <ul>
+                                <li>High loss = mountain peak (bad)</li>
+                                <li>Low loss = valley bottom (good)</li>
+                                <li>Gradient descent = rolling downhill</li>
+                            </ul>
+                            <h4>Mathematical Reality</h4>
+                            <p>With 175 billion parameters, this "landscape" has 175 billion dimensions—impossible to visualize but mathematically tractable using calculus.</p>
+                        </div>
+                    </div>
+
+                    <div class="image-block">
+                        <div class="image-block-icon">&#128200;</div>
+                        <div class="image-block-title">Learning Curve</div>
+                        <div class="image-block-desc">The original shows a typical training curve: loss starts high and decreases rapidly at first, then more slowly, eventually plateauing. This curve shows training progress over time.</div>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">Backpropagation uses the chain rule of calculus to compute how each weight affects the loss, allowing efficient gradient computation through hundreds of layers. This makes training deep networks computationally feasible.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Continue with remaining chapters... -->
+            <!-- For brevity, I'll include Chapter 10 (Inside ChatGPT) as it's particularly important -->
+
+            <section class="chapter" id="ch7">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 7</div>
+                    <h2 class="chapter-title">The Practice and Lore of Neural Net Training</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            There's an awful lot of "lore" about neural net training. Fundamentally much of it is about what architecture of neural net to use, how to set up training, and what data to train on.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Art vs. Science</h4>
+                            <p>"Lore" suggests knowledge passed down through practice rather than derived from theory. Neural network training involves many decisions that work empirically but lack theoretical justification.</p>
+                            <h4>Key Decisions</h4>
+                            <ul>
+                                <li><strong>Architecture:</strong> How many layers? What types?</li>
+                                <li><strong>Hyperparameters:</strong> Learning rate, batch size, etc.</li>
+                                <li><strong>Data:</strong> How much? What preprocessing?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch8">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 8</div>
+                    <h2 class="chapter-title">"Surely a Network That's Big Enough Can Do Anything!"</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            There's a notion that if we just had a "big enough" neural net it would be able to do anything. But this isn't true. The fundamental issue is the phenomenon of "computational irreducibility".
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Limits of Learning</h4>
+                            <p>No matter how big, neural networks can't:</p>
+                            <ul>
+                                <li>Solve problems requiring step-by-step computation</li>
+                                <li>Prove mathematical theorems reliably</li>
+                                <li>Predict computationally irreducible systems</li>
+                            </ul>
+                            <h4>Computational Irreducibility</h4>
+                            <p>Some processes can't be predicted without running them step-by-step. No shortcut exists—not even for infinitely large neural networks.</p>
+                        </div>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">ChatGPT's success reveals that essay-writing is "computationally shallower" than we thought—it doesn't require solving computationally irreducible problems, just pattern matching and continuation.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch9">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 9</div>
+                    <h2 class="chapter-title">The Concept of Embeddings</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            Neural nets—at least as they're set up today—are fundamentally based on numbers. So if we're going to deal with something like text, we need some way to represent it in terms of numbers. The idea of embeddings is to represent something—say, a word—by an array of numbers in such a way that "nearby things" correspond to nearby arrays of numbers.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Words as Vectors</h4>
+                            <p>Each word becomes a point in high-dimensional space:</p>
+                            <ul>
+                                <li>"king" → [0.2, -0.5, 0.8, ...] (12,288 numbers)</li>
+                                <li>"queen" → [0.21, -0.48, 0.79, ...] (nearby!)</li>
+                                <li>"banana" → [-0.7, 0.3, -0.1, ...] (far away)</li>
+                            </ul>
+                            <h4>Why This Works</h4>
+                            <p>Words appearing in similar contexts get similar embeddings. "King" and "queen" appear in similar sentences, so their vectors cluster together.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            But what's remarkable is that somehow in this embedding space we can often do things like find that "king" - "man" + "woman" = "queen"—presumably reflecting the meaning that a queen is to women what a king is to men.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Vector Arithmetic on Meaning</h4>
+                            <p>This famous example shows embeddings capture relationships:</p>
+                            <ul>
+                                <li>vector(king) - vector(man) = "royalty" direction</li>
+                                <li>vector(woman) + "royalty" ≈ vector(queen)</li>
+                            </ul>
+                            <h4>Other Examples</h4>
+                            <ul>
+                                <li>Paris - France + Italy ≈ Rome</li>
+                                <li>bigger - big + small ≈ smaller</li>
+                            </ul>
+                            <h4>Limitations</h4>
+                            <p>This doesn't always work perfectly—embeddings capture statistical co-occurrence, not true understanding of meaning.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch10">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 10</div>
+                    <h2 class="chapter-title">Inside ChatGPT</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            OK, so we're finally ready to discuss what's inside ChatGPT. And, yes, ultimately, it's a giant neural net—currently a version of the so-called GPT-3 network with 175 billion weights.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Scale</h4>
+                            <p>175 billion weights means 175 billion learned numbers. If each is 2 bytes (float16), that's 350 GB just for weights—requiring multiple high-end GPUs to run.</p>
+                            <h4>Historical Context</h4>
+                            <p>GPT-3 (2020) was 100x larger than GPT-2 (2019). ChatGPT fine-tuned GPT-3 for conversation.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            In many ways the most remarkable thing about ChatGPT is that all it needs to do is to generate text—and to do that it just has to compute successive probabilities for "what token to add next". At its core it's a neural net that's been set up to produce that.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Remarkable Simplicity</h4>
+                            <p>The task is deceptively simple: just predict the next token. Yet from this simple objective emerges:</p>
+                            <ul>
+                                <li>Coherent paragraphs</li>
+                                <li>Logical reasoning (sometimes)</li>
+                                <li>Creative writing</li>
+                                <li>Code generation</li>
+                                <li>Question answering</li>
+                            </ul>
+                            <h4>Emergence</h4>
+                            <p>Complex capabilities emerge from the simple task of next-token prediction at sufficient scale.</p>
+                        </div>
+                    </div>
+
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            The most important thing about transformer neural nets like the ones used in ChatGPT is a piece called an "attention block". The idea of attention is that it provides a way for the sequence of tokens being processed to "pay attention to" (and draw information from) tokens that preceded it in the sequence.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Key Innovation</h4>
+                            <p>Attention solves the "long-range dependency" problem. Without attention, early tokens would be "forgotten" by the time later tokens are processed.</p>
+                            <h4>How Attention Works</h4>
+                            <ol>
+                                <li>Each token creates Query, Key, and Value vectors</li>
+                                <li>Query asks "what am I looking for?"</li>
+                                <li>Keys answer "what do I contain?"</li>
+                                <li>Matching Query-Key pairs retrieve Values</li>
+                            </ol>
+                            <h4>Example</h4>
+                            <p>In "The cat sat on the mat because it was tired", the word "it" needs to attend to "cat" to resolve the reference—attention enables this.</p>
+                        </div>
+                    </div>
+
+                    <div class="technical-box">
+                        <span class="label">ChatGPT Architecture Summary</span>
+                        <pre>
+┌─────────────────────────────────────────────────┐
+│                 ChatGPT (GPT-3)                  │
+├─────────────────────────────────────────────────┤
+│ Parameters:           175,000,000,000            │
+│ Layers:               96 transformer blocks      │
+│ Attention Heads:      96 per block               │
+│ Embedding Dimensions: 12,288                     │
+│ Context Length:       4,096 tokens (original)    │
+│ Vocabulary Size:      ~50,257 tokens             │
+├─────────────────────────────────────────────────┤
+│ Processing Flow:                                 │
+│   Input Tokens                                   │
+│        ↓                                         │
+│   Token Embedding + Position Embedding           │
+│        ↓                                         │
+│   Attention Block 1 (96 attention heads)         │
+│        ↓                                         │
+│   ... Attention Blocks 2-95 ...                  │
+│        ↓                                         │
+│   Attention Block 96                             │
+│        ↓                                         │
+│   Output: 50,257 probability values              │
+└─────────────────────────────────────────────────┘</pre>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch11">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 11</div>
+                    <h2 class="chapter-title">The Training of ChatGPT</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            ChatGPT's training corpus was essentially "all of the web" (i.e. a few billion pages of text, with a trillion or so words), together with a few million books, and other sources.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Training Data Scale</h4>
+                            <table style="margin: 15px 0;">
+                                <tr><th>Source</th><th>Volume</th></tr>
+                                <tr><td>Web pages</td><td>~1 trillion words</td></tr>
+                                <tr><td>Books</td><td>~100 billion words</td></tr>
+                                <tr><td>Other sources</td><td>Additional billions</td></tr>
+                                <tr><td><strong>Total</strong></td><td><strong>~300 billion tokens</strong></td></tr>
+                            </table>
+                            <h4>Data Quality</h4>
+                            <p>Not all web text is equal. Training includes filtering for quality, though the exact criteria aren't public.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch12">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 12</div>
+                    <h2 class="chapter-title">Beyond Basic Training</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            The raw GPT-3 model was trained just to "complete text". But ChatGPT was further trained using something called RLHF—"Reinforcement Learning from Human Feedback"—which effectively taught it to produce outputs that humans rate as "good".
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The RLHF Process</h4>
+                            <ol>
+                                <li><strong>Supervised Fine-tuning:</strong> Train on human-written responses</li>
+                                <li><strong>Reward Model Training:</strong> Humans rank model outputs</li>
+                                <li><strong>Policy Optimization:</strong> Use RL to maximize reward model score</li>
+                            </ol>
+                            <h4>Why RLHF Matters</h4>
+                            <p>Raw GPT-3 might complete "How do I make a bomb?" with actual instructions. RLHF teaches the model to refuse harmful requests while being helpful for legitimate ones.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch13">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 13</div>
+                    <h2 class="chapter-title">What Really Lets ChatGPT Work?</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            Human language—and the thought processes behind it—have always seemed to us to be somehow very special. And so it's seemed like something "AI-complete" to be able to produce human language and have human-like conversations. But now ChatGPT can do these things. So what's going on? Is this telling us that human language—and thought—are in some sense less special than we believed?
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Deep Question</h4>
+                            <p>ChatGPT's success forces us to reconsider: what makes human language special? If a statistical model can produce convincing language, perhaps language itself is more statistical than we thought.</p>
+                            <h4>Two Interpretations</h4>
+                            <ul>
+                                <li><strong>Optimistic:</strong> We've achieved AI that truly understands language</li>
+                                <li><strong>Skeptical:</strong> Language is simpler than we thought; ChatGPT exploits this without true understanding</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Insight</div>
+                        <div class="key-concept-text">ChatGPT's success suggests that producing human-like text requires less computational sophistication than we assumed. The patterns in human language are learnable by statistical methods—a discovery about language itself, not just about AI.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch14">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 14</div>
+                    <h2 class="chapter-title">Meaning Space and Semantic Laws of Motion</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            We've talked about ChatGPT working with embeddings. And we can think of these embeddings as defining a kind of "meaning space" in which words, sentences and larger pieces of text get placed.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Geometric View</h4>
+                            <p>Meaning becomes geometry. Related concepts cluster; transitions between ideas become "movements" through this space.</p>
+                            <h4>Implications</h4>
+                            <ul>
+                                <li>Reasoning = trajectories through meaning space</li>
+                                <li>Creativity = novel paths through the space</li>
+                                <li>Coherence = smooth, connected paths</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch15">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 15</div>
+                    <h2 class="chapter-title">Semantic Grammar and the Power of Computational Language</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            We've been talking so far about the impressive ability of ChatGPT to deal with human natural language. But Wolfram|Alpha uses a different kind of language: computational language, specifically the Wolfram Language.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>Two Types of Language</h4>
+                            <ul>
+                                <li><strong>Natural Language:</strong> Ambiguous, contextual, human</li>
+                                <li><strong>Computational Language:</strong> Precise, formal, executable</li>
+                            </ul>
+                            <h4>The Synthesis</h4>
+                            <p>Wolfram proposes combining ChatGPT's natural language abilities with Wolfram Language's computational precision—getting the best of both worlds.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chapter" id="ch16">
+                <div class="chapter-header">
+                    <div class="chapter-number">Chapter 16</div>
+                    <h2 class="chapter-title">So ... What Is ChatGPT Doing, and Why Does It Work?</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="paragraph-block" onclick="toggleCommentary(this)">
+                        <div class="original-text">
+                            The basic answer is that what ChatGPT is doing is generating text by successively adding one token at a time, each time choosing its next token by sampling from a probability distribution that's been "learned" by training on a large corpus of text.
+                        </div>
+                        <div class="commentary">
+                            <div class="commentary-header">
+                                <div class="commentary-icon">&#128161;</div>
+                                <div class="commentary-title">Commentary & Analysis</div>
+                            </div>
+                            <h4>The Summary</h4>
+                            <p>After 15 chapters, the answer is simple:</p>
+                            <ol>
+                                <li>Predict next token probabilities</li>
+                                <li>Sample from those probabilities</li>
+                                <li>Repeat</li>
+                            </ol>
+                            <h4>Why It Works</h4>
+                            <p>Because language has learnable patterns, and 175 billion parameters can capture enough of them to produce convincingly human-like text.</p>
+                        </div>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Final Insight</div>
+                        <div class="key-concept-text">ChatGPT's success is a scientific discovery about the nature of human language: producing coherent text is computationally shallower than we assumed. The patterns underlying human language can be learned through statistical methods from sufficient examples.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRD Section -->
+            <div class="prd-section" id="prd">
+                <div class="section-header" id="prd-exec">
+                    <h2>Part 2: Product Requirements Document</h2>
+                    <p>Transforming Wolfram's essay into an educational product</p>
+                </div>
+
+                <h3>Executive Summary</h3>
+                <p>This PRD defines the requirements for converting Stephen Wolfram's comprehensive essay into a multi-format educational resource. The goal is to make these insights accessible to diverse audiences while preserving technical accuracy.</p>
+
+                <h3 id="prd-audience">Target Audiences</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Audience</th>
+                                <th>Technical Level</th>
+                                <th>Primary Need</th>
+                                <th>Format Preference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Executives</td>
+                                <td>Beginner</td>
+                                <td>Strategic understanding</td>
+                                <td>2-page summary</td>
+                            </tr>
+                            <tr>
+                                <td>Developers</td>
+                                <td>Intermediate</td>
+                                <td>Implementation details</td>
+                                <td>Code examples, diagrams</td>
+                            </tr>
+                            <tr>
+                                <td>ML Engineers</td>
+                                <td>Advanced</td>
+                                <td>Technical depth</td>
+                                <td>Mathematical detail</td>
+                            </tr>
+                            <tr>
+                                <td>Students</td>
+                                <td>Beginner-Intermediate</td>
+                                <td>Learning path</td>
+                                <td>Interactive course</td>
+                            </tr>
+                            <tr>
+                                <td>Educators</td>
+                                <td>All levels</td>
+                                <td>Teaching materials</td>
+                                <td>Modular content</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 id="prd-modules">Content Modules</h3>
+                <div class="module-grid">
+                    <div class="module-card">
+                        <div class="module-num">Module 1: Foundations</div>
+                        <div class="module-body">
+                            <h4>Chapters 1-3</h4>
+                            <p>"How ChatGPT Generates Text"</p>
+                            <ul>
+                                <li>Token-by-token generation</li>
+                                <li>Temperature and sampling</li>
+                                <li>N-gram limitations</li>
+                                <li>Model fundamentals</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="module-card">
+                        <div class="module-num">Module 2: Neural Networks</div>
+                        <div class="module-body">
+                            <h4>Chapters 4-7</h4>
+                            <p>"Neural Networks Explained"</p>
+                            <ul>
+                                <li>Neurons and layers</li>
+                                <li>Activation functions</li>
+                                <li>Training and backprop</li>
+                                <li>Practice and lore</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="module-card">
+                        <div class="module-num">Module 3: Architecture</div>
+                        <div class="module-body">
+                            <h4>Chapters 8-12</h4>
+                            <p>"Inside the Transformer"</p>
+                            <ul>
+                                <li>Embeddings</li>
+                                <li>Attention mechanism</li>
+                                <li>GPT architecture</li>
+                                <li>Training at scale</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="module-card">
+                        <div class="module-num">Module 4: Theory</div>
+                        <div class="module-body">
+                            <h4>Chapters 13-16</h4>
+                            <p>"Why It Works"</p>
+                            <ul>
+                                <li>Computational limits</li>
+                                <li>Meaning space</li>
+                                <li>Semantic grammar</li>
+                                <li>Conclusions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 id="prd-specs">Technical Specifications</h3>
+                <div class="specs-box">
+                    <h4>ChatGPT Key Specifications</h4>
+                    <div class="specs-row">
+                        <span class="specs-label">Parameters</span>
+                        <span class="specs-value">175,000,000,000</span>
+                    </div>
+                    <div class="specs-row">
+                        <span class="specs-label">Embedding Dimensions</span>
+                        <span class="specs-value">12,288</span>
+                    </div>
+                    <div class="specs-row">
+                        <span class="specs-label">Attention Heads</span>
+                        <span class="specs-value">96 per block</span>
+                    </div>
+                    <div class="specs-row">
+                        <span class="specs-label">Transformer Blocks</span>
+                        <span class="specs-value">96 layers</span>
+                    </div>
+                    <div class="specs-row">
+                        <span class="specs-label">Training Data</span>
+                        <span class="specs-value">~300 billion tokens</span>
+                    </div>
+                    <div class="specs-row">
+                        <span class="specs-label">Vocabulary Size</span>
+                        <span class="specs-value">~50,257 tokens</span>
+                    </div>
+                    <div class="specs-row">
+                        <span class="specs-label">Context Length</span>
+                        <span class="specs-value">4,096 tokens (original)</span>
+                    </div>
+                    <div class="specs-row">
+                        <span class="specs-label">Temperature (typical)</span>
+                        <span class="specs-value">0.8</span>
+                    </div>
+                </div>
+
+                <h3 id="prd-glossary">Glossary</h3>
+                <div class="glossary-grid">
+                    <div class="glossary-item">
+                        <div class="glossary-term">Token</div>
+                        <div class="glossary-def">The basic unit of text processing—a word, subword, or character that the model operates on.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Embedding</div>
+                        <div class="glossary-def">A numerical vector representation of a token where similar meanings have similar vectors.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Attention</div>
+                        <div class="glossary-def">A mechanism that allows tokens to "look at" and draw information from other tokens in the sequence.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Transformer</div>
+                        <div class="glossary-def">The neural network architecture using attention mechanisms, forming the basis of GPT models.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Temperature</div>
+                        <div class="glossary-def">A parameter controlling randomness in token selection—lower is more deterministic, higher is more creative.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Loss Function</div>
+                        <div class="glossary-def">A measure of how wrong the model's predictions are—training minimizes this value.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Gradient Descent</div>
+                        <div class="glossary-def">The optimization algorithm that adjusts weights to minimize loss by following the steepest downhill direction.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Backpropagation</div>
+                        <div class="glossary-def">The algorithm for computing gradients through the network using the chain rule of calculus.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">RLHF</div>
+                        <div class="glossary-def">Reinforcement Learning from Human Feedback—a technique for fine-tuning models based on human preferences.</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Computational Irreducibility</div>
+                        <div class="glossary-def">The property of processes that cannot be predicted without running them step-by-step—a fundamental limit on what neural networks can learn.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer style="text-align: center; padding: 60px 0; color: var(--gray-500); border-top: 1px solid var(--gray-200); margin-top: 60px;">
+                <p style="font-size: 1.1rem; margin-bottom: 10px;">Comprehensive Analysis of</p>
+                <p style="font-size: 1.3rem; color: var(--gray-700); margin-bottom: 20px;"><strong>"What Is ChatGPT Doing … and Why Does It Work?"</strong></p>
+                <p>Stephen Wolfram • February 2023</p>
+                <p style="margin-top: 20px;">
+                    <a href="https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                        Read the Original Essay →
+                    </a>
+                </p>
+            </footer>
+        </div>
+    </main>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Toggle paragraph commentary
+        function toggleCommentary(element) {
+            element.classList.toggle('expanded');
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Close sidebar when clicking a link (mobile)
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+            });
+        });
+
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Reading progress bar
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // Active nav link highlighting
+        const chapters = document.querySelectorAll('.chapter');
+        const navLinks = document.querySelectorAll('.sidebar a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            chapters.forEach(chapter => {
+                const chapterTop = chapter.offsetTop - 100;
+                if (scrollY >= chapterTop) {
+                    current = chapter.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Expand all commentaries for printing
+        window.addEventListener('beforeprint', () => {
+            document.querySelectorAll('.paragraph-block').forEach(block => {
+                block.classList.add('expanded');
+            });
+        });
+    </script>
+</body>
+</html>
