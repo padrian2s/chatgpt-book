@@ -366,6 +366,43 @@
             color: var(--primary-dark);
         }
 
+        /* Images */
+        .img-block {
+            margin: 25px 0;
+            background: var(--gray-100);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .img-block img {
+            width: 100%;
+            display: block;
+        }
+
+        .img-caption {
+            padding: 15px 20px;
+            background: var(--gray-800);
+            color: var(--gray-300);
+            font-size: 0.85rem;
+            font-family: system-ui, sans-serif;
+        }
+
+        .img-caption strong {
+            color: var(--accent);
+        }
+
+        .img-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .img-grid .img-block {
+            margin: 0;
+        }
+
         /* Equation Box */
         .equation-box {
             background: var(--gray-900);
@@ -822,6 +859,12 @@
                     <h2 class="chapter-title">Model Architecture Overview</h2>
                 </div>
                 <div class="chapter-content">
+                    <!-- Main Architecture Figure -->
+                    <div class="img-block">
+                        <img src="https://arxiv.org/html/1706.03762v7/Figures/ModalNet-21.png" alt="The Transformer model architecture">
+                        <div class="img-caption"><strong>Figure 1:</strong> The Transformer model architecture. The encoder (left) processes input through N=6 identical layers of self-attention and feed-forward networks. The decoder (right) adds encoder-decoder attention.</div>
+                    </div>
+
                     <div class="para">
                         <div class="para-text">The Transformer follows an encoder-decoder structure using stacked self-attention and point-wise, fully connected layers for both the encoder and decoder.</div>
                         <div class="para-hint">Click for commentary</div>
@@ -1083,6 +1126,18 @@ Input Sequence
                     <h2 class="chapter-title">Scaled Dot-Product Attention</h2>
                 </div>
                 <div class="chapter-content">
+                    <!-- Attention Mechanism Figures -->
+                    <div class="img-grid">
+                        <div class="img-block">
+                            <img src="https://arxiv.org/html/1706.03762v7/Figures/ModalNet-19.png" alt="Scaled Dot-Product Attention">
+                            <div class="img-caption"><strong>Figure 2 (Left):</strong> Scaled Dot-Product Attention. MatMul Q×K, scale by √d_k, apply mask (optional), softmax, then MatMul with V.</div>
+                        </div>
+                        <div class="img-block">
+                            <img src="https://arxiv.org/html/1706.03762v7/Figures/ModalNet-20.png" alt="Multi-Head Attention">
+                            <div class="img-caption"><strong>Figure 2 (Right):</strong> Multi-Head Attention. Multiple attention heads run in parallel, outputs are concatenated and projected.</div>
+                        </div>
+                    </div>
+
                     <div class="para">
                         <div class="para-text">We call our particular attention "Scaled Dot-Product Attention". The input consists of queries and keys of dimension d_k, and values of dimension d_v.</div>
                         <div class="para-hint">Click for commentary</div>
@@ -1541,6 +1596,34 @@ Big Model:
                     <h2 class="chapter-title">Conclusion and Historical Impact</h2>
                 </div>
                 <div class="chapter-content">
+                    <!-- Attention Visualization Examples from the paper -->
+                    <div class="img-block">
+                        <img src="https://arxiv.org/html/1706.03762v7/x1.png" alt="Attention visualization for long-distance dependencies">
+                        <div class="img-caption"><strong>Figure 3:</strong> Encoder self-attention in layer 5 of 6. Many attention heads attend to a distant dependency of the verb "making", completing the phrase "making...more difficult". Attentions visualized in different colors for different heads.</div>
+                    </div>
+
+                    <div class="img-grid">
+                        <div class="img-block">
+                            <img src="https://arxiv.org/html/1706.03762v7/x2.png" alt="Anaphora resolution attention head 1">
+                            <div class="img-caption"><strong>Figure 4:</strong> Two attention heads in layer 5/6 exhibiting anaphora resolution behavior. The word "its" attends strongly to "Law", showing the model learns coreference.</div>
+                        </div>
+                        <div class="img-block">
+                            <img src="https://arxiv.org/html/1706.03762v7/x3.png" alt="Anaphora resolution attention head 2">
+                            <div class="img-caption"><strong>Figure 4 (cont.):</strong> Different sentence showing attention from "its" to the referent. Heads appear to have learned different aspects of syntax.</div>
+                        </div>
+                    </div>
+
+                    <div class="img-grid">
+                        <div class="img-block">
+                            <img src="https://arxiv.org/html/1706.03762v7/x4.png" alt="Attention head behavior example 1">
+                            <div class="img-caption"><strong>Figure 5:</strong> Attention heads exhibit behavior related to sentence structure. Different heads learn to perform different tasks.</div>
+                        </div>
+                        <div class="img-block">
+                            <img src="https://arxiv.org/html/1706.03762v7/x5.png" alt="Attention head behavior example 2">
+                            <div class="img-caption"><strong>Figure 5 (cont.):</strong> Full attentions for head 5-6. Notice how different heads capture different linguistic phenomena.</div>
+                        </div>
+                    </div>
+
                     <div class="para">
                         <div class="para-text">In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly used in encoder-decoder architectures with multi-headed self-attention.</div>
                         <div class="para-hint">Click for commentary</div>
