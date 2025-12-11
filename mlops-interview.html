@@ -1,0 +1,2596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLOps Interview Q&A - AI Frameworks Focus</title>
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --secondary: #06b6d4;
+            --accent: #10b981;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e1b4b;
+            --darker: #0f0a1e;
+            --light: #f8f9fa;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.8;
+            color: var(--gray-800);
+            background: var(--gray-50);
+            font-size: 18px;
+        }
+
+        /* Navigation Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--dark);
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 25px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .nav-section {
+            padding: 15px 20px 5px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gray-500);
+            font-weight: 600;
+            font-family: system-ui, sans-serif;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 8px 20px;
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-family: system-ui, sans-serif;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: var(--gray-800);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .sidebar a .num {
+            display: inline-block;
+            width: 28px;
+            color: var(--gray-600);
+            font-size: 0.7rem;
+        }
+
+        /* Mobile Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            min-height: 100vh;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: white;
+            padding: 80px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237c3aed' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-400);
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: var(--gray-400);
+            font-family: system-ui, sans-serif;
+        }
+
+        .hero-meta .icon {
+            color: var(--primary);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 25px 60px;
+            background: var(--gray-900);
+            border-bottom: 1px solid var(--gray-800);
+        }
+
+        .stat {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 15px;
+            background: var(--gray-800);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: system-ui, sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Content Area */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 60px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 30px 35px;
+            border-radius: 16px 16px 0 0;
+            margin-bottom: 0;
+        }
+
+        .section:nth-child(4n+2) .section-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0891b2 100%);
+        }
+
+        .section:nth-child(4n+3) .section-header {
+            background: linear-gradient(135deg, var(--accent) 0%, #059669 100%);
+        }
+
+        .section:nth-child(4n+4) .section-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .section-number {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            font-family: system-ui, sans-serif;
+        }
+
+        .section-content {
+            background: white;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        /* Q&A Item */
+        .qa-item {
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .qa-item:last-child {
+            border-bottom: none;
+        }
+
+        .qa-item:hover {
+            background: var(--gray-50);
+        }
+
+        .question {
+            padding: 25px 35px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .q-badge {
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            font-family: system-ui, sans-serif;
+            flex-shrink: 0;
+        }
+
+        .section:nth-child(4n+2) .q-badge {
+            background: var(--secondary);
+        }
+
+        .section:nth-child(4n+3) .q-badge {
+            background: var(--accent);
+        }
+
+        .section:nth-child(4n+4) .q-badge {
+            background: #f59e0b;
+        }
+
+        .q-text {
+            flex: 1;
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .q-toggle {
+            color: var(--gray-400);
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .qa-item.expanded .q-toggle {
+            transform: rotate(180deg);
+        }
+
+        .answer {
+            display: none;
+            padding: 0 35px 30px 82px;
+        }
+
+        .qa-item.expanded .answer {
+            display: block;
+        }
+
+        .answer-content {
+            background: var(--gray-50);
+            border-left: 4px solid var(--primary);
+            padding: 25px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .section:nth-child(4n+2) .answer-content {
+            border-left-color: var(--secondary);
+        }
+
+        .section:nth-child(4n+3) .answer-content {
+            border-left-color: var(--accent);
+        }
+
+        .section:nth-child(4n+4) .answer-content {
+            border-left-color: #f59e0b;
+        }
+
+        .answer-content h4 {
+            color: var(--gray-800);
+            font-size: 1rem;
+            margin: 20px 0 10px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .answer-content h4:first-child {
+            margin-top: 0;
+        }
+
+        .answer-content p {
+            color: var(--gray-700);
+            margin-bottom: 15px;
+        }
+
+        .answer-content ul {
+            margin: 10px 0 15px 20px;
+            color: var(--gray-700);
+        }
+
+        .answer-content li {
+            margin-bottom: 8px;
+        }
+
+        .answer-content li strong {
+            color: var(--gray-800);
+        }
+
+        .answer-content code {
+            background: var(--gray-200);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--primary-dark);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--gray-900);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .code-block .keyword { color: #c792ea; }
+        .code-block .string { color: #c3e88d; }
+        .code-block .function { color: #82aaff; }
+        .code-block .comment { color: #676e95; }
+        .code-block .class { color: #ffcb6b; }
+
+        /* Difficulty Badge */
+        .difficulty {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: system-ui, sans-serif;
+            margin-left: 10px;
+        }
+
+        .difficulty.junior {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .difficulty.mid {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty.senior {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Key Point Box */
+        .key-point {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .key-point-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-family: system-ui, sans-serif;
+            font-weight: 600;
+        }
+
+        .key-point-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Progress Bar */
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gray-200);
+            z-index: 9999;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        /* Back to Top */
+        .back-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .back-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .hero, .stats-bar, .content {
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+
+            .question {
+                padding: 20px 25px;
+            }
+
+            .answer {
+                padding: 0 25px 25px 62px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .stats-bar {
+                gap: 10px;
+            }
+
+            .stat {
+                min-width: 100px;
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 1.4rem;
+            }
+
+            .q-text {
+                font-size: 0.95rem;
+            }
+
+            .answer {
+                padding-left: 25px;
+            }
+        }
+
+        @media print {
+            .sidebar, .menu-toggle, .back-top, .progress { display: none !important; }
+            .main-content { margin-left: 0; }
+            .answer { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- Mobile Menu -->
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>MLOps Interview Q&A</h1>
+            <p>AI Frameworks Focus</p>
+        </div>
+        <div class="nav-section">Model Development</div>
+        <a href="#sec1"><span class="num">01</span> Training Frameworks</a>
+        <a href="#sec2"><span class="num">02</span> Distributed Training</a>
+        <div class="nav-section">Experiment Management</div>
+        <a href="#sec3"><span class="num">03</span> Experiment Tracking</a>
+        <a href="#sec4"><span class="num">04</span> Model Versioning</a>
+        <div class="nav-section">Model Serving</div>
+        <a href="#sec5"><span class="num">05</span> Serving Frameworks</a>
+        <a href="#sec6"><span class="num">06</span> Model Optimization</a>
+        <div class="nav-section">Pipelines</div>
+        <a href="#sec7"><span class="num">07</span> ML Pipelines</a>
+        <a href="#sec8"><span class="num">08</span> Feature Stores</a>
+        <div class="nav-section">Quality & Monitoring</div>
+        <a href="#sec9"><span class="num">09</span> Model Monitoring</a>
+        <a href="#sec10"><span class="num">10</span> Testing & Validation</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-content">
+                <h1>MLOps Interview Questions</h1>
+                <p class="subtitle">AI Frameworks, Tools, and Best Practices</p>
+                <div class="hero-meta">
+                    <span><span class="icon">●</span> 50+ Questions</span>
+                    <span><span class="icon">●</span> 10 Topics</span>
+                    <span><span class="icon">●</span> All Levels</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value">38</div>
+                <div class="stat-label">Questions</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">10</div>
+                <div class="stat-label">Topic Areas</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">20+</div>
+                <div class="stat-label">Frameworks</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Difficulty Levels</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+
+            <!-- Section 1: Training Frameworks -->
+            <div class="section" id="sec1">
+                <div class="section-header">
+                    <div class="section-number">Section 01</div>
+                    <h2 class="section-title">Training Frameworks (PyTorch, TensorFlow, JAX)</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">What are the key differences between PyTorch and TensorFlow 2.x? When would you choose one over the other?<span class="difficulty junior">Junior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Key Differences</h4>
+                                <ul>
+                                    <li><strong>Execution Model:</strong> PyTorch uses eager execution by default (define-by-run). TensorFlow 2.x also defaults to eager but supports <code>@tf.function</code> for graph compilation.</li>
+                                    <li><strong>API Style:</strong> PyTorch is more Pythonic and intuitive. TensorFlow has Keras as high-level API but lower-level ops can be verbose.</li>
+                                    <li><strong>Debugging:</strong> PyTorch integrates naturally with Python debuggers (pdb). TensorFlow graphs are harder to debug.</li>
+                                    <li><strong>Deployment:</strong> TensorFlow has better production tooling (TF Serving, TFLite, TF.js). PyTorch catching up with TorchServe, ONNX.</li>
+                                    <li><strong>Research vs Production:</strong> PyTorch dominates research papers. TensorFlow stronger in enterprise production.</li>
+                                </ul>
+                                <h4>When to Choose</h4>
+                                <ul>
+                                    <li><strong>PyTorch:</strong> Research, prototyping, NLP (Hugging Face), dynamic architectures, when team prefers Pythonic code</li>
+                                    <li><strong>TensorFlow:</strong> Mobile/edge deployment, existing TF infrastructure, TPU training, production-first projects</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Interview Tip</div>
+                                    <div class="key-point-text">Mention that the gap has narrowed significantly. Both are production-ready. The choice often depends on team expertise and existing infrastructure rather than technical superiority.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">Explain the difference between <code>model.eval()</code> and <code>torch.no_grad()</code> in PyTorch.<span class="difficulty junior">Junior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>model.eval()</h4>
+                                <p>Sets the model to evaluation mode. This affects layers that behave differently during training vs inference:</p>
+                                <ul>
+                                    <li><strong>Dropout:</strong> Disabled (no random zeroing)</li>
+                                    <li><strong>BatchNorm:</strong> Uses running mean/variance instead of batch statistics</li>
+                                    <li><strong>Does NOT disable gradient computation</strong></li>
+                                </ul>
+                                <h4>torch.no_grad()</h4>
+                                <p>Context manager that disables gradient computation:</p>
+                                <ul>
+                                    <li><strong>Saves memory:</strong> No need to store intermediate activations for backward pass</li>
+                                    <li><strong>Faster inference:</strong> Skip gradient tape operations</li>
+                                    <li><strong>Does NOT affect layer behavior</strong></li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Correct inference pattern - use BOTH</span>
+model.<span class="function">eval</span>()  <span class="comment"># Change layer behavior</span>
+<span class="keyword">with</span> torch.<span class="function">no_grad</span>():  <span class="comment"># Disable gradients</span>
+    outputs = <span class="function">model</span>(inputs)
+
+<span class="comment"># Don't forget to switch back for training</span>
+model.<span class="function">train</span>()</pre>
+                                </div>
+                                <div class="key-point">
+                                    <div class="key-point-label">Key Insight</div>
+                                    <div class="key-point-text">Always use both together for inference. model.eval() alone still computes gradients (wasting memory). torch.no_grad() alone doesn't fix BatchNorm/Dropout behavior.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">What is JAX and when would you use it over PyTorch/TensorFlow?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is JAX?</h4>
+                                <p>JAX is Google's library for high-performance numerical computing. It's NumPy + automatic differentiation + XLA compilation + vectorization.</p>
+                                <h4>Key Features</h4>
+                                <ul>
+                                    <li><strong>Functional paradigm:</strong> Pure functions, no hidden state, explicit random keys</li>
+                                    <li><strong>Transformations:</strong> <code>grad</code> (autodiff), <code>jit</code> (compilation), <code>vmap</code> (auto-batching), <code>pmap</code> (parallelization)</li>
+                                    <li><strong>XLA compilation:</strong> Optimized kernels for GPU/TPU</li>
+                                    <li><strong>Composable:</strong> Transformations can be combined freely</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="keyword">import</span> jax.numpy <span class="keyword">as</span> jnp
+<span class="keyword">from</span> jax <span class="keyword">import</span> grad, jit, vmap
+
+<span class="comment"># Define a loss function</span>
+<span class="keyword">def</span> <span class="function">loss_fn</span>(params, x, y):
+    pred = jnp.<span class="function">dot</span>(x, params)
+    <span class="keyword">return</span> jnp.<span class="function">mean</span>((pred - y) ** 2)
+
+<span class="comment"># Get gradient function (automatic!)</span>
+grad_fn = <span class="function">grad</span>(loss_fn)
+
+<span class="comment"># JIT compile for speed</span>
+fast_grad = <span class="function">jit</span>(grad_fn)
+
+<span class="comment"># Vectorize over batch dimension</span>
+batched_pred = <span class="function">vmap</span>(predict_fn)</pre>
+                                </div>
+                                <h4>When to Use JAX</h4>
+                                <ul>
+                                    <li><strong>Research requiring custom autodiff:</strong> Higher-order gradients, Hessians</li>
+                                    <li><strong>TPU-first projects:</strong> JAX has excellent TPU support</li>
+                                    <li><strong>Scientific computing:</strong> Physics simulations, differential equations</li>
+                                    <li><strong>When you need vmap:</strong> Auto-vectorization is powerful</li>
+                                </ul>
+                                <h4>When NOT to Use JAX</h4>
+                                <ul>
+                                    <li>Need mature ecosystem (Hugging Face, torchvision)</li>
+                                    <li>Team unfamiliar with functional programming</li>
+                                    <li>Standard deep learning tasks where PyTorch/TF suffice</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q4</div>
+                            <div class="q-text">How do you handle GPU memory issues during training? What strategies exist?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Immediate Fixes</h4>
+                                <ul>
+                                    <li><strong>Reduce batch size:</strong> Most direct solution, but affects convergence</li>
+                                    <li><strong>Gradient accumulation:</strong> Simulate larger batches without memory cost</li>
+                                    <li><strong>Mixed precision (FP16/BF16):</strong> Halves memory, often faster too</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Gradient Accumulation in PyTorch</span>
+accumulation_steps = 4
+optimizer.<span class="function">zero_grad</span>()
+
+<span class="keyword">for</span> i, (inputs, labels) <span class="keyword">in</span> <span class="function">enumerate</span>(dataloader):
+    outputs = <span class="function">model</span>(inputs)
+    loss = <span class="function">criterion</span>(outputs, labels) / accumulation_steps
+    loss.<span class="function">backward</span>()
+
+    <span class="keyword">if</span> (i + 1) % accumulation_steps == 0:
+        optimizer.<span class="function">step</span>()
+        optimizer.<span class="function">zero_grad</span>()</pre>
+                                </div>
+                                <h4>Advanced Techniques</h4>
+                                <ul>
+                                    <li><strong>Gradient checkpointing:</strong> Trade compute for memory by recomputing activations</li>
+                                    <li><strong>Model parallelism:</strong> Split model across GPUs (for very large models)</li>
+                                    <li><strong>Offloading:</strong> Move optimizer states to CPU (DeepSpeed ZeRO)</li>
+                                    <li><strong>8-bit optimizers:</strong> bitsandbytes library reduces optimizer memory</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Mixed Precision Training with PyTorch</span>
+<span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> autocast, GradScaler
+
+scaler = <span class="class">GradScaler</span>()
+
+<span class="keyword">for</span> inputs, labels <span class="keyword">in</span> dataloader:
+    optimizer.<span class="function">zero_grad</span>()
+
+    <span class="keyword">with</span> <span class="function">autocast</span>():  <span class="comment"># FP16 forward pass</span>
+        outputs = <span class="function">model</span>(inputs)
+        loss = <span class="function">criterion</span>(outputs, labels)
+
+    scaler.<span class="function">scale</span>(loss).<span class="function">backward</span>()  <span class="comment"># Scaled backward</span>
+    scaler.<span class="function">step</span>(optimizer)
+    scaler.<span class="function">update</span>()</pre>
+                                </div>
+                                <div class="key-point">
+                                    <div class="key-point-label">Pro Tip</div>
+                                    <div class="key-point-text">Start with mixed precision + gradient accumulation. They're easy to implement and often sufficient. Gradient checkpointing is next. Model parallelism/offloading for very large models only.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q5</div>
+                            <div class="q-text">Explain the PyTorch DataLoader and how to optimize data loading for training.<span class="difficulty junior">Junior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>DataLoader Basics</h4>
+                                <p>DataLoader wraps a Dataset and provides batching, shuffling, and parallel data loading.</p>
+                                <div class="code-block">
+<pre><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, Dataset
+
+dataloader = <span class="class">DataLoader</span>(
+    dataset,
+    batch_size=32,
+    shuffle=<span class="keyword">True</span>,          <span class="comment"># Shuffle for training</span>
+    num_workers=4,          <span class="comment"># Parallel data loading</span>
+    pin_memory=<span class="keyword">True</span>,        <span class="comment"># Faster GPU transfer</span>
+    prefetch_factor=2,      <span class="comment"># Batches to prefetch per worker</span>
+    persistent_workers=<span class="keyword">True</span> <span class="comment"># Keep workers alive between epochs</span>
+)</pre>
+                                </div>
+                                <h4>Optimization Strategies</h4>
+                                <ul>
+                                    <li><strong>num_workers:</strong> Start with 4, increase until CPU-bound. Too many causes overhead.</li>
+                                    <li><strong>pin_memory=True:</strong> Pre-allocates memory for faster CPU→GPU transfer</li>
+                                    <li><strong>persistent_workers=True:</strong> Avoids worker restart overhead between epochs</li>
+                                    <li><strong>prefetch_factor:</strong> Load next batches while GPU is computing</li>
+                                </ul>
+                                <h4>Common Issues</h4>
+                                <ul>
+                                    <li><strong>Slow first epoch:</strong> Workers initializing. Use persistent_workers.</li>
+                                    <li><strong>Memory leak:</strong> Large objects in Dataset.__getitem__(). Process data lazily.</li>
+                                    <li><strong>Bottleneck detection:</strong> If GPU util is low, data loading is the bottleneck.</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Rule of Thumb</div>
+                                    <div class="key-point-text">Set num_workers = number of CPU cores / number of GPUs. Always use pin_memory=True for GPU training. Profile with torch.profiler to find bottlenecks.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Distributed Training -->
+            <div class="section" id="sec2">
+                <div class="section-header">
+                    <div class="section-number">Section 02</div>
+                    <h2 class="section-title">Distributed Training</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">What is the difference between Data Parallelism and Model Parallelism?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Data Parallelism</h4>
+                                <p>Same model replicated across devices, each processes different data batches.</p>
+                                <ul>
+                                    <li><strong>How it works:</strong> Split batch across GPUs → forward pass → all-reduce gradients → update</li>
+                                    <li><strong>When to use:</strong> Model fits in single GPU memory</li>
+                                    <li><strong>Scaling:</strong> Near-linear with more GPUs (communication overhead exists)</li>
+                                    <li><strong>Tools:</strong> PyTorch DDP, tf.distribute.MirroredStrategy, Horovod</li>
+                                </ul>
+                                <h4>Model Parallelism</h4>
+                                <p>Model split across devices, each holds part of the model.</p>
+                                <ul>
+                                    <li><strong>Pipeline parallelism:</strong> Split by layers (GPU1: layers 1-10, GPU2: layers 11-20)</li>
+                                    <li><strong>Tensor parallelism:</strong> Split individual layers across GPUs</li>
+                                    <li><strong>When to use:</strong> Model too large for single GPU</li>
+                                    <li><strong>Challenge:</strong> Pipeline bubbles cause GPU idle time</li>
+                                    <li><strong>Tools:</strong> DeepSpeed, Megatron-LM, FairScale</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># PyTorch DistributedDataParallel (DDP)</span>
+<span class="keyword">import</span> torch.distributed <span class="keyword">as</span> dist
+<span class="keyword">from</span> torch.nn.parallel <span class="keyword">import</span> DistributedDataParallel <span class="keyword">as</span> DDP
+
+dist.<span class="function">init_process_group</span>(backend=<span class="string">"nccl"</span>)
+model = <span class="class">DDP</span>(model, device_ids=[local_rank])
+
+<span class="comment"># Training loop unchanged - DDP handles gradient sync</span>
+<span class="keyword">for</span> batch <span class="keyword">in</span> dataloader:
+    loss = <span class="function">model</span>(batch)
+    loss.<span class="function">backward</span>()  <span class="comment"># Gradients automatically synchronized</span>
+    optimizer.<span class="function">step</span>()</pre>
+                                </div>
+                                <div class="key-point">
+                                    <div class="key-point-label">Interview Tip</div>
+                                    <div class="key-point-text">Most production systems use Data Parallelism (DDP). Model Parallelism is for LLMs (GPT, LLaMA) that don't fit on one GPU. Mention ZeRO (DeepSpeed) as a hybrid approach.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">Explain DeepSpeed ZeRO and its different stages.<span class="difficulty senior">Senior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is ZeRO?</h4>
+                                <p>Zero Redundancy Optimizer - partitions model states across GPUs instead of replicating them, dramatically reducing memory per GPU.</p>
+                                <h4>Memory Breakdown (Standard DDP)</h4>
+                                <p>For a model with Ψ parameters in mixed precision:</p>
+                                <ul>
+                                    <li><strong>Parameters (FP16):</strong> 2Ψ bytes</li>
+                                    <li><strong>Gradients (FP16):</strong> 2Ψ bytes</li>
+                                    <li><strong>Optimizer states (FP32):</strong> 12Ψ bytes (Adam: params + momentum + variance)</li>
+                                    <li><strong>Total per GPU:</strong> 16Ψ bytes (all replicated!)</li>
+                                </ul>
+                                <h4>ZeRO Stages</h4>
+                                <ul>
+                                    <li><strong>ZeRO-1:</strong> Partition optimizer states → 4x memory reduction</li>
+                                    <li><strong>ZeRO-2:</strong> + Partition gradients → 8x memory reduction</li>
+                                    <li><strong>ZeRO-3:</strong> + Partition parameters → Linear scaling with GPUs</li>
+                                    <li><strong>ZeRO-Offload:</strong> Offload to CPU RAM/NVMe</li>
+                                    <li><strong>ZeRO-Infinity:</strong> Offload everything, train trillion-parameter models</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># DeepSpeed config for ZeRO Stage 2</span>
+{
+    <span class="string">"zero_optimization"</span>: {
+        <span class="string">"stage"</span>: 2,
+        <span class="string">"offload_optimizer"</span>: {
+            <span class="string">"device"</span>: <span class="string">"cpu"</span>
+        },
+        <span class="string">"allgather_bucket_size"</span>: 2e8,
+        <span class="string">"reduce_bucket_size"</span>: 2e8
+    },
+    <span class="string">"fp16"</span>: {<span class="string">"enabled"</span>: true},
+    <span class="string">"train_batch_size"</span>: 32
+}</pre>
+                                </div>
+                                <h4>Trade-offs</h4>
+                                <ul>
+                                    <li><strong>ZeRO-1/2:</strong> Minimal communication overhead, use by default</li>
+                                    <li><strong>ZeRO-3:</strong> More communication (all-gather params), but enables huge models</li>
+                                    <li><strong>Offloading:</strong> Slower but allows training on fewer GPUs</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">What is Horovod and how does it compare to PyTorch DDP?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is Horovod?</h4>
+                                <p>Uber's distributed training framework. Framework-agnostic (TensorFlow, PyTorch, MXNet). Uses ring-allreduce for gradient synchronization.</p>
+                                <h4>Key Features</h4>
+                                <ul>
+                                    <li><strong>Framework agnostic:</strong> Same API for TF and PyTorch</li>
+                                    <li><strong>MPI-based:</strong> Leverages battle-tested HPC communication</li>
+                                    <li><strong>Minimal code changes:</strong> Wrap optimizer, done</li>
+                                    <li><strong>Elastic training:</strong> Add/remove workers dynamically</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="keyword">import</span> horovod.torch <span class="keyword">as</span> hvd
+
+hvd.<span class="function">init</span>()
+torch.cuda.<span class="function">set_device</span>(hvd.<span class="function">local_rank</span>())
+
+model.cuda()
+optimizer = optim.<span class="class">SGD</span>(model.parameters(), lr=0.01 * hvd.<span class="function">size</span>())
+
+<span class="comment"># Wrap optimizer - handles gradient sync</span>
+optimizer = hvd.<span class="class">DistributedOptimizer</span>(optimizer)
+
+<span class="comment"># Broadcast initial state</span>
+hvd.<span class="function">broadcast_parameters</span>(model.state_dict(), root_rank=0)</pre>
+                                </div>
+                                <h4>Horovod vs PyTorch DDP</h4>
+                                <table style="width:100%; border-collapse: collapse; margin: 15px 0;">
+                                    <tr style="background: var(--gray-200);"><th style="padding: 10px; text-align: left;">Aspect</th><th style="padding: 10px; text-align: left;">Horovod</th><th style="padding: 10px; text-align: left;">PyTorch DDP</th></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Performance</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Excellent</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Excellent (often faster)</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Framework support</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">TF, PyTorch, MXNet</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">PyTorch only</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Setup</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Requires MPI</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Built-in</td></tr>
+                                    <tr><td style="padding: 10px;">Elastic training</td><td style="padding: 10px;">Yes</td><td style="padding: 10px;">TorchElastic</td></tr>
+                                </table>
+                                <div class="key-point">
+                                    <div class="key-point-label">Recommendation</div>
+                                    <div class="key-point-text">For PyTorch-only projects, use DDP (native, faster, simpler). For multi-framework environments or existing Horovod infrastructure, Horovod is solid. Both scale to thousands of GPUs.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q4</div>
+                            <div class="q-text">How do you handle batch normalization in distributed training?<span class="difficulty senior">Senior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>The Problem</h4>
+                                <p>Standard BatchNorm computes statistics per-GPU. With small per-GPU batch sizes (large models), statistics become noisy and unstable.</p>
+                                <h4>Solutions</h4>
+                                <ul>
+                                    <li><strong>SyncBatchNorm:</strong> Synchronize statistics across all GPUs (PyTorch: <code>nn.SyncBatchNorm</code>)</li>
+                                    <li><strong>GroupNorm/LayerNorm:</strong> Statistics per sample, not per batch - no sync needed</li>
+                                    <li><strong>Virtual BatchNorm:</strong> Use reference batch for statistics</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Convert all BatchNorm to SyncBatchNorm</span>
+model = torch.nn.<span class="function">SyncBatchNorm.convert_sync_batchnorm</span>(model)
+model = <span class="class">DDP</span>(model, device_ids=[local_rank])
+
+<span class="comment"># Or use GroupNorm instead (no sync overhead)</span>
+<span class="comment"># Replace: nn.BatchNorm2d(64)</span>
+<span class="comment"># With:    nn.GroupNorm(num_groups=32, num_channels=64)</span></pre>
+                                </div>
+                                <h4>Trade-offs</h4>
+                                <ul>
+                                    <li><strong>SyncBatchNorm:</strong> More accurate but adds communication overhead</li>
+                                    <li><strong>GroupNorm:</strong> No overhead, works well for small batches, slightly different results</li>
+                                    <li><strong>Large effective batch size:</strong> Regular BatchNorm often fine if total batch is large</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Best Practice</div>
+                                    <div class="key-point-text">If per-GPU batch ≥ 16, standard BatchNorm is usually fine. For smaller batches (large models), use SyncBatchNorm or switch to GroupNorm/LayerNorm. Modern architectures (Transformers) use LayerNorm anyway.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Experiment Tracking -->
+            <div class="section" id="sec3">
+                <div class="section-header">
+                    <div class="section-number">Section 03</div>
+                    <h2 class="section-title">Experiment Tracking (MLflow, W&B, Neptune)</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">What is MLflow and what are its main components?<span class="difficulty junior">Junior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>MLflow Components</h4>
+                                <ul>
+                                    <li><strong>MLflow Tracking:</strong> Log parameters, metrics, artifacts. Compare experiments.</li>
+                                    <li><strong>MLflow Projects:</strong> Package code for reproducibility (MLproject file)</li>
+                                    <li><strong>MLflow Models:</strong> Standard format for packaging models (multiple flavors)</li>
+                                    <li><strong>Model Registry:</strong> Centralized model store with versioning and stages</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="keyword">import</span> mlflow
+
+<span class="comment"># Start experiment</span>
+mlflow.<span class="function">set_experiment</span>(<span class="string">"my-experiment"</span>)
+
+<span class="keyword">with</span> mlflow.<span class="function">start_run</span>():
+    <span class="comment"># Log parameters</span>
+    mlflow.<span class="function">log_param</span>(<span class="string">"learning_rate"</span>, 0.01)
+    mlflow.<span class="function">log_param</span>(<span class="string">"epochs"</span>, 100)
+
+    <span class="comment"># Train model...</span>
+
+    <span class="comment"># Log metrics</span>
+    mlflow.<span class="function">log_metric</span>(<span class="string">"accuracy"</span>, 0.95)
+    mlflow.<span class="function">log_metric</span>(<span class="string">"loss"</span>, 0.05)
+
+    <span class="comment"># Log model</span>
+    mlflow.sklearn.<span class="function">log_model</span>(model, <span class="string">"model"</span>)
+
+    <span class="comment"># Log artifacts (plots, data)</span>
+    mlflow.<span class="function">log_artifact</span>(<span class="string">"confusion_matrix.png"</span>)</pre>
+                                </div>
+                                <h4>Key Benefits</h4>
+                                <ul>
+                                    <li><strong>Open source:</strong> No vendor lock-in</li>
+                                    <li><strong>Self-hosted or managed:</strong> Databricks, AWS, Azure offerings</li>
+                                    <li><strong>Framework agnostic:</strong> Works with any ML library</li>
+                                    <li><strong>Model Registry:</strong> Staging → Production workflow</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">Compare MLflow, Weights & Biases, and Neptune. When would you use each?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Comparison</h4>
+                                <table style="width:100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem;">
+                                    <tr style="background: var(--gray-200);"><th style="padding: 10px; text-align: left;">Feature</th><th style="padding: 10px; text-align: left;">MLflow</th><th style="padding: 10px; text-align: left;">W&B</th><th style="padding: 10px; text-align: left;">Neptune</th></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Hosting</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Self-hosted / Managed</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Cloud-first</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Cloud-first</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Open Source</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Yes (Apache 2.0)</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Client only</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Client only</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">UI/UX</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Basic</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Excellent</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Good</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Collaboration</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Basic</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Excellent</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Good</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Model Registry</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Built-in</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Yes</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Yes</td></tr>
+                                    <tr><td style="padding: 10px;">Price</td><td style="padding: 10px;">Free (self-host)</td><td style="padding: 10px;">Free tier, paid</td><td style="padding: 10px;">Free tier, paid</td></tr>
+                                </table>
+                                <h4>When to Use Each</h4>
+                                <ul>
+                                    <li><strong>MLflow:</strong> Enterprise with data privacy requirements, need self-hosting, Databricks users</li>
+                                    <li><strong>Weights & Biases:</strong> Research teams, need collaboration features, best visualizations, hyperparameter sweeps</li>
+                                    <li><strong>Neptune:</strong> Production ML teams, need extensive metadata tracking, good API</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Recommendation</div>
+                                    <div class="key-point-text">For startups and research: W&B (best UX, free for individuals). For enterprises with compliance needs: MLflow (self-hosted). All three are solid choices - pick based on team needs and budget.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">How do you implement hyperparameter tuning with experiment tracking?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Approach 1: Optuna + MLflow</h4>
+                                <div class="code-block">
+<pre><span class="keyword">import</span> optuna
+<span class="keyword">import</span> mlflow
+
+<span class="keyword">def</span> <span class="function">objective</span>(trial):
+    <span class="keyword">with</span> mlflow.<span class="function">start_run</span>(nested=<span class="keyword">True</span>):
+        <span class="comment"># Sample hyperparameters</span>
+        lr = trial.<span class="function">suggest_float</span>(<span class="string">"lr"</span>, 1e-5, 1e-1, log=<span class="keyword">True</span>)
+        n_layers = trial.<span class="function">suggest_int</span>(<span class="string">"n_layers"</span>, 1, 5)
+
+        mlflow.<span class="function">log_params</span>({<span class="string">"lr"</span>: lr, <span class="string">"n_layers"</span>: n_layers})
+
+        <span class="comment"># Train and evaluate</span>
+        accuracy = <span class="function">train_model</span>(lr, n_layers)
+
+        mlflow.<span class="function">log_metric</span>(<span class="string">"accuracy"</span>, accuracy)
+        <span class="keyword">return</span> accuracy
+
+<span class="keyword">with</span> mlflow.<span class="function">start_run</span>(run_name=<span class="string">"hpo-study"</span>):
+    study = optuna.<span class="function">create_study</span>(direction=<span class="string">"maximize"</span>)
+    study.<span class="function">optimize</span>(objective, n_trials=100)
+
+    mlflow.<span class="function">log_params</span>(study.best_params)</pre>
+                                </div>
+                                <h4>Approach 2: W&B Sweeps</h4>
+                                <div class="code-block">
+<pre><span class="comment"># sweep_config.yaml</span>
+method: bayes
+metric:
+  name: val_accuracy
+  goal: maximize
+parameters:
+  learning_rate:
+    distribution: log_uniform_values
+    min: 0.00001
+    max: 0.1
+  batch_size:
+    values: [16, 32, 64]
+
+<span class="comment"># In training script</span>
+<span class="keyword">import</span> wandb
+
+wandb.<span class="function">init</span>(config=wandb.config)
+<span class="comment"># Access: wandb.config.learning_rate</span></pre>
+                                </div>
+                                <h4>Best Practices</h4>
+                                <ul>
+                                    <li><strong>Use nested runs:</strong> Group trials under parent experiment</li>
+                                    <li><strong>Log early stopping metrics:</strong> Prune bad trials early</li>
+                                    <li><strong>Save best model artifact:</strong> Register best trial's model</li>
+                                    <li><strong>Use Bayesian optimization:</strong> More efficient than grid/random search</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Model Versioning -->
+            <div class="section" id="sec4">
+                <div class="section-header">
+                    <div class="section-number">Section 04</div>
+                    <h2 class="section-title">Model Versioning & Registry</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">What is DVC (Data Version Control) and how does it work with Git?<span class="difficulty junior">Junior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is DVC?</h4>
+                                <p>DVC is Git for data and models. It tracks large files, datasets, and ML models alongside your code without storing them in Git.</p>
+                                <h4>How It Works</h4>
+                                <ul>
+                                    <li><strong>.dvc files:</strong> Small pointer files stored in Git (contain hash of actual data)</li>
+                                    <li><strong>Remote storage:</strong> Actual data stored in S3, GCS, Azure, or local</li>
+                                    <li><strong>Git integration:</strong> Data versions linked to code commits</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Initialize DVC in a Git repo</span>
+dvc init
+
+<span class="comment"># Track a large dataset</span>
+dvc add data/training_data.csv
+git add data/training_data.csv.dvc data/.gitignore
+git commit -m <span class="string">"Add training data"</span>
+
+<span class="comment"># Configure remote storage</span>
+dvc remote add -d myremote s3://my-bucket/dvc-store
+
+<span class="comment"># Push data to remote</span>
+dvc push
+
+<span class="comment"># Checkout data for specific Git commit</span>
+git checkout v1.0
+dvc checkout  <span class="comment"># Fetches matching data version</span></pre>
+                                </div>
+                                <h4>Key Benefits</h4>
+                                <ul>
+                                    <li><strong>Reproducibility:</strong> Exact data + code combination for any commit</li>
+                                    <li><strong>Storage efficiency:</strong> Deduplication, only stores diffs</li>
+                                    <li><strong>Pipelines:</strong> Define and version ML pipelines (dvc.yaml)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">Explain the MLflow Model Registry and its stage transitions.<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Model Registry Concepts</h4>
+                                <ul>
+                                    <li><strong>Registered Model:</strong> Named entity grouping model versions</li>
+                                    <li><strong>Model Version:</strong> Specific iteration with artifacts, metrics, lineage</li>
+                                    <li><strong>Stages:</strong> None → Staging → Production → Archived</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="keyword">import</span> mlflow
+<span class="keyword">from</span> mlflow <span class="keyword">import</span> MlflowClient
+
+client = <span class="class">MlflowClient</span>()
+
+<span class="comment"># Register model from a run</span>
+result = mlflow.<span class="function">register_model</span>(
+    <span class="string">"runs:/&lt;run_id&gt;/model"</span>,
+    <span class="string">"fraud-detection-model"</span>
+)
+
+<span class="comment"># Transition to staging</span>
+client.<span class="function">transition_model_version_stage</span>(
+    name=<span class="string">"fraud-detection-model"</span>,
+    version=1,
+    stage=<span class="string">"Staging"</span>
+)
+
+<span class="comment"># After validation, promote to production</span>
+client.<span class="function">transition_model_version_stage</span>(
+    name=<span class="string">"fraud-detection-model"</span>,
+    version=1,
+    stage=<span class="string">"Production"</span>,
+    archive_existing_versions=<span class="keyword">True</span>  <span class="comment"># Archive old prod version</span>
+)
+
+<span class="comment"># Load production model for serving</span>
+model = mlflow.pyfunc.<span class="function">load_model</span>(
+    <span class="string">"models:/fraud-detection-model/Production"</span>
+)</pre>
+                                </div>
+                                <h4>Stage Workflow</h4>
+                                <ul>
+                                    <li><strong>None:</strong> Just registered, not validated</li>
+                                    <li><strong>Staging:</strong> Under testing, A/B testing, shadow mode</li>
+                                    <li><strong>Production:</strong> Serving live traffic</li>
+                                    <li><strong>Archived:</strong> Old versions kept for rollback</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Best Practice</div>
+                                    <div class="key-point-text">Automate stage transitions with CI/CD. Run validation tests before Staging→Production. Keep archived versions for quick rollback.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">How do you version ML models in production? What metadata should be tracked?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Versioning Strategies</h4>
+                                <ul>
+                                    <li><strong>Semantic versioning:</strong> major.minor.patch (1.2.3)</li>
+                                    <li><strong>Date-based:</strong> 2024-01-15-v1</li>
+                                    <li><strong>Git SHA:</strong> Link to exact code commit</li>
+                                    <li><strong>Experiment ID:</strong> Link to training run</li>
+                                </ul>
+                                <h4>Essential Metadata</h4>
+                                <ul>
+                                    <li><strong>Training data:</strong> Dataset version, hash, sample count, date range</li>
+                                    <li><strong>Code:</strong> Git commit SHA, branch, repo URL</li>
+                                    <li><strong>Environment:</strong> Python version, package versions (requirements.txt hash)</li>
+                                    <li><strong>Hyperparameters:</strong> All training configuration</li>
+                                    <li><strong>Metrics:</strong> Training/validation scores, evaluation results</li>
+                                    <li><strong>Lineage:</strong> Parent model (for fine-tuning), training run ID</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Model metadata example (stored with model)</span>
+{
+    <span class="string">"model_version"</span>: <span class="string">"2.1.0"</span>,
+    <span class="string">"git_sha"</span>: <span class="string">"a1b2c3d4"</span>,
+    <span class="string">"training_run_id"</span>: <span class="string">"mlflow-run-xyz"</span>,
+    <span class="string">"dataset"</span>: {
+        <span class="string">"name"</span>: <span class="string">"transactions_v3"</span>,
+        <span class="string">"hash"</span>: <span class="string">"sha256:abc123..."</span>,
+        <span class="string">"rows"</span>: 1000000,
+        <span class="string">"date_range"</span>: [<span class="string">"2023-01-01"</span>, <span class="string">"2023-12-31"</span>]
+    },
+    <span class="string">"metrics"</span>: {
+        <span class="string">"auc_roc"</span>: 0.95,
+        <span class="string">"precision"</span>: 0.92
+    },
+    <span class="string">"created_at"</span>: <span class="string">"2024-01-15T10:30:00Z"</span>,
+    <span class="string">"created_by"</span>: <span class="string">"training-pipeline"</span>
+}</pre>
+                                </div>
+                                <div class="key-point">
+                                    <div class="key-point-label">Key Insight</div>
+                                    <div class="key-point-text">You should be able to reproduce any model from its metadata alone. If you can't answer "what data and code produced this model?", your versioning is incomplete.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Serving Frameworks -->
+            <div class="section" id="sec5">
+                <div class="section-header">
+                    <div class="section-number">Section 05</div>
+                    <h2 class="section-title">Model Serving Frameworks</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">Compare TensorFlow Serving, TorchServe, and Triton Inference Server.<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Comparison Overview</h4>
+                                <table style="width:100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem;">
+                                    <tr style="background: var(--gray-200);"><th style="padding: 10px; text-align: left;">Feature</th><th style="padding: 10px; text-align: left;">TF Serving</th><th style="padding: 10px; text-align: left;">TorchServe</th><th style="padding: 10px; text-align: left;">Triton</th></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Frameworks</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">TensorFlow only</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">PyTorch only</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">TF, PyTorch, ONNX, TensorRT</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Batching</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Dynamic batching</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Dynamic batching</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Advanced dynamic batching</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Model Management</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Version policies</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">MAR archives</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Model repository</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">GPU Optimization</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Good</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Good</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Excellent (NVIDIA)</td></tr>
+                                    <tr><td style="padding: 10px;">Concurrent Models</td><td style="padding: 10px;">Yes</td><td style="padding: 10px;">Yes</td><td style="padding: 10px;">Best (GPU sharing)</td></tr>
+                                </table>
+                                <h4>When to Use Each</h4>
+                                <ul>
+                                    <li><strong>TF Serving:</strong> TensorFlow models, need battle-tested serving, gRPC preferred</li>
+                                    <li><strong>TorchServe:</strong> PyTorch models, need custom handlers, AWS integration</li>
+                                    <li><strong>Triton:</strong> Multi-framework, need maximum GPU efficiency, ensemble models</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Production Recommendation</div>
+                                    <div class="key-point-text">For heterogeneous model serving at scale, Triton is the best choice. It handles multiple frameworks, optimizes GPU utilization, and supports model ensembles natively.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">What is ONNX and why is it important for model deployment?<span class="difficulty junior">Junior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is ONNX?</h4>
+                                <p>Open Neural Network Exchange - an open format for representing ML models. Enables interoperability between frameworks.</p>
+                                <h4>Key Benefits</h4>
+                                <ul>
+                                    <li><strong>Framework agnostic:</strong> Train in PyTorch, deploy with TensorRT</li>
+                                    <li><strong>Optimization:</strong> ONNX Runtime optimizes for target hardware</li>
+                                    <li><strong>Portability:</strong> Same model runs on cloud, edge, mobile</li>
+                                    <li><strong>Ecosystem:</strong> Wide tooling support (converters, optimizers)</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Export PyTorch model to ONNX</span>
+<span class="keyword">import</span> torch
+
+model.<span class="function">eval</span>()
+dummy_input = torch.<span class="function">randn</span>(1, 3, 224, 224)
+
+torch.onnx.<span class="function">export</span>(
+    model,
+    dummy_input,
+    <span class="string">"model.onnx"</span>,
+    input_names=[<span class="string">"input"</span>],
+    output_names=[<span class="string">"output"</span>],
+    dynamic_axes={
+        <span class="string">"input"</span>: {0: <span class="string">"batch_size"</span>},
+        <span class="string">"output"</span>: {0: <span class="string">"batch_size"</span>}
+    },
+    opset_version=14
+)
+
+<span class="comment"># Run with ONNX Runtime</span>
+<span class="keyword">import</span> onnxruntime <span class="keyword">as</span> ort
+
+session = ort.<span class="class">InferenceSession</span>(<span class="string">"model.onnx"</span>)
+outputs = session.<span class="function">run</span>(<span class="keyword">None</span>, {<span class="string">"input"</span>: input_array})</pre>
+                                </div>
+                                <h4>Common Use Cases</h4>
+                                <ul>
+                                    <li><strong>Edge deployment:</strong> Convert PyTorch → ONNX → TensorRT for Jetson</li>
+                                    <li><strong>Mobile:</strong> ONNX → CoreML (iOS) or TFLite (Android)</li>
+                                    <li><strong>Standardization:</strong> Single format for model artifacts</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">How do you implement A/B testing for ML models in production?<span class="difficulty senior">Senior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>A/B Testing Architecture</h4>
+                                <ul>
+                                    <li><strong>Traffic splitting:</strong> Route percentage of requests to each model version</li>
+                                    <li><strong>Consistent assignment:</strong> Same user always sees same model (by user ID hash)</li>
+                                    <li><strong>Metrics collection:</strong> Track business KPIs per variant</li>
+                                    <li><strong>Statistical analysis:</strong> Determine winner with significance</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Simple traffic splitting with feature flags</span>
+<span class="keyword">import</span> hashlib
+
+<span class="keyword">def</span> <span class="function">get_model_variant</span>(user_id, experiment_config):
+    <span class="comment"># Consistent hashing for user assignment</span>
+    hash_val = int(hashlib.<span class="function">md5</span>(
+        f<span class="string">"{user_id}_{experiment_config['name']}"</span>.encode()
+    ).hexdigest(), 16)
+
+    bucket = hash_val % 100
+
+    <span class="keyword">if</span> bucket < experiment_config[<span class="string">'control_percentage'</span>]:
+        <span class="keyword">return</span> <span class="string">"control"</span>, load_model(<span class="string">"v1"</span>)
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> <span class="string">"treatment"</span>, load_model(<span class="string">"v2"</span>)
+
+<span class="comment"># Log for analysis</span>
+<span class="keyword">def</span> <span class="function">predict_with_logging</span>(user_id, features):
+    variant, model = <span class="function">get_model_variant</span>(user_id, config)
+    prediction = model.<span class="function">predict</span>(features)
+
+    log_prediction(
+        user_id=user_id,
+        variant=variant,
+        prediction=prediction,
+        timestamp=now()
+    )
+    <span class="keyword">return</span> prediction</pre>
+                                </div>
+                                <h4>Key Considerations</h4>
+                                <ul>
+                                    <li><strong>Sample size:</strong> Calculate required samples for statistical power</li>
+                                    <li><strong>Guardrail metrics:</strong> Monitor for regressions in critical metrics</li>
+                                    <li><strong>Ramp-up:</strong> Start with small percentage, increase gradually</li>
+                                    <li><strong>Shadow mode:</strong> Run new model without affecting users first</li>
+                                </ul>
+                                <h4>Tools</h4>
+                                <ul>
+                                    <li><strong>Istio/Envoy:</strong> Service mesh traffic splitting</li>
+                                    <li><strong>LaunchDarkly/Unleash:</strong> Feature flag platforms</li>
+                                    <li><strong>Seldon/KServe:</strong> Built-in canary deployments</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Statistical Note</div>
+                                    <div class="key-point-text">Don't peek at results early! Pre-register your sample size and decision criteria. Use sequential testing if you need early stopping.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q4</div>
+                            <div class="q-text">What is dynamic batching and why is it important for inference?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>The Problem</h4>
+                                <p>GPUs are optimized for parallel processing. Single requests underutilize GPU. But waiting too long for batches increases latency.</p>
+                                <h4>Dynamic Batching</h4>
+                                <p>Automatically groups incoming requests into batches based on:</p>
+                                <ul>
+                                    <li><strong>Max batch size:</strong> Upper limit on batch</li>
+                                    <li><strong>Max delay:</strong> Maximum time to wait for more requests</li>
+                                    <li><strong>Preferred batch sizes:</strong> Optimize for specific sizes</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Triton config.pbtxt example</span>
+dynamic_batching {
+    preferred_batch_size: [4, 8, 16]
+    max_queue_delay_microseconds: 100
+}
+
+instance_group [
+    {
+        count: 2
+        kind: KIND_GPU
+    }
+]</pre>
+                                </div>
+                                <h4>Trade-offs</h4>
+                                <ul>
+                                    <li><strong>Throughput vs Latency:</strong> Larger batches = higher throughput, longer wait</li>
+                                    <li><strong>Memory:</strong> Larger batches need more GPU memory</li>
+                                    <li><strong>Padding overhead:</strong> Variable-length inputs need padding</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Tuning Tip</div>
+                                    <div class="key-point-text">Start with max_delay = p50 latency target / 10. Increase batch size until GPU utilization is high but latency SLA is met. Profile under realistic load.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Model Optimization -->
+            <div class="section" id="sec6">
+                <div class="section-header">
+                    <div class="section-number">Section 06</div>
+                    <h2 class="section-title">Model Optimization & Compression</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">Explain quantization and its types (PTQ vs QAT).<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is Quantization?</h4>
+                                <p>Converting model weights and activations from floating-point (FP32) to lower precision (INT8, FP16). Reduces model size and speeds up inference.</p>
+                                <h4>Post-Training Quantization (PTQ)</h4>
+                                <ul>
+                                    <li><strong>Process:</strong> Quantize after training using calibration data</li>
+                                    <li><strong>Pros:</strong> Fast, no retraining needed</li>
+                                    <li><strong>Cons:</strong> May lose accuracy, especially for sensitive models</li>
+                                    <li><strong>Best for:</strong> Large models, CNNs, when time is limited</li>
+                                </ul>
+                                <h4>Quantization-Aware Training (QAT)</h4>
+                                <ul>
+                                    <li><strong>Process:</strong> Simulate quantization during training</li>
+                                    <li><strong>Pros:</strong> Better accuracy preservation</li>
+                                    <li><strong>Cons:</strong> Requires retraining, more complex</li>
+                                    <li><strong>Best for:</strong> Accuracy-critical applications, smaller models</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># PyTorch Post-Training Quantization</span>
+<span class="keyword">import</span> torch.quantization
+
+<span class="comment"># Prepare model</span>
+model.<span class="function">eval</span>()
+model.qconfig = torch.quantization.<span class="function">get_default_qconfig</span>(<span class="string">'fbgemm'</span>)
+model_prepared = torch.quantization.<span class="function">prepare</span>(model)
+
+<span class="comment"># Calibrate with representative data</span>
+<span class="keyword">with</span> torch.<span class="function">no_grad</span>():
+    <span class="keyword">for</span> batch <span class="keyword">in</span> calibration_loader:
+        model_prepared(batch)
+
+<span class="comment"># Convert to quantized model</span>
+model_quantized = torch.quantization.<span class="function">convert</span>(model_prepared)
+
+<span class="comment"># Size reduction: ~4x (FP32 → INT8)</span></pre>
+                                </div>
+                                <h4>Quantization Levels</h4>
+                                <ul>
+                                    <li><strong>FP16:</strong> 2x size reduction, minimal accuracy loss, wide hardware support</li>
+                                    <li><strong>INT8:</strong> 4x size reduction, may need calibration, faster on CPUs</li>
+                                    <li><strong>INT4/GPTQ:</strong> 8x reduction, for LLMs, requires careful tuning</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">What is knowledge distillation and when would you use it?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Concept</h4>
+                                <p>Train a smaller "student" model to mimic a larger "teacher" model. Student learns from teacher's soft predictions (logits), not just hard labels.</p>
+                                <h4>Why Soft Labels Help</h4>
+                                <ul>
+                                    <li><strong>More information:</strong> Teacher's logits encode relationships between classes</li>
+                                    <li><strong>Example:</strong> "Cat" image might have teacher output [cat: 0.9, dog: 0.08, bird: 0.02] - student learns cats look more like dogs than birds</li>
+                                    <li><strong>Regularization:</strong> Soft targets provide smoother training signal</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Knowledge Distillation Loss</span>
+<span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F
+
+<span class="keyword">def</span> <span class="function">distillation_loss</span>(student_logits, teacher_logits, labels,
+                        temperature=4.0, alpha=0.7):
+    <span class="comment"># Soft targets from teacher (with temperature)</span>
+    soft_loss = F.<span class="function">kl_div</span>(
+        F.<span class="function">log_softmax</span>(student_logits / temperature, dim=1),
+        F.<span class="function">softmax</span>(teacher_logits / temperature, dim=1),
+        reduction=<span class="string">'batchmean'</span>
+    ) * (temperature ** 2)
+
+    <span class="comment"># Hard targets (ground truth)</span>
+    hard_loss = F.<span class="function">cross_entropy</span>(student_logits, labels)
+
+    <span class="comment"># Weighted combination</span>
+    <span class="keyword">return</span> alpha * soft_loss + (1 - alpha) * hard_loss</pre>
+                                </div>
+                                <h4>When to Use</h4>
+                                <ul>
+                                    <li><strong>Edge deployment:</strong> Need smaller model for mobile/IoT</li>
+                                    <li><strong>Latency requirements:</strong> Student can be 10x faster</li>
+                                    <li><strong>Ensemble compression:</strong> Distill ensemble into single model</li>
+                                    <li><strong>Proprietary models:</strong> Can't deploy teacher, only student</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Pro Tip</div>
+                                    <div class="key-point-text">Temperature (T) controls softness. Higher T = softer probabilities = more knowledge transfer. Start with T=4, tune based on results. Common alpha values: 0.5-0.9.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">Explain pruning techniques for neural networks.<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is Pruning?</h4>
+                                <p>Removing unnecessary weights or neurons from a neural network to reduce size and computation while maintaining accuracy.</p>
+                                <h4>Pruning Types</h4>
+                                <ul>
+                                    <li><strong>Unstructured (Weight) Pruning:</strong> Remove individual weights (sparse matrices)</li>
+                                    <li><strong>Structured Pruning:</strong> Remove entire neurons, channels, or layers</li>
+                                    <li><strong>Magnitude-based:</strong> Remove smallest weights</li>
+                                    <li><strong>Gradient-based:</strong> Remove weights with smallest gradients</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># PyTorch Pruning Example</span>
+<span class="keyword">import</span> torch.nn.utils.prune <span class="keyword">as</span> prune
+
+<span class="comment"># Prune 30% of weights in a layer</span>
+prune.<span class="function">l1_unstructured</span>(
+    module=model.fc1,
+    name=<span class="string">'weight'</span>,
+    amount=0.3
+)
+
+<span class="comment"># Structured pruning (remove channels)</span>
+prune.<span class="function">ln_structured</span>(
+    module=model.conv1,
+    name=<span class="string">'weight'</span>,
+    amount=0.2,
+    n=2,  <span class="comment"># L2 norm</span>
+    dim=0  <span class="comment"># Prune output channels</span>
+)
+
+<span class="comment"># Make pruning permanent</span>
+prune.<span class="function">remove</span>(model.fc1, <span class="string">'weight'</span>)</pre>
+                                </div>
+                                <h4>Pruning Workflow</h4>
+                                <ol>
+                                    <li>Train full model to convergence</li>
+                                    <li>Prune (remove weights)</li>
+                                    <li>Fine-tune (recover accuracy)</li>
+                                    <li>Repeat (iterative pruning often better)</li>
+                                </ol>
+                                <h4>Practical Considerations</h4>
+                                <ul>
+                                    <li><strong>Unstructured:</strong> Higher sparsity possible, but needs sparse hardware/software</li>
+                                    <li><strong>Structured:</strong> Actual speedup on standard hardware, but less aggressive</li>
+                                    <li><strong>Typical results:</strong> 50-90% weights removed with <1% accuracy drop</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: ML Pipelines -->
+            <div class="section" id="sec7">
+                <div class="section-header">
+                    <div class="section-number">Section 07</div>
+                    <h2 class="section-title">ML Pipelines & Orchestration</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">Compare Kubeflow Pipelines, Airflow, and Prefect for ML workflows.<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Overview</h4>
+                                <table style="width:100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem;">
+                                    <tr style="background: var(--gray-200);"><th style="padding: 10px; text-align: left;">Aspect</th><th style="padding: 10px; text-align: left;">Kubeflow</th><th style="padding: 10px; text-align: left;">Airflow</th><th style="padding: 10px; text-align: left;">Prefect</th></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Focus</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">ML-native</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">General data</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Modern data/ML</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Infrastructure</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Kubernetes required</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Flexible</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Flexible</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Learning Curve</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Steep</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Medium</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Easy</td></tr>
+                                    <tr><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">ML Features</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Built-in (experiments, artifacts)</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Via plugins</td><td style="padding: 10px; border-bottom: 1px solid var(--gray-200);">Good integration</td></tr>
+                                    <tr><td style="padding: 10px;">Dynamic Workflows</td><td style="padding: 10px;">Yes</td><td style="padding: 10px;">Limited (2.0 better)</td><td style="padding: 10px;">Excellent</td></tr>
+                                </table>
+                                <h4>When to Use Each</h4>
+                                <ul>
+                                    <li><strong>Kubeflow Pipelines:</strong> Full ML platform on Kubernetes, need experiment tracking, caching, artifact management built-in</li>
+                                    <li><strong>Airflow:</strong> Already using for data pipelines, need mature scheduling, large ecosystem</li>
+                                    <li><strong>Prefect:</strong> Python-first, need dynamic workflows, modern API, quick setup</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Prefect Example - Clean Python</span>
+<span class="keyword">from</span> prefect <span class="keyword">import</span> flow, task
+
+<span class="keyword">@task</span>
+<span class="keyword">def</span> <span class="function">load_data</span>():
+    <span class="keyword">return</span> pd.<span class="function">read_csv</span>(<span class="string">"data.csv"</span>)
+
+<span class="keyword">@task</span>
+<span class="keyword">def</span> <span class="function">train_model</span>(data):
+    model = <span class="class">RandomForestClassifier</span>()
+    model.<span class="function">fit</span>(data)
+    <span class="keyword">return</span> model
+
+<span class="keyword">@flow</span>
+<span class="keyword">def</span> <span class="function">ml_pipeline</span>():
+    data = <span class="function">load_data</span>()
+    model = <span class="function">train_model</span>(data)
+    <span class="keyword">return</span> model
+
+<span class="comment"># Just run it!</span>
+<span class="function">ml_pipeline</span>()</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">What is Metaflow and why did Netflix create it?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is Metaflow?</h4>
+                                <p>A human-centric ML framework from Netflix. Focuses on data scientist productivity rather than infrastructure complexity.</p>
+                                <h4>Design Philosophy</h4>
+                                <ul>
+                                    <li><strong>"Write once, run anywhere":</strong> Same code runs locally and on AWS Batch/Step Functions</li>
+                                    <li><strong>Versioning built-in:</strong> Every run's data, code, and artifacts automatically versioned</li>
+                                    <li><strong>Failure handling:</strong> Resume from failed steps, not from scratch</li>
+                                    <li><strong>No YAML/configs:</strong> Pure Python decorators</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="keyword">from</span> metaflow <span class="keyword">import</span> FlowSpec, step, Parameter
+
+<span class="keyword">class</span> <span class="class">TrainingFlow</span>(FlowSpec):
+    learning_rate = <span class="class">Parameter</span>(<span class="string">'lr'</span>, default=0.01)
+
+    <span class="keyword">@step</span>
+    <span class="keyword">def</span> <span class="function">start</span>(self):
+        self.data = <span class="function">load_data</span>()
+        self.<span class="function">next</span>(self.train)
+
+    <span class="keyword">@step</span>
+    <span class="keyword">def</span> <span class="function">train</span>(self):
+        self.model = <span class="function">train</span>(self.data, lr=self.learning_rate)
+        self.<span class="function">next</span>(self.end)
+
+    <span class="keyword">@step</span>
+    <span class="keyword">def</span> <span class="function">end</span>(self):
+        <span class="keyword">print</span>(f<span class="string">"Done! Model: {self.model}"</span>)
+
+<span class="comment"># Run locally</span>
+<span class="comment"># python flow.py run</span>
+
+<span class="comment"># Run on AWS Batch</span>
+<span class="comment"># python flow.py run --with batch</span></pre>
+                                </div>
+                                <h4>Key Features</h4>
+                                <ul>
+                                    <li><strong>@retry decorator:</strong> Automatic retries on failure</li>
+                                    <li><strong>@resources:</strong> Specify CPU/GPU/memory per step</li>
+                                    <li><strong>Artifacts:</strong> self.x automatically versioned and accessible</li>
+                                    <li><strong>Client API:</strong> Access past runs' data programmatically</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Why Netflix Created It</div>
+                                    <div class="key-point-text">Data scientists were spending 80% of time on infrastructure, 20% on ML. Metaflow flips this. It's opinionated about infrastructure so you don't have to be.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">How do you handle pipeline caching and artifact management?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Why Caching Matters</h4>
+                                <ul>
+                                    <li><strong>Cost:</strong> Don't reprocess same data repeatedly</li>
+                                    <li><strong>Time:</strong> Skip expensive steps when inputs unchanged</li>
+                                    <li><strong>Iteration speed:</strong> Faster experimentation</li>
+                                </ul>
+                                <h4>Caching Strategies</h4>
+                                <ul>
+                                    <li><strong>Input-based:</strong> Cache key = hash of inputs (Kubeflow default)</li>
+                                    <li><strong>Code + input:</strong> Invalidate when code changes too</li>
+                                    <li><strong>Time-based:</strong> Force refresh after TTL</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Kubeflow Pipeline with caching</span>
+<span class="keyword">from</span> kfp <span class="keyword">import</span> dsl
+
+<span class="keyword">@dsl.component</span>
+<span class="keyword">def</span> <span class="function">preprocess</span>(data_path: str) -> str:
+    <span class="comment"># Cached based on data_path</span>
+    ...
+
+<span class="keyword">@dsl.pipeline</span>
+<span class="keyword">def</span> <span class="function">my_pipeline</span>():
+    preprocess_task = <span class="function">preprocess</span>(data_path=<span class="string">"s3://..."</span>)
+    <span class="comment"># Enable caching</span>
+    preprocess_task.set_caching_options(enable_caching=<span class="keyword">True</span>)</pre>
+                                </div>
+                                <h4>Artifact Management</h4>
+                                <ul>
+                                    <li><strong>Storage:</strong> S3, GCS, or artifact store (MLflow, W&B)</li>
+                                    <li><strong>Naming:</strong> Include run ID, timestamp, hash in artifact names</li>
+                                    <li><strong>Metadata:</strong> Store lineage (what inputs produced this?)</li>
+                                    <li><strong>Cleanup:</strong> Retention policies for old artifacts</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Best Practice</div>
+                                    <div class="key-point-text">Cache aggressively but invalidate correctly. Use content-addressable storage (hash-based names). Always log which cached artifacts were used for reproducibility.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Feature Stores -->
+            <div class="section" id="sec8">
+                <div class="section-header">
+                    <div class="section-number">Section 08</div>
+                    <h2 class="section-title">Feature Stores</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">What is a feature store and why do you need one?<span class="difficulty junior">Junior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is a Feature Store?</h4>
+                                <p>A centralized repository for storing, managing, and serving ML features. It bridges the gap between data engineering and data science.</p>
+                                <h4>Problems It Solves</h4>
+                                <ul>
+                                    <li><strong>Training-Serving Skew:</strong> Same feature computation for training and inference</li>
+                                    <li><strong>Feature Duplication:</strong> Teams recomputing same features</li>
+                                    <li><strong>Point-in-Time Correctness:</strong> Get features as they were at prediction time (no data leakage)</li>
+                                    <li><strong>Low-Latency Serving:</strong> Pre-computed features for real-time inference</li>
+                                </ul>
+                                <h4>Architecture Components</h4>
+                                <ul>
+                                    <li><strong>Offline Store:</strong> Historical features for training (data warehouse, Parquet)</li>
+                                    <li><strong>Online Store:</strong> Latest features for serving (Redis, DynamoDB)</li>
+                                    <li><strong>Feature Registry:</strong> Metadata, lineage, documentation</li>
+                                    <li><strong>Transformation Engine:</strong> Compute features from raw data</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">When You Need One</div>
+                                    <div class="key-point-text">Multiple ML models sharing features, real-time serving requirements, feature reuse across teams, or issues with training-serving skew. For single model projects, often overkill.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">Compare Feast, Tecton, and Databricks Feature Store.<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Comparison</h4>
+                                <table style="width:100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85rem;">
+                                    <tr style="background: var(--gray-200);"><th style="padding: 10px; text-align: left;">Feature</th><th style="padding: 10px; text-align: left;">Feast</th><th style="padding: 10px; text-align: left;">Tecton</th><th style="padding: 10px; text-align: left;">Databricks</th></tr>
+                                    <tr><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Type</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Open source</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Managed</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Managed (Unity Catalog)</td></tr>
+                                    <tr><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Real-time transforms</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Limited</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Excellent</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Good</td></tr>
+                                    <tr><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Streaming</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Basic</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Native</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Spark Streaming</td></tr>
+                                    <tr><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Setup</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Self-managed</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Fully managed</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Databricks-managed</td></tr>
+                                    <tr><td style="padding: 8px;">Cost</td><td style="padding: 8px;">Free + infra</td><td style="padding: 8px;">$$$$</td><td style="padding: 8px;">Databricks pricing</td></tr>
+                                </table>
+                                <h4>When to Use Each</h4>
+                                <ul>
+                                    <li><strong>Feast:</strong> Budget-conscious, simple batch features, want open source, have engineering capacity</li>
+                                    <li><strong>Tecton:</strong> Real-time features critical, need streaming, want managed service, enterprise budget</li>
+                                    <li><strong>Databricks:</strong> Already on Databricks, want integrated experience, batch-first workflows</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Feast Example</span>
+<span class="keyword">from</span> feast <span class="keyword">import</span> FeatureStore
+
+store = <span class="class">FeatureStore</span>(repo_path=<span class="string">"."</span>)
+
+<span class="comment"># Get training data with point-in-time join</span>
+training_df = store.<span class="function">get_historical_features</span>(
+    entity_df=entities_with_timestamps,
+    features=[
+        <span class="string">"user_features:age"</span>,
+        <span class="string">"user_features:total_purchases"</span>,
+        <span class="string">"product_features:price"</span>
+    ]
+).<span class="function">to_df</span>()
+
+<span class="comment"># Get online features for serving</span>
+features = store.<span class="function">get_online_features</span>(
+    features=[...],
+    entity_rows=[{<span class="string">"user_id"</span>: 123}]
+).<span class="function">to_dict</span>()</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">Explain point-in-time joins and why they matter for ML.<span class="difficulty senior">Senior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>The Problem</h4>
+                                <p>When creating training data, you need features as they were at prediction time, not as they are now. Otherwise, you're leaking future information.</p>
+                                <h4>Example</h4>
+                                <p>Predicting fraud for a transaction on Jan 15:</p>
+                                <ul>
+                                    <li><strong>Wrong:</strong> Use user's current purchase count (includes Jan 16-31)</li>
+                                    <li><strong>Right:</strong> Use purchase count as of Jan 14 (before prediction)</li>
+                                </ul>
+                                <h4>Point-in-Time Join</h4>
+                                <p>For each entity + event timestamp, find the most recent feature values before that timestamp.</p>
+                                <div class="code-block">
+<pre><span class="comment"># Entities (what we're predicting for)</span>
+entities = [
+    {<span class="string">"user_id"</span>: 1, <span class="string">"event_time"</span>: <span class="string">"2024-01-15 10:00"</span>},
+    {<span class="string">"user_id"</span>: 1, <span class="string">"event_time"</span>: <span class="string">"2024-01-20 14:00"</span>},
+]
+
+<span class="comment"># Features (change over time)</span>
+features = [
+    {<span class="string">"user_id"</span>: 1, <span class="string">"feature_time"</span>: <span class="string">"2024-01-10"</span>, <span class="string">"purchases"</span>: 5},
+    {<span class="string">"user_id"</span>: 1, <span class="string">"feature_time"</span>: <span class="string">"2024-01-18"</span>, <span class="string">"purchases"</span>: 8},
+]
+
+<span class="comment"># Point-in-time join result:</span>
+<span class="comment"># user_id=1, event=Jan15 → purchases=5 (from Jan10)</span>
+<span class="comment"># user_id=1, event=Jan20 → purchases=8 (from Jan18)</span></pre>
+                                </div>
+                                <h4>Why It's Hard</h4>
+                                <ul>
+                                    <li><strong>Complex joins:</strong> Not a simple SQL join - need ASOF semantics</li>
+                                    <li><strong>Scale:</strong> Can be expensive with many entities and features</li>
+                                    <li><strong>Multiple feature tables:</strong> Each with different update frequencies</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Critical Insight</div>
+                                    <div class="key-point-text">Data leakage from incorrect time handling is one of the most common ML bugs. Models look great in offline evaluation but fail in production. Feature stores automate point-in-time correctness.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 9: Model Monitoring -->
+            <div class="section" id="sec9">
+                <div class="section-header">
+                    <div class="section-number">Section 09</div>
+                    <h2 class="section-title">Model Monitoring & Observability</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">What is model drift and what types exist?<span class="difficulty junior">Junior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is Model Drift?</h4>
+                                <p>Model performance degradation over time due to changes in data patterns, user behavior, or the underlying phenomenon being modeled.</p>
+                                <h4>Types of Drift</h4>
+                                <ul>
+                                    <li><strong>Data Drift (Covariate Shift):</strong> Input distribution changes. P(X) changes, but P(Y|X) stays same. Example: New user demographics.</li>
+                                    <li><strong>Concept Drift:</strong> Relationship between inputs and outputs changes. P(Y|X) changes. Example: Fraud patterns evolve.</li>
+                                    <li><strong>Label Drift:</strong> Target distribution changes. P(Y) changes. Example: Seasonal purchase patterns.</li>
+                                    <li><strong>Upstream Data Changes:</strong> Schema changes, missing features, new categories.</li>
+                                </ul>
+                                <h4>Detection Methods</h4>
+                                <ul>
+                                    <li><strong>Statistical tests:</strong> KS test, Chi-squared, PSI (Population Stability Index)</li>
+                                    <li><strong>Distribution comparison:</strong> Compare feature histograms over time</li>
+                                    <li><strong>Performance monitoring:</strong> Track accuracy/precision if labels available</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Real-World Impact</div>
+                                    <div class="key-point-text">COVID-19 caused massive concept drift across industries. Models trained on 2019 data failed in 2020. Always monitor and be ready to retrain.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">Compare Evidently, WhyLabs, and Great Expectations for ML monitoring.<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Tool Comparison</h4>
+                                <table style="width:100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85rem;">
+                                    <tr style="background: var(--gray-200);"><th style="padding: 10px; text-align: left;">Feature</th><th style="padding: 10px; text-align: left;">Evidently</th><th style="padding: 10px; text-align: left;">WhyLabs</th><th style="padding: 10px; text-align: left;">Great Expectations</th></tr>
+                                    <tr><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Focus</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">ML monitoring, drift</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">ML observability</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Data quality</td></tr>
+                                    <tr><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Type</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Open source</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Managed + open source</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Open source</td></tr>
+                                    <tr><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Drift Detection</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Excellent</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Excellent</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Basic</td></tr>
+                                    <tr><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Real-time</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Batch + RT</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Real-time native</td><td style="padding: 8px; border-bottom: 1px solid var(--gray-200);">Batch</td></tr>
+                                    <tr><td style="padding: 8px;">Reports</td><td style="padding: 8px;">Beautiful HTML</td><td style="padding: 8px;">Dashboard</td><td style="padding: 8px;">Data docs</td></tr>
+                                </table>
+                                <div class="code-block">
+<pre><span class="comment"># Evidently - Drift Report</span>
+<span class="keyword">from</span> evidently.report <span class="keyword">import</span> <span class="class">Report</span>
+<span class="keyword">from</span> evidently.metric_preset <span class="keyword">import</span> <span class="class">DataDriftPreset</span>
+
+report = <span class="class">Report</span>(metrics=[<span class="class">DataDriftPreset</span>()])
+report.<span class="function">run</span>(
+    reference_data=train_df,
+    current_data=production_df
+)
+report.<span class="function">save_html</span>(<span class="string">"drift_report.html"</span>)
+
+<span class="comment"># Check drift programmatically</span>
+result = report.<span class="function">as_dict</span>()
+<span class="keyword">if</span> result[<span class="string">"metrics"</span>][0][<span class="string">"result"</span>][<span class="string">"dataset_drift"</span>]:
+    trigger_retraining()</pre>
+                                </div>
+                                <h4>When to Use Each</h4>
+                                <ul>
+                                    <li><strong>Evidently:</strong> Data science teams, need quick drift detection, beautiful reports</li>
+                                    <li><strong>WhyLabs:</strong> Production ML systems, need real-time monitoring, alerting</li>
+                                    <li><strong>Great Expectations:</strong> Data engineering focus, pipeline data quality, schema validation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">What metrics should you monitor for ML models in production?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Model Performance Metrics</h4>
+                                <ul>
+                                    <li><strong>Online metrics:</strong> Accuracy, precision, recall (if labels available)</li>
+                                    <li><strong>Proxy metrics:</strong> CTR, conversion rate, engagement (business KPIs)</li>
+                                    <li><strong>Prediction distribution:</strong> Score histograms, class balance</li>
+                                </ul>
+                                <h4>Data Quality Metrics</h4>
+                                <ul>
+                                    <li><strong>Feature statistics:</strong> Mean, std, min, max, nulls per feature</li>
+                                    <li><strong>Distribution drift:</strong> PSI, KL divergence, KS statistic</li>
+                                    <li><strong>Schema compliance:</strong> Types, ranges, cardinality</li>
+                                </ul>
+                                <h4>Operational Metrics</h4>
+                                <ul>
+                                    <li><strong>Latency:</strong> p50, p95, p99 inference time</li>
+                                    <li><strong>Throughput:</strong> Requests per second</li>
+                                    <li><strong>Error rates:</strong> 4xx, 5xx, timeout rates</li>
+                                    <li><strong>Resource usage:</strong> GPU/CPU utilization, memory</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Prometheus metrics for ML serving</span>
+<span class="keyword">from</span> prometheus_client <span class="keyword">import</span> Histogram, Counter, Gauge
+
+<span class="comment"># Latency histogram</span>
+INFERENCE_LATENCY = <span class="class">Histogram</span>(
+    <span class="string">'model_inference_seconds'</span>,
+    <span class="string">'Time spent on inference'</span>,
+    buckets=[.01, .025, .05, .1, .25, .5, 1]
+)
+
+<span class="comment"># Prediction counter by class</span>
+PREDICTIONS = <span class="class">Counter</span>(
+    <span class="string">'model_predictions_total'</span>,
+    <span class="string">'Total predictions'</span>,
+    [<span class="string">'model_version'</span>, <span class="string">'predicted_class'</span>]
+)
+
+<span class="comment"># Feature value gauge (for drift detection)</span>
+FEATURE_MEAN = <span class="class">Gauge</span>(
+    <span class="string">'feature_mean'</span>,
+    <span class="string">'Rolling mean of feature'</span>,
+    [<span class="string">'feature_name'</span>]
+)</pre>
+                                </div>
+                                <div class="key-point">
+                                    <div class="key-point-label">Monitoring Strategy</div>
+                                    <div class="key-point-text">Start with operational metrics (can catch issues immediately). Add data drift detection (catches problems before they affect users). Add performance metrics when ground truth is available (may be delayed).</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q4</div>
+                            <div class="q-text">How do you set up alerting for ML model degradation?<span class="difficulty senior">Senior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Alert Categories</h4>
+                                <ul>
+                                    <li><strong>Immediate (P0):</strong> Model serving errors, latency spikes, complete failures</li>
+                                    <li><strong>Urgent (P1):</strong> Significant drift detected, performance drop &gt;10%</li>
+                                    <li><strong>Warning (P2):</strong> Gradual drift trends, minor performance changes</li>
+                                </ul>
+                                <h4>Alert Design Principles</h4>
+                                <ul>
+                                    <li><strong>Avoid alert fatigue:</strong> Too many alerts = ignored alerts</li>
+                                    <li><strong>Use anomaly detection:</strong> Dynamic thresholds beat static ones</li>
+                                    <li><strong>Multi-signal alerts:</strong> Combine metrics to reduce false positives</li>
+                                    <li><strong>Actionable alerts:</strong> Include runbook links, context</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Example Prometheus alerting rules</span>
+groups:
+  - name: ml_model_alerts
+    rules:
+      <span class="comment"># High latency alert</span>
+      - alert: ModelLatencyHigh
+        expr: histogram_quantile(0.95, model_inference_seconds) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Model p95 latency > 500ms"
+
+      <span class="comment"># Drift alert</span>
+      - alert: DataDriftDetected
+        expr: feature_psi > 0.25
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "PSI > 0.25 indicates significant drift"
+          runbook: "https://wiki/ml-drift-runbook"
+
+      <span class="comment"># Accuracy drop</span>
+      - alert: ModelAccuracyDrop
+        expr: (model_accuracy - model_accuracy offset 7d) < -0.05
+        for: 30m
+        labels:
+          severity: critical</pre>
+                                </div>
+                                <h4>Response Playbook</h4>
+                                <ol>
+                                    <li><strong>Triage:</strong> Is it data, model, or infrastructure?</li>
+                                    <li><strong>Rollback:</strong> Can we switch to previous model version?</li>
+                                    <li><strong>Investigate:</strong> Check feature distributions, upstream changes</li>
+                                    <li><strong>Remediate:</strong> Retrain, fix data pipeline, or accept degradation</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 10: Testing -->
+            <div class="section" id="sec10">
+                <div class="section-header">
+                    <div class="section-number">Section 10</div>
+                    <h2 class="section-title">ML Testing & Validation</h2>
+                </div>
+                <div class="section-content">
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q1</div>
+                            <div class="q-text">What types of tests should you have for ML systems?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Testing Pyramid for ML</h4>
+                                <ul>
+                                    <li><strong>Unit Tests:</strong> Test individual functions (preprocessing, feature engineering)</li>
+                                    <li><strong>Data Tests:</strong> Validate data quality, schema, distributions</li>
+                                    <li><strong>Model Tests:</strong> Validate model behavior and performance</li>
+                                    <li><strong>Integration Tests:</strong> Test end-to-end pipeline</li>
+                                    <li><strong>A/B Tests:</strong> Validate in production</li>
+                                </ul>
+                                <h4>Data Tests</h4>
+                                <div class="code-block">
+<pre><span class="comment"># Great Expectations style data tests</span>
+<span class="keyword">def</span> <span class="function">test_feature_ranges</span>(df):
+    <span class="keyword">assert</span> df[<span class="string">"age"</span>].between(0, 120).all()
+    <span class="keyword">assert</span> df[<span class="string">"income"</span>].min() >= 0
+    <span class="keyword">assert</span> df[<span class="string">"category"</span>].isin(VALID_CATEGORIES).all()
+
+<span class="keyword">def</span> <span class="function">test_no_nulls_in_critical_features</span>(df):
+    critical = [<span class="string">"user_id"</span>, <span class="string">"timestamp"</span>, <span class="string">"target"</span>]
+    <span class="keyword">assert</span> df[critical].notna().all().all()
+
+<span class="keyword">def</span> <span class="function">test_feature_distribution</span>(train_df, test_df):
+    <span class="keyword">for</span> col <span class="keyword">in</span> numerical_features:
+        psi = <span class="function">calculate_psi</span>(train_df[col], test_df[col])
+        <span class="keyword">assert</span> psi < 0.25, f<span class="string">"{col} has PSI {psi}"</span></pre>
+                                </div>
+                                <h4>Model Tests</h4>
+                                <div class="code-block">
+<pre><span class="keyword">def</span> <span class="function">test_model_performance_threshold</span>(model, test_data):
+    y_pred = model.<span class="function">predict</span>(test_data.X)
+    accuracy = <span class="function">accuracy_score</span>(test_data.y, y_pred)
+    <span class="keyword">assert</span> accuracy >= 0.85, f<span class="string">"Accuracy {accuracy} below threshold"</span>
+
+<span class="keyword">def</span> <span class="function">test_model_not_worse_than_baseline</span>(model, baseline, test_data):
+    model_score = model.<span class="function">score</span>(test_data)
+    baseline_score = baseline.<span class="function">score</span>(test_data)
+    <span class="keyword">assert</span> model_score >= baseline_score * 0.95
+
+<span class="keyword">def</span> <span class="function">test_model_invariance</span>(model):
+    <span class="comment"># Prediction shouldn't change for semantically identical inputs</span>
+    input1 = <span class="string">"The movie was great!"</span>
+    input2 = <span class="string">"The movie was great !"</span>  <span class="comment"># Extra space</span>
+    <span class="keyword">assert</span> model.<span class="function">predict</span>(input1) == model.<span class="function">predict</span>(input2)</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q2</div>
+                            <div class="q-text">How do you test for model fairness and bias?<span class="difficulty senior">Senior</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Fairness Metrics</h4>
+                                <ul>
+                                    <li><strong>Demographic Parity:</strong> Equal positive prediction rates across groups</li>
+                                    <li><strong>Equalized Odds:</strong> Equal TPR and FPR across groups</li>
+                                    <li><strong>Predictive Parity:</strong> Equal precision across groups</li>
+                                    <li><strong>Calibration:</strong> Predicted probabilities match actual rates per group</li>
+                                </ul>
+                                <h4>Testing Approach</h4>
+                                <div class="code-block">
+<pre><span class="comment"># Using Fairlearn</span>
+<span class="keyword">from</span> fairlearn.metrics <span class="keyword">import</span> MetricFrame, selection_rate
+
+<span class="comment"># Calculate metrics per group</span>
+metric_frame = <span class="class">MetricFrame</span>(
+    metrics={
+        <span class="string">"accuracy"</span>: accuracy_score,
+        <span class="string">"selection_rate"</span>: selection_rate,
+        <span class="string">"precision"</span>: precision_score
+    },
+    y_true=y_test,
+    y_pred=y_pred,
+    sensitive_features=test_df[<span class="string">"gender"</span>]
+)
+
+<span class="comment"># Check disparities</span>
+<span class="keyword">print</span>(metric_frame.by_group)
+<span class="keyword">print</span>(f<span class="string">"Selection rate ratio: {metric_frame.ratio()}"</span>)
+
+<span class="comment"># Assert fairness constraints</span>
+<span class="keyword">def</span> <span class="function">test_demographic_parity</span>(model, data, sensitive_attr):
+    groups = data[sensitive_attr].unique()
+    rates = {}
+    <span class="keyword">for</span> group <span class="keyword">in</span> groups:
+        mask = data[sensitive_attr] == group
+        rates[group] = model.<span class="function">predict</span>(data[mask]).mean()
+
+    ratio = min(rates.values()) / max(rates.values())
+    <span class="keyword">assert</span> ratio >= 0.8, f<span class="string">"Demographic parity ratio {ratio} < 0.8"</span></pre>
+                                </div>
+                                <h4>Bias Mitigation Strategies</h4>
+                                <ul>
+                                    <li><strong>Pre-processing:</strong> Resampling, reweighting training data</li>
+                                    <li><strong>In-processing:</strong> Add fairness constraints to training (Fairlearn)</li>
+                                    <li><strong>Post-processing:</strong> Adjust thresholds per group</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Important Consideration</div>
+                                    <div class="key-point-text">Different fairness metrics can conflict - you can't satisfy all simultaneously. Choose metrics based on your use case and legal requirements. Document your choices and trade-offs.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q3</div>
+                            <div class="q-text">What is shadow deployment and how do you implement it?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>What is Shadow Deployment?</h4>
+                                <p>Running a new model in parallel with production, processing real traffic but not affecting user experience. The new model's predictions are logged but not used.</p>
+                                <h4>Benefits</h4>
+                                <ul>
+                                    <li><strong>Zero risk:</strong> Users only see production model results</li>
+                                    <li><strong>Real data testing:</strong> Validate on actual production traffic</li>
+                                    <li><strong>Performance comparison:</strong> Compare latency, predictions, errors</li>
+                                    <li><strong>Catch issues:</strong> Find edge cases before they affect users</li>
+                                </ul>
+                                <div class="code-block">
+<pre><span class="comment"># Shadow deployment pattern</span>
+<span class="keyword">import</span> asyncio
+<span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor
+
+executor = <span class="class">ThreadPoolExecutor</span>(max_workers=2)
+
+<span class="keyword">async def</span> <span class="function">predict_with_shadow</span>(features):
+    <span class="comment"># Production prediction (blocking, returned to user)</span>
+    prod_result = production_model.<span class="function">predict</span>(features)
+
+    <span class="comment"># Shadow prediction (async, logged only)</span>
+    <span class="keyword">def</span> <span class="function">shadow_predict</span>():
+        <span class="keyword">try</span>:
+            shadow_result = shadow_model.<span class="function">predict</span>(features)
+            <span class="function">log_shadow_prediction</span>(
+                features=features,
+                prod=prod_result,
+                shadow=shadow_result,
+                match=prod_result == shadow_result
+            )
+        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+            <span class="function">log_shadow_error</span>(e)
+
+    executor.<span class="function">submit</span>(shadow_predict)
+    <span class="keyword">return</span> prod_result  <span class="comment"># Only production result returned</span></pre>
+                                </div>
+                                <h4>Analysis After Shadow Period</h4>
+                                <ul>
+                                    <li><strong>Prediction agreement:</strong> How often do models agree?</li>
+                                    <li><strong>Disagreement analysis:</strong> What inputs cause different predictions?</li>
+                                    <li><strong>Latency comparison:</strong> Is shadow model faster/slower?</li>
+                                    <li><strong>Error rates:</strong> Any crashes or timeouts?</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Implementation Tip</div>
+                                    <div class="key-point-text">Make shadow predictions async/non-blocking so they don't increase user-facing latency. Log extensively for analysis. Run shadow for days/weeks to capture all edge cases and traffic patterns.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="question">
+                            <div class="q-badge">Q4</div>
+                            <div class="q-text">How do you validate model reproducibility?<span class="difficulty mid">Mid</span></div>
+                            <div class="q-toggle">▼</div>
+                        </div>
+                        <div class="answer">
+                            <div class="answer-content">
+                                <h4>Sources of Non-Reproducibility</h4>
+                                <ul>
+                                    <li><strong>Random seeds:</strong> Model initialization, data shuffling, dropout</li>
+                                    <li><strong>Non-deterministic operations:</strong> cuDNN, parallel reduction</li>
+                                    <li><strong>Environment differences:</strong> Library versions, hardware</li>
+                                    <li><strong>Data ordering:</strong> Different order = different results</li>
+                                </ul>
+                                <h4>Reproducibility Checklist</h4>
+                                <div class="code-block">
+<pre><span class="comment"># Set all random seeds</span>
+<span class="keyword">import</span> random
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> torch
+
+<span class="keyword">def</span> <span class="function">set_seed</span>(seed=42):
+    random.<span class="function">seed</span>(seed)
+    np.random.<span class="function">seed</span>(seed)
+    torch.<span class="function">manual_seed</span>(seed)
+    torch.cuda.<span class="function">manual_seed_all</span>(seed)
+
+    <span class="comment"># For full reproducibility (slower)</span>
+    torch.backends.cudnn.deterministic = <span class="keyword">True</span>
+    torch.backends.cudnn.benchmark = <span class="keyword">False</span>
+
+<span class="comment"># Test reproducibility</span>
+<span class="keyword">def</span> <span class="function">test_training_reproducibility</span>():
+    <span class="function">set_seed</span>(42)
+    model1, metrics1 = <span class="function">train_model</span>(data)
+
+    <span class="function">set_seed</span>(42)
+    model2, metrics2 = <span class="function">train_model</span>(data)
+
+    <span class="keyword">assert</span> metrics1 == metrics2
+    <span class="comment"># Or for floats:</span>
+    <span class="keyword">assert</span> np.<span class="function">allclose</span>(metrics1, metrics2, rtol=1e-5)</pre>
+                                </div>
+                                <h4>Best Practices</h4>
+                                <ul>
+                                    <li><strong>Version everything:</strong> Code (Git), data (DVC), environment (Docker)</li>
+                                    <li><strong>Log all hyperparameters:</strong> Including random seeds</li>
+                                    <li><strong>Use deterministic operations:</strong> Accept performance trade-off</li>
+                                    <li><strong>Hash inputs/outputs:</strong> Verify data pipeline consistency</li>
+                                    <li><strong>Reproducibility tests:</strong> Run same training twice, compare results</li>
+                                </ul>
+                                <div class="key-point">
+                                    <div class="key-point-label">Reality Check</div>
+                                    <div class="key-point-text">Perfect reproducibility is often impossible (GPU non-determinism, floating-point variations). Instead, aim for "close enough" reproducibility - metrics within acceptable tolerance. Document known sources of variance.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer style="text-align: center; padding: 50px 0; color: var(--gray-500); border-top: 1px solid var(--gray-200); margin-top: 50px;">
+                <p style="font-size: 1.1rem; margin-bottom: 8px;">MLOps Interview Questions</p>
+                <p style="font-size: 1rem; color: var(--gray-700);"><strong>AI Frameworks Focus</strong></p>
+                <p>Covering PyTorch, TensorFlow, MLflow, and more</p>
+            </footer>
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Expand/collapse Q&A items
+            document.querySelectorAll('.qa-item').forEach(function(item) {
+                item.querySelector('.question').addEventListener('click', function() {
+                    item.classList.toggle('expanded');
+                });
+            });
+
+            // Close sidebar on mobile link click
+            document.querySelectorAll('.sidebar a').forEach(function(a) {
+                a.addEventListener('click', function() {
+                    if (window.innerWidth <= 1024) {
+                        document.getElementById('sidebar').classList.remove('open');
+                    }
+                });
+            });
+
+            // Back to top visibility
+            window.addEventListener('scroll', function() {
+                var backTop = document.getElementById('backTop');
+                if (backTop) backTop.classList.toggle('visible', window.scrollY > 500);
+
+                // Progress bar
+                var h = document.documentElement;
+                var progress = (window.scrollY / (h.scrollHeight - h.clientHeight)) * 100;
+                var progressBar = document.getElementById('progressBar');
+                if (progressBar) progressBar.style.width = progress + '%';
+            });
+
+            // Print: expand all
+            window.addEventListener('beforeprint', function() {
+                document.querySelectorAll('.qa-item').forEach(function(item) {
+                    item.classList.add('expanded');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
