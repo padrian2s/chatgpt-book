@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT Book - Analysis Collection</title>
+    <title>AI Papers - Illustrated Analysis Collection</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
@@ -278,16 +278,63 @@
 <body>
     <div class="hero">
         <div class="hero-content">
-            <h1>What Is ChatGPT Doing and Why Does It Work?</h1>
-            <p>A comprehensive analysis collection based on</p>
-            <p class="subtitle">Stephen Wolfram's essay on the inner workings of ChatGPT</p>
+            <h1>AI Papers: Illustrated Analysis Collection</h1>
+            <p>Deep-dive analyses of foundational AI/ML papers</p>
+            <p class="subtitle">Interactive commentary, key insights, and technical breakdowns</p>
         </div>
     </div>
 
     <div class="container">
+        <!-- Attention Is All You Need Section -->
         <div class="intro">
-            <h2>Analysis Documents</h2>
-            <p>Explore different versions of the analysis, from quick overviews to comprehensive illustrated guides with expandable commentary.</p>
+            <h2>Attention Is All You Need (2017)</h2>
+            <p>The foundational Transformer paper that revolutionized NLP and enabled modern LLMs like GPT and Claude.</p>
+        </div>
+
+        <div class="cards" style="margin-bottom: 60px;">
+            <a href="attention-is-all-you-need.html" class="card">
+                <div class="card-header alt3">
+                    <div class="card-icon"><span class="material-symbols-outlined">psychology</span></div>
+                    <h3>Attention Is All You Need</h3>
+                </div>
+                <div class="card-body">
+                    <p>Complete illustrated analysis of the Transformer paper by Vaswani et al. Covers self-attention, multi-head attention, positional encoding, and the architecture that powers modern AI.</p>
+                    <div class="card-tags">
+                        <span class="tag">Transformer</span>
+                        <span class="tag">Self-Attention</span>
+                        <span class="tag">NeurIPS 2017</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>View Analysis</span>
+                    <span class="arrow"><span class="material-symbols-outlined">arrow_forward</span></span>
+                </div>
+            </a>
+
+            <a href="transformer-simulation.html" class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <div class="card-icon"><span class="material-symbols-outlined">play_circle</span></div>
+                    <h3>Interactive Simulation</h3>
+                </div>
+                <div class="card-body">
+                    <p>Step through the Transformer architecture interactively. Visualize tokenization, embeddings, positional encoding, self-attention calculations, and multi-head attention in real-time.</p>
+                    <div class="card-tags">
+                        <span class="tag">Interactive</span>
+                        <span class="tag">Step-by-Step</span>
+                        <span class="tag">Visualization</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>Launch Simulation</span>
+                    <span class="arrow"><span class="material-symbols-outlined">arrow_forward</span></span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Wolfram Essay Section -->
+        <div class="intro">
+            <h2>What Is ChatGPT Doing? (2023)</h2>
+            <p>Stephen Wolfram's comprehensive essay explaining how large language models work.</p>
         </div>
 
         <div class="cards">
@@ -350,15 +397,22 @@
         </div>
 
         <div class="source-section">
-            <h3><span class="source-icon"><span class="material-symbols-outlined">link</span></span>Original Source</h3>
-            <a href="https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/" target="_blank" rel="noopener">
-                https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/
-            </a>
+            <h3><span class="source-icon"><span class="material-symbols-outlined">link</span></span>Original Sources</h3>
+            <p style="margin-bottom: 10px;">
+                <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">
+                    Attention Is All You Need (arXiv:1706.03762)
+                </a>
+            </p>
+            <p>
+                <a href="https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/" target="_blank" rel="noopener">
+                    What Is ChatGPT Doing … and Why Does It Work? (Wolfram)
+                </a>
+            </p>
         </div>
     </div>
 
     <footer>
-        <p>Analysis collection based on Stephen Wolfram's essay published February 2023</p>
+        <p>Illustrated analysis collection of foundational AI/ML papers and essays</p>
     </footer>
 </body>
 </html>

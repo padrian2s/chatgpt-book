@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Simulation - Interactive Attention Visualization</title>
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-light: #10b981;
+            --primary-dark: #047857;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--gray-100);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--gray-800) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--gray-400);
+            font-size: 1.1rem;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            background: var(--gray-800);
+            padding: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid var(--gray-600);
+            color: var(--gray-400);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* Section */
+        .section {
+            display: none;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .section-desc {
+            color: var(--gray-600);
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        /* Input Area */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Button */
+        .btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--gray-600);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-700);
+        }
+
+        /* Token Display */
+        .tokens-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .token {
+            padding: 10px 16px;
+            background: var(--gray-100);
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.95rem;
+            border: 2px solid var(--gray-200);
+            position: relative;
+        }
+
+        .token.highlighted {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .token-index {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Embedding Grid */
+        .embedding-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .embedding-grid {
+            display: inline-flex;
+            gap: 3px;
+        }
+
+        .embedding-row {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .embedding-row .token-label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            padding: 4px 8px;
+            background: var(--gray-100);
+            border-radius: 4px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+
+        .embedding-cell {
+            width: 40px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-family: 'Consolas', monospace;
+            border-radius: 3px;
+            color: white;
+        }
+
+        /* Attention Matrix */
+        .attention-container {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .attention-matrix {
+            display: inline-block;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .attention-row {
+            display: flex;
+        }
+
+        .attention-cell {
+            width: 60px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-family: 'Consolas', monospace;
+            border-right: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .attention-cell:last-child {
+            border-right: none;
+        }
+
+        .attention-row:last-child .attention-cell {
+            border-bottom: none;
+        }
+
+        .attention-header {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .attention-label {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        /* Visualization Canvas */
+        .viz-container {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 300px;
+        }
+
+        .viz-title {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Attention Lines SVG */
+        .attention-viz {
+            position: relative;
+            min-height: 200px;
+        }
+
+        .attention-viz svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .source-tokens, .target-tokens {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .source-tokens {
+            margin-bottom: 120px;
+        }
+
+        .viz-token {
+            padding: 10px 16px;
+            background: white;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            position: relative;
+            z-index: 1;
+        }
+
+        .viz-token.source {
+            border-color: var(--primary);
+            background: #ecfdf5;
+        }
+
+        .viz-token.target {
+            border-color: var(--secondary);
+            background: #f5f3ff;
+        }
+
+        /* Positional Encoding Wave */
+        .wave-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .wave-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .wave-label {
+            width: 80px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            text-align: right;
+        }
+
+        .wave-cells {
+            display: flex;
+            gap: 2px;
+        }
+
+        .wave-cell {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-family: 'Consolas', monospace;
+            color: white;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .info-box h4 {
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .info-box p {
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        /* Formula Box */
+        .formula-box {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .highlight {
+            color: var(--accent);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--gray-50);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Multi-head display */
+        .heads-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .head-card {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid var(--gray-200);
+        }
+
+        .head-card h4 {
+            color: var(--gray-700);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .head-card.active {
+            border-color: var(--primary);
+            background: #ecfdf5;
+        }
+
+        /* Slider */
+        .slider-group {
+            margin: 20px 0;
+        }
+
+        .slider-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--gray-200);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 8px;
+            font-family: 'Consolas', monospace;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Step indicator */
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--gray-100);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .step.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step.completed {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            header {
+                padding: 25px 15px;
+            }
+            header h1 {
+                font-size: 1.5rem;
+            }
+            .tabs {
+                padding: 10px;
+            }
+            .tab {
+                padding: 10px 16px;
+                font-size: 0.8rem;
+            }
+            .section {
+                padding: 20px;
+            }
+        }
+
+        /* Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .animating {
+            animation: pulse 1s infinite;
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-400);
+            text-decoration: none;
+            padding: 15px 40px;
+            font-size: 0.9rem;
+            background: var(--gray-800);
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <a href="attention-is-all-you-need.html" class="back-link">← Back to Analysis</a>
+
+    <header>
+        <h1>Transformer Simulation</h1>
+        <p>Interactive visualization of attention mechanisms</p>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab active" data-section="tokenization">1. Tokenization</button>
+        <button class="tab" data-section="embedding">2. Embeddings</button>
+        <button class="tab" data-section="positional">3. Positional Encoding</button>
+        <button class="tab" data-section="attention">4. Self-Attention</button>
+        <button class="tab" data-section="multihead">5. Multi-Head</button>
+        <button class="tab" data-section="fullflow">6. Full Flow</button>
+    </nav>
+
+    <div class="container">
+        <!-- Section 1: Tokenization -->
+        <div class="section active" id="tokenization">
+            <h2>Step 1: Tokenization</h2>
+            <p class="section-desc">Convert input text into tokens. In real Transformers, this uses BPE (Byte-Pair Encoding) to handle unknown words.</p>
+
+            <div class="input-group">
+                <label>Enter a sentence:</label>
+                <input type="text" id="tokenInput" value="The cat sat on the mat" placeholder="Enter text to tokenize...">
+            </div>
+
+            <button class="btn" onclick="tokenize()">Tokenize</button>
+
+            <div class="viz-container">
+                <div class="viz-title">Tokens</div>
+                <div class="tokens-display" id="tokenDisplay"></div>
+            </div>
+
+            <div class="stats-grid" id="tokenStats"></div>
+
+            <div class="info-box">
+                <h4>How Tokenization Works</h4>
+                <p>Real transformers use subword tokenization (BPE). "unhappiness" might become ["un", "happiness"] or ["un", "hap", "pi", "ness"]. This simulation uses simple word-level tokenization for clarity.</p>
+            </div>
+        </div>
+
+        <!-- Section 2: Embeddings -->
+        <div class="section" id="embedding">
+            <h2>Step 2: Token Embeddings</h2>
+            <p class="section-desc">Each token is converted to a dense vector. Similar words have similar embeddings.</p>
+
+            <div class="input-group">
+                <label>Embedding Dimension (d_model):</label>
+                <input type="number" id="embDim" value="8" min="4" max="16">
+            </div>
+
+            <button class="btn" onclick="generateEmbeddings()">Generate Embeddings</button>
+
+            <div class="viz-container">
+                <div class="viz-title">Token Embeddings (each token → d-dimensional vector)</div>
+                <div class="embedding-container" id="embeddingDisplay"></div>
+            </div>
+
+            <div class="formula-box">
+                Embedding: token → <span class="highlight">ℝ<sup>d_model</sup></span> (512-dim in original paper)
+            </div>
+
+            <div class="info-box">
+                <h4>Learned Representations</h4>
+                <p>Embeddings are learned during training. Words used in similar contexts end up with similar vectors. "king" - "man" + "woman" ≈ "queen" demonstrates the semantic structure captured.</p>
+            </div>
+        </div>
+
+        <!-- Section 3: Positional Encoding -->
+        <div class="section" id="positional">
+            <h2>Step 3: Positional Encoding</h2>
+            <p class="section-desc">Since attention is position-invariant, we add sinusoidal position information to embeddings.</p>
+
+            <div class="slider-group">
+                <label>Number of Positions: <span id="posCountDisplay">6</span></label>
+                <input type="range" id="posCount" min="4" max="12" value="6" oninput="updatePositionalEncoding()">
+            </div>
+
+            <div class="slider-group">
+                <label>Embedding Dimensions to Show: <span id="posDimDisplay">8</span></label>
+                <input type="range" id="posDim" min="4" max="16" value="8" oninput="updatePositionalEncoding()">
+            </div>
+
+            <button class="btn" onclick="updatePositionalEncoding()">Generate Positional Encoding</button>
+
+            <div class="viz-container">
+                <div class="viz-title">Positional Encoding Matrix (position × dimension)</div>
+                <div class="wave-container" id="positionalDisplay"></div>
+            </div>
+
+            <div class="formula-box">
+                PE<sub>(pos, 2i)</sub> = sin(pos / 10000<sup>2i/d</sup>) &nbsp;&nbsp;|&nbsp;&nbsp; PE<sub>(pos, 2i+1)</sub> = cos(pos / 10000<sup>2i/d</sup>)
+            </div>
+
+            <div class="info-box">
+                <h4>Why Sinusoids?</h4>
+                <p>Sine/cosine waves at different frequencies create unique patterns for each position. The model can learn to attend to relative positions because PE(pos+k) can be expressed as a linear function of PE(pos).</p>
+            </div>
+        </div>
+
+        <!-- Section 4: Self-Attention -->
+        <div class="section" id="attention">
+            <h2>Step 4: Scaled Dot-Product Attention</h2>
+            <p class="section-desc">The core mechanism: compute attention weights from Query-Key dot products, then weight the Values.</p>
+
+            <div class="steps">
+                <div class="step completed" id="step1"><span class="step-num">1</span> Q, K, V</div>
+                <div class="step" id="step2"><span class="step-num">2</span> QK<sup>T</sup></div>
+                <div class="step" id="step3"><span class="step-num">3</span> Scale</div>
+                <div class="step" id="step4"><span class="step-num">4</span> Softmax</div>
+                <div class="step" id="step5"><span class="step-num">5</span> × V</div>
+            </div>
+
+            <button class="btn" onclick="runAttentionStep()">Next Step</button>
+            <button class="btn btn-secondary" onclick="resetAttention()">Reset</button>
+
+            <div class="viz-container">
+                <div class="viz-title" id="attentionStepTitle">Query, Key, Value Matrices</div>
+                <div id="attentionViz"></div>
+            </div>
+
+            <div class="formula-box">
+                Attention(Q, K, V) = softmax(<span class="highlight">QK<sup>T</sup> / √d<sub>k</sub></span>) V
+            </div>
+
+            <div class="info-box" id="attentionInfo">
+                <h4>Step 1: Create Q, K, V</h4>
+                <p>Each token's embedding is projected into three vectors: Query (what am I looking for?), Key (what do I contain?), Value (what information do I have?).</p>
+            </div>
+        </div>
+
+        <!-- Section 5: Multi-Head Attention -->
+        <div class="section" id="multihead">
+            <h2>Step 5: Multi-Head Attention</h2>
+            <p class="section-desc">Run multiple attention operations in parallel, each learning different relationship types.</p>
+
+            <div class="slider-group">
+                <label>Number of Heads: <span id="headCountDisplay">4</span></label>
+                <input type="range" id="headCount" min="1" max="8" value="4" oninput="updateHeadCount()">
+            </div>
+
+            <button class="btn" onclick="simulateMultiHead()">Run Multi-Head Attention</button>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalDim">512</div>
+                    <div class="stat-label">d_model</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="numHeads">4</div>
+                    <div class="stat-label">Heads</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="headDim">128</div>
+                    <div class="stat-label">d_k per head</div>
+                </div>
+            </div>
+
+            <div class="viz-container">
+                <div class="viz-title">Attention Patterns by Head</div>
+                <div class="heads-container" id="headsDisplay"></div>
+            </div>
+
+            <div class="formula-box">
+                MultiHead(Q,K,V) = Concat(head<sub>1</sub>, ..., head<sub>h</sub>) W<sup>O</sup>
+            </div>
+
+            <div class="info-box">
+                <h4>Why Multiple Heads?</h4>
+                <p>Each head can specialize: one might learn syntax, another semantics, another coreference. The outputs are concatenated and projected back to d_model dimensions.</p>
+            </div>
+        </div>
+
+        <!-- Section 6: Full Flow -->
+        <div class="section" id="fullflow">
+            <h2>Step 6: Complete Transformer Flow</h2>
+            <p class="section-desc">See how input flows through the entire encoder layer.</p>
+
+            <div class="input-group">
+                <label>Input Sentence:</label>
+                <input type="text" id="fullFlowInput" value="I love transformers" placeholder="Enter text...">
+            </div>
+
+            <button class="btn" onclick="runFullFlow()">Run Encoder Layer</button>
+
+            <div class="steps" id="flowSteps">
+                <div class="step" data-step="input"><span class="step-num">1</span> Input</div>
+                <div class="step" data-step="embed"><span class="step-num">2</span> Embed</div>
+                <div class="step" data-step="pos"><span class="step-num">3</span> +Position</div>
+                <div class="step" data-step="attn"><span class="step-num">4</span> Attention</div>
+                <div class="step" data-step="add1"><span class="step-num">5</span> Add&Norm</div>
+                <div class="step" data-step="ffn"><span class="step-num">6</span> FFN</div>
+                <div class="step" data-step="add2"><span class="step-num">7</span> Add&Norm</div>
+                <div class="step" data-step="output"><span class="step-num">8</span> Output</div>
+            </div>
+
+            <div class="viz-container">
+                <div class="viz-title" id="flowTitle">Input Tokens</div>
+                <div id="flowViz"></div>
+            </div>
+
+            <div class="attention-viz" id="attentionLines">
+                <div class="source-tokens" id="sourceTokens"></div>
+                <svg id="attentionSvg"></svg>
+                <div class="target-tokens" id="targetTokens"></div>
+            </div>
+
+            <div class="info-box" id="flowInfo">
+                <h4>Encoder Layer Structure</h4>
+                <p>Input → Embedding + Positional → Multi-Head Self-Attention → Add & LayerNorm → Feed-Forward → Add & LayerNorm → Output</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentTokens = [];
+        let currentEmbeddings = [];
+        let attentionStep = 0;
+        let attentionMatrices = {};
+
+        // Tab navigation
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.section).classList.add('active');
+            });
+        });
+
+        // 1. Tokenization
+        function tokenize() {
+            const input = document.getElementById('tokenInput').value;
+            currentTokens = input.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+
+            const display = document.getElementById('tokenDisplay');
+            display.innerHTML = currentTokens.map((token, i) => `
+                <div class="token">
+                    ${token}
+                    <span class="token-index">${i}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('tokenStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${currentTokens.length}</div>
+                    <div class="stat-label">Tokens</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${input.length}</div>
+                    <div class="stat-label">Characters</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~50K</div>
+                    <div class="stat-label">Vocab Size</div>
+                </div>
+            `;
+        }
+
+        // 2. Embeddings
+        function generateEmbeddings() {
+            if (currentTokens.length === 0) {
+                tokenize();
+            }
+
+            const dim = parseInt(document.getElementById('embDim').value);
+            currentEmbeddings = currentTokens.map(token => {
+                // Generate pseudo-random but deterministic embeddings based on token
+                const seed = token.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+                return Array(dim).fill(0).map((_, i) => {
+                    const val = Math.sin(seed * (i + 1) * 0.1) * 0.5;
+                    return Math.round(val * 100) / 100;
+                });
+            });
+
+            const display = document.getElementById('embeddingDisplay');
+            display.innerHTML = `
+                <div class="embedding-grid">
+                    ${currentTokens.map((token, ti) => `
+                        <div class="embedding-row">
+                            <div class="token-label">${token}</div>
+                            ${currentEmbeddings[ti].map(val => `
+                                <div class="embedding-cell" style="background: ${getColorForValue(val)}">${val.toFixed(2)}</div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getColorForValue(val) {
+            // Map -1 to 1 → red to blue
+            const normalized = (val + 1) / 2;
+            const r = Math.round(255 * (1 - normalized));
+            const b = Math.round(255 * normalized);
+            return `rgb(${r}, 100, ${b})`;
+        }
+
+        // 3. Positional Encoding
+        function updatePositionalEncoding() {
+            const positions = parseInt(document.getElementById('posCount').value);
+            const dims = parseInt(document.getElementById('posDim').value);
+
+            document.getElementById('posCountDisplay').textContent = positions;
+            document.getElementById('posDimDisplay').textContent = dims;
+
+            const display = document.getElementById('positionalDisplay');
+            let html = '';
+
+            for (let pos = 0; pos < positions; pos++) {
+                html += `<div class="wave-row">
+                    <div class="wave-label">pos=${pos}</div>
+                    <div class="wave-cells">`;
+
+                for (let i = 0; i < dims; i++) {
+                    const angle = pos / Math.pow(10000, (2 * Math.floor(i/2)) / dims);
+                    const val = i % 2 === 0 ? Math.sin(angle) : Math.cos(angle);
+                    html += `<div class="wave-cell" style="background: ${getColorForValue(val)}">${val.toFixed(2)}</div>`;
+                }
+
+                html += '</div></div>';
+            }
+
+            display.innerHTML = html;
+        }
+
+        // 4. Self-Attention
+        function resetAttention() {
+            attentionStep = 0;
+            document.querySelectorAll('#attention .step').forEach((s, i) => {
+                s.classList.remove('active', 'completed');
+                if (i === 0) s.classList.add('completed');
+            });
+
+            // Initialize with sample data
+            const tokens = ['The', 'cat', 'sat'];
+            const dim = 4;
+
+            attentionMatrices = {
+                Q: tokens.map((_, i) => Array(dim).fill(0).map(() => Math.round((Math.random() - 0.5) * 2 * 100) / 100)),
+                K: tokens.map((_, i) => Array(dim).fill(0).map(() => Math.round((Math.random() - 0.5) * 2 * 100) / 100)),
+                V: tokens.map((_, i) => Array(dim).fill(0).map(() => Math.round((Math.random() - 0.5) * 2 * 100) / 100)),
+                tokens: tokens
+            };
+
+            showQKV();
+        }
+
+        function showQKV() {
+            const viz = document.getElementById('attentionViz');
+            document.getElementById('attentionStepTitle').textContent = 'Query, Key, Value Matrices';
+
+            viz.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    ${['Q (Query)', 'K (Key)', 'V (Value)'].map((name, mi) => {
+                        const matrix = [attentionMatrices.Q, attentionMatrices.K, attentionMatrices.V][mi];
+                        return `
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 10px; color: var(--gray-700);">${name}</div>
+                                <div class="attention-matrix">
+                                    ${matrix.map((row, ri) => `
+                                        <div class="attention-row">
+                                            <div class="attention-cell attention-label">${attentionMatrices.tokens[ri]}</div>
+                                            ${row.map(val => `
+                                                <div class="attention-cell" style="background: ${getColorForValue(val)}; color: white;">${val.toFixed(1)}</div>
+                                            `).join('')}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            document.getElementById('attentionInfo').innerHTML = `
+                <h4>Step 1: Create Q, K, V</h4>
+                <p>Each token's embedding is projected into three vectors using learned weight matrices W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub>.</p>
+            `;
+        }
+
+        function runAttentionStep() {
+            attentionStep++;
+
+            const steps = document.querySelectorAll('#attention .step');
+            steps.forEach((s, i) => {
+                s.classList.remove('active');
+                if (i < attentionStep) s.classList.add('completed');
+                if (i === attentionStep) s.classList.add('active');
+            });
+
+            const viz = document.getElementById('attentionViz');
+            const info = document.getElementById('attentionInfo');
+            const title = document.getElementById('attentionStepTitle');
+
+            switch(attentionStep) {
+                case 1: // QK^T
+                    title.textContent = 'QK^T (Attention Scores)';
+                    const scores = matmul(attentionMatrices.Q, transpose(attentionMatrices.K));
+                    attentionMatrices.scores = scores;
+                    viz.innerHTML = renderMatrix(scores, attentionMatrices.tokens, attentionMatrices.tokens, 'QK^T');
+                    info.innerHTML = `<h4>Step 2: Compute QK<sup>T</sup></h4><p>Dot product of each Query with all Keys. Higher values = more attention. Score[i][j] = how much token i attends to token j.</p>`;
+                    break;
+
+                case 2: // Scale
+                    title.textContent = 'Scaled Scores (÷ √d_k)';
+                    const dk = attentionMatrices.Q[0].length;
+                    const scaled = attentionMatrices.scores.map(row => row.map(v => v / Math.sqrt(dk)));
+                    attentionMatrices.scaled = scaled;
+                    viz.innerHTML = renderMatrix(scaled, attentionMatrices.tokens, attentionMatrices.tokens, `÷ √${dk} = ÷ ${Math.sqrt(dk).toFixed(2)}`);
+                    info.innerHTML = `<h4>Step 3: Scale by √d<sub>k</sub></h4><p>Dividing by √d<sub>k</sub> (${Math.sqrt(dk).toFixed(2)}) prevents dot products from getting too large, which would cause softmax to produce extreme values.</p>`;
+                    break;
+
+                case 3: // Softmax
+                    title.textContent = 'Attention Weights (Softmax)';
+                    const weights = attentionMatrices.scaled.map(row => softmax(row));
+                    attentionMatrices.weights = weights;
+                    viz.innerHTML = renderMatrix(weights, attentionMatrices.tokens, attentionMatrices.tokens, 'Softmax (rows sum to 1)');
+                    info.innerHTML = `<h4>Step 4: Apply Softmax</h4><p>Softmax converts scores to probabilities. Each row sums to 1. These are the attention weights—how much each token "attends to" others.</p>`;
+                    break;
+
+                case 4: // Multiply V
+                    title.textContent = 'Output (Weights × V)';
+                    const output = matmul(attentionMatrices.weights, attentionMatrices.V);
+                    viz.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(3, auto); gap: 20px; align-items: center; justify-content: center;">
+                            ${renderMatrix(attentionMatrices.weights, attentionMatrices.tokens, attentionMatrices.tokens, 'Weights')}
+                            <div style="font-size: 2rem; color: var(--gray-400);">×</div>
+                            ${renderMatrix(attentionMatrices.V, attentionMatrices.tokens, ['v0','v1','v2','v3'], 'V')}
+                        </div>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <div style="font-size: 1.5rem; color: var(--gray-400); margin-bottom: 10px;">↓</div>
+                            ${renderMatrix(output, attentionMatrices.tokens, ['o0','o1','o2','o3'], 'Output')}
+                        </div>
+                    `;
+                    info.innerHTML = `<h4>Step 5: Weighted Sum of Values</h4><p>Each output is a weighted combination of all Value vectors, where weights come from attention. Output[i] = Σ(attention[i][j] × V[j]).</p>`;
+                    break;
+
+                default:
+                    attentionStep = 0;
+                    resetAttention();
+            }
+        }
+
+        function renderMatrix(matrix, rowLabels, colLabels, title) {
+            return `
+                <div>
+                    <div style="font-weight: 600; margin-bottom: 10px; color: var(--gray-700); text-align: center;">${title}</div>
+                    <div class="attention-matrix">
+                        <div class="attention-row">
+                            <div class="attention-cell attention-header"></div>
+                            ${colLabels.map(l => `<div class="attention-cell attention-header">${l}</div>`).join('')}
+                        </div>
+                        ${matrix.map((row, ri) => `
+                            <div class="attention-row">
+                                <div class="attention-cell attention-label">${rowLabels[ri]}</div>
+                                ${row.map(val => `
+                                    <div class="attention-cell" style="background: ${getColorForValue(val)}; color: white;">${val.toFixed(2)}</div>
+                                `).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function matmul(a, b) {
+            const result = [];
+            for (let i = 0; i < a.length; i++) {
+                result[i] = [];
+                for (let j = 0; j < b[0].length; j++) {
+                    let sum = 0;
+                    for (let k = 0; k < a[0].length; k++) {
+                        sum += a[i][k] * b[k][j];
+                    }
+                    result[i][j] = Math.round(sum * 100) / 100;
+                }
+            }
+            return result;
+        }
+
+        function transpose(m) {
+            return m[0].map((_, i) => m.map(row => row[i]));
+        }
+
+        function softmax(arr) {
+            const max = Math.max(...arr);
+            const exps = arr.map(x => Math.exp(x - max));
+            const sum = exps.reduce((a, b) => a + b, 0);
+            return exps.map(x => Math.round((x / sum) * 100) / 100);
+        }
+
+        // 5. Multi-Head Attention
+        function updateHeadCount() {
+            const count = parseInt(document.getElementById('headCount').value);
+            document.getElementById('headCountDisplay').textContent = count;
+            document.getElementById('numHeads').textContent = count;
+            document.getElementById('headDim').textContent = Math.round(512 / count);
+        }
+
+        function simulateMultiHead() {
+            const headCount = parseInt(document.getElementById('headCount').value);
+            const display = document.getElementById('headsDisplay');
+
+            const tokens = currentTokens.length > 0 ? currentTokens.slice(0, 4) : ['The', 'cat', 'sat', 'on'];
+
+            let html = '';
+            for (let h = 0; h < headCount; h++) {
+                // Generate random attention pattern for this head
+                const pattern = tokens.map(() => {
+                    const weights = tokens.map(() => Math.random());
+                    const sum = weights.reduce((a, b) => a + b, 0);
+                    return weights.map(w => Math.round((w / sum) * 100) / 100);
+                });
+
+                html += `
+                    <div class="head-card ${h === 0 ? 'active' : ''}">
+                        <h4>Head ${h + 1} (d_k = ${Math.round(512 / headCount)})</h4>
+                        <div class="attention-matrix" style="font-size: 0.75rem;">
+                            <div class="attention-row">
+                                <div class="attention-cell attention-header" style="width: 45px; height: 30px;"></div>
+                                ${tokens.map(t => `<div class="attention-cell attention-header" style="width: 45px; height: 30px;">${t.slice(0,3)}</div>`).join('')}
+                            </div>
+                            ${pattern.map((row, ri) => `
+                                <div class="attention-row">
+                                    <div class="attention-cell attention-label" style="width: 45px; height: 30px;">${tokens[ri].slice(0,3)}</div>
+                                    ${row.map(val => `
+                                        <div class="attention-cell" style="width: 45px; height: 30px; background: ${getColorForValue(val * 2 - 1)}; color: white;">${val.toFixed(2)}</div>
+                                    `).join('')}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            display.innerHTML = html;
+        }
+
+        // 6. Full Flow
+        let flowStep = 0;
+
+        function runFullFlow() {
+            flowStep = 0;
+            const input = document.getElementById('fullFlowInput').value;
+            currentTokens = input.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+
+            animateFlow();
+        }
+
+        function animateFlow() {
+            const steps = document.querySelectorAll('#flowSteps .step');
+            const viz = document.getElementById('flowViz');
+            const title = document.getElementById('flowTitle');
+            const info = document.getElementById('flowInfo');
+
+            steps.forEach((s, i) => {
+                s.classList.remove('active', 'completed');
+                if (i < flowStep) s.classList.add('completed');
+                if (i === flowStep) s.classList.add('active');
+            });
+
+            switch(flowStep) {
+                case 0: // Input
+                    title.textContent = 'Input Tokens';
+                    viz.innerHTML = `<div class="tokens-display">${currentTokens.map((t, i) => `<div class="token">${t}<span class="token-index">${i}</span></div>`).join('')}</div>`;
+                    info.innerHTML = `<h4>Step 1: Input</h4><p>Raw text is tokenized into discrete tokens.</p>`;
+                    break;
+                case 1: // Embed
+                    title.textContent = 'Token Embeddings';
+                    viz.innerHTML = `<div class="tokens-display">${currentTokens.map(t => `<div class="token highlighted">${t} → [0.2, -0.1, ...]</div>`).join('')}</div>`;
+                    info.innerHTML = `<h4>Step 2: Embedding</h4><p>Each token is mapped to a 512-dimensional vector.</p>`;
+                    break;
+                case 2: // Position
+                    title.textContent = 'Add Positional Encoding';
+                    viz.innerHTML = `<div class="tokens-display">${currentTokens.map((t, i) => `<div class="token" style="border-color: var(--accent);">${t} + PE[${i}]</div>`).join('')}</div>`;
+                    info.innerHTML = `<h4>Step 3: Positional Encoding</h4><p>Sinusoidal position vectors are added to preserve sequence order.</p>`;
+                    break;
+                case 3: // Attention
+                    title.textContent = 'Multi-Head Self-Attention';
+                    drawAttentionLines();
+                    info.innerHTML = `<h4>Step 4: Self-Attention</h4><p>8 attention heads compute weighted combinations of all tokens.</p>`;
+                    break;
+                case 4: // Add & Norm 1
+                    title.textContent = 'Residual + Layer Norm';
+                    viz.innerHTML = `<div style="text-align: center; padding: 20px;"><div style="font-family: Consolas; font-size: 1.2rem;">LayerNorm(x + Attention(x))</div></div>`;
+                    info.innerHTML = `<h4>Step 5: Add & Norm</h4><p>Residual connection adds input to attention output, then layer normalization stabilizes values.</p>`;
+                    break;
+                case 5: // FFN
+                    title.textContent = 'Feed-Forward Network';
+                    viz.innerHTML = `<div style="text-align: center; padding: 20px;"><div style="font-family: Consolas;">512 → 2048 → ReLU → 2048 → 512</div></div>`;
+                    info.innerHTML = `<h4>Step 6: Feed-Forward</h4><p>Two linear layers with ReLU. Applied identically to each position.</p>`;
+                    break;
+                case 6: // Add & Norm 2
+                    title.textContent = 'Residual + Layer Norm';
+                    viz.innerHTML = `<div style="text-align: center; padding: 20px;"><div style="font-family: Consolas; font-size: 1.2rem;">LayerNorm(x + FFN(x))</div></div>`;
+                    info.innerHTML = `<h4>Step 7: Add & Norm</h4><p>Second residual connection and layer normalization.</p>`;
+                    break;
+                case 7: // Output
+                    title.textContent = 'Encoder Output';
+                    viz.innerHTML = `<div class="tokens-display">${currentTokens.map(t => `<div class="token" style="background: var(--primary); color: white; border-color: var(--primary);">${t}</div>`).join('')}</div>`;
+                    info.innerHTML = `<h4>Step 8: Output</h4><p>Contextualized representations ready for the next encoder layer or the decoder.</p>`;
+                    break;
+            }
+
+            flowStep++;
+            if (flowStep <= 7) {
+                setTimeout(animateFlow, 1500);
+            }
+        }
+
+        function drawAttentionLines() {
+            const sourceDiv = document.getElementById('sourceTokens');
+            const targetDiv = document.getElementById('targetTokens');
+            const svg = document.getElementById('attentionSvg');
+            const viz = document.getElementById('flowViz');
+
+            viz.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--gray-600);">See attention visualization below ↓</div>';
+
+            sourceDiv.innerHTML = currentTokens.map(t => `<div class="viz-token source">${t}</div>`).join('');
+            targetDiv.innerHTML = currentTokens.map(t => `<div class="viz-token target">${t}</div>`).join('');
+
+            // Draw lines after DOM updates
+            setTimeout(() => {
+                const sourceTokens = sourceDiv.querySelectorAll('.viz-token');
+                const targetTokens = targetDiv.querySelectorAll('.viz-token');
+                const container = document.getElementById('attentionLines');
+                const rect = container.getBoundingClientRect();
+
+                let lines = '';
+                sourceTokens.forEach((st, si) => {
+                    const stRect = st.getBoundingClientRect();
+                    targetTokens.forEach((tt, ti) => {
+                        const ttRect = tt.getBoundingClientRect();
+                        const weight = Math.random();
+                        const opacity = 0.1 + weight * 0.6;
+                        const strokeWidth = 1 + weight * 3;
+
+                        const x1 = stRect.left + stRect.width/2 - rect.left;
+                        const y1 = stRect.bottom - rect.top;
+                        const x2 = ttRect.left + ttRect.width/2 - rect.left;
+                        const y2 = ttRect.top - rect.top;
+
+                        lines += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${si === ti ? '#059669' : '#7c3aed'}" stroke-width="${strokeWidth}" opacity="${opacity}"/>`;
+                    });
+                });
+
+                svg.innerHTML = lines;
+            }, 100);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            tokenize();
+            updatePositionalEncoding();
+            resetAttention();
+            updateHeadCount();
+        });
+    </script>
+</body>
+</html>
