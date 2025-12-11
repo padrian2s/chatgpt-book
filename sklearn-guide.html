@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scikit-learn User Guide - Complete Illustrated Analysis</title>
+    <style>
+        :root {
+            --primary: #f57c00;
+            --primary-dark: #e65100;
+            --secondary: #3498db;
+            --accent: #2ecc71;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #f8f9fa;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.8;
+            color: var(--gray-800);
+            background: var(--gray-50);
+            font-size: 18px;
+        }
+
+        /* Navigation Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--dark);
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 25px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .nav-section {
+            padding: 15px 20px 5px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gray-500);
+            font-weight: 600;
+            font-family: system-ui, sans-serif;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 8px 20px;
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-family: system-ui, sans-serif;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: var(--gray-800);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .sidebar a.active {
+            background: var(--gray-800);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar a .ch {
+            display: inline-block;
+            width: 28px;
+            color: var(--gray-600);
+            font-size: 0.7rem;
+        }
+
+        .sidebar a.sub {
+            padding-left: 35px;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* Mobile Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            min-height: 100vh;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: white;
+            padding: 80px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f57c00' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-400);
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: var(--gray-400);
+            font-family: system-ui, sans-serif;
+        }
+
+        .hero-meta .icon {
+            color: var(--primary);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--gray-800);
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 1px solid var(--gray-700);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: system-ui, sans-serif;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Content Area */
+        .content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 50px 40px;
+        }
+
+        /* Chapter Sections */
+        .chapter {
+            margin-bottom: 70px;
+            scroll-margin-top: 20px;
+        }
+
+        .chapter-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .chapter-number {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .chapter-title {
+            font-size: 1.6rem;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .chapter:nth-child(4n+2) .chapter-header { background: linear-gradient(135deg, var(--secondary) 0%, #2980b9 100%); }
+        .chapter:nth-child(4n+3) .chapter-header { background: linear-gradient(135deg, var(--accent) 0%, #27ae60 100%); }
+        .chapter:nth-child(4n+4) .chapter-header { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+
+        .chapter-content {
+            background: white;
+            padding: 35px;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        /* Subsection */
+        .subsection {
+            margin: 30px 0;
+            padding: 25px;
+            background: var(--gray-50);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .subsection h3 {
+            color: var(--gray-800);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Paragraph Blocks */
+        .para {
+            margin-bottom: 25px;
+            border-left: 4px solid var(--gray-200);
+            padding-left: 20px;
+            transition: border-color 0.3s;
+            cursor: pointer;
+        }
+
+        .para:hover {
+            border-left-color: var(--primary);
+        }
+
+        .para.expanded {
+            border-left-color: var(--accent);
+        }
+
+        .para-text {
+            color: var(--gray-700);
+            margin-bottom: 10px;
+        }
+
+        .para-hint {
+            font-size: 0.7rem;
+            color: var(--primary);
+            font-family: system-ui, sans-serif;
+            font-style: italic;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .para:hover .para-hint { opacity: 1; }
+        .para.expanded .para-hint { color: var(--accent); }
+        .para.expanded .para-hint::before { content: '▼ '; }
+        .para:not(.expanded) .para-hint::before { content: '▶ '; }
+
+        /* Commentary */
+        .commentary {
+            display: none;
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 12px;
+            font-family: system-ui, sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            animation: slideDown 0.3s ease;
+        }
+
+        .para.expanded .commentary { display: block; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .commentary-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(245,124,0,0.2);
+        }
+
+        .commentary-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .commentary-title {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .commentary h4 {
+            color: var(--primary-dark);
+            margin: 15px 0 8px;
+            font-size: 0.95rem;
+        }
+
+        .commentary p { color: var(--gray-700); margin-bottom: 10px; }
+        .commentary ul, .commentary ol { margin: 8px 0 12px 18px; color: var(--gray-700); }
+        .commentary li { margin-bottom: 5px; }
+        .commentary code {
+            background: rgba(245,124,0,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85em;
+            color: var(--primary-dark);
+        }
+
+        /* Code Box */
+        .code-box {
+            background: var(--gray-900);
+            color: #a5d6a7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent);
+        }
+
+        .code-box .label {
+            color: var(--primary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: block;
+            font-family: system-ui, sans-serif;
+        }
+
+        .code-box .comment { color: #6a9955; }
+        .code-box .keyword { color: #569cd6; }
+        .code-box .string { color: #ce9178; }
+        .code-box .function { color: #dcdcaa; }
+        .code-box .class { color: #4ec9b0; }
+
+        /* Formula Box */
+        .formula-box {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .formula-box .label {
+            color: var(--secondary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: block;
+            font-family: system-ui, sans-serif;
+            text-align: left;
+        }
+
+        .formula-box .highlight {
+            color: var(--primary);
+        }
+
+        /* Images */
+        .img-block {
+            margin: 25px 0;
+            background: var(--gray-100);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .img-block img {
+            width: 100%;
+            display: block;
+        }
+
+        .img-caption {
+            padding: 15px 20px;
+            background: var(--gray-800);
+            color: var(--gray-300);
+            font-size: 0.85rem;
+            font-family: system-ui, sans-serif;
+        }
+
+        .img-caption strong {
+            color: var(--primary);
+        }
+
+        .img-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .img-grid .img-block {
+            margin: 0;
+        }
+
+        /* Key Concept */
+        .key-concept {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--gray-800) 100%);
+            color: white;
+            padding: 22px 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            font-family: system-ui, sans-serif;
+        }
+
+        .key-concept-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .key-concept-text {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Algorithm Box */
+        .algorithm-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid var(--secondary);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .algorithm-box h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .algorithm-box ol {
+            margin-left: 20px;
+            color: var(--gray-700);
+        }
+
+        .algorithm-box li {
+            margin-bottom: 8px;
+        }
+
+        /* Comparison Table */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: system-ui, sans-serif;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--gray-100);
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        tr:hover { background: var(--gray-50); }
+
+        /* Use Case Box */
+        .use-case {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .use-case h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #e65100;
+            margin-bottom: 10px;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Section Header */
+        .section-header {
+            margin: 50px 0 35px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+
+        .section-header p {
+            color: var(--gray-600);
+            font-size: 1rem;
+        }
+
+        /* Specs Section */
+        .specs-section {
+            background: var(--dark);
+            color: white;
+            margin: 0 -40px;
+            padding: 50px 40px;
+        }
+
+        .specs-section .section-header { border-bottom-color: var(--primary); }
+        .specs-section .section-header h2 { color: white; }
+        .specs-section .section-header p { color: var(--gray-400); }
+        .specs-section h3 { color: var(--primary); margin: 30px 0 15px; font-size: 1.3rem; }
+
+        /* Glossary */
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .glossary-item {
+            background: var(--gray-800);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .glossary-term {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .glossary-def {
+            color: var(--gray-400);
+            font-size: 0.85rem;
+            font-family: system-ui, sans-serif;
+        }
+
+        /* Back to Top */
+        .back-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(245,124,0,0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-top.visible { opacity: 1; visibility: visible; }
+        .back-top:hover { transform: translateY(-3px); }
+
+        /* Progress Bar */
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 300px;
+            right: 0;
+            height: 4px;
+            background: var(--gray-200);
+            z-index: 999;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .menu-toggle { display: block; }
+            .main-content { margin-left: 0; }
+            .hero { padding: 60px 25px; }
+            .hero h1 { font-size: 1.8rem; }
+            .stats-bar { padding: 20px 25px; }
+            .content { padding: 30px 20px; }
+            .progress { left: 0; }
+            .specs-section { margin: 0 -20px; padding: 40px 20px; }
+        }
+
+        @media print {
+            .sidebar, .menu-toggle, .back-top, .progress { display: none !important; }
+            .main-content { margin-left: 0; }
+            .chapter { break-inside: avoid; }
+            .commentary { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- Mobile Menu -->
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>scikit-learn User Guide</h1>
+            <p>Machine Learning in Python</p>
+        </div>
+        <div class="nav-section">Supervised Learning</div>
+        <a href="#ch1"><span class="ch">1.1</span> Linear Models</a>
+        <a href="#ch2"><span class="ch">1.4</span> Support Vector Machines</a>
+        <a href="#ch3"><span class="ch">1.6</span> Nearest Neighbors</a>
+        <a href="#ch4"><span class="ch">1.10</span> Decision Trees</a>
+        <a href="#ch5"><span class="ch">1.11</span> Ensemble Methods</a>
+        <a href="#ch6"><span class="ch">1.17</span> Neural Networks</a>
+        <div class="nav-section">Unsupervised Learning</div>
+        <a href="#ch7"><span class="ch">2.3</span> Clustering</a>
+        <a href="#ch8"><span class="ch">2.5</span> Dimensionality Reduction</a>
+        <div class="nav-section">Model Selection & Preprocessing</div>
+        <a href="#ch9"><span class="ch">3.1</span> Cross-Validation</a>
+        <a href="#ch10"><span class="ch">6.3</span> Preprocessing</a>
+        <a href="#ch11"><span class="ch">6.1</span> Pipelines</a>
+        <div class="nav-section">Reference</div>
+        <a href="#glossary">Glossary</a>
+        <a href="#cheatsheet">Cheat Sheet</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero -->
+        <header class="hero">
+            <div class="hero-content">
+                <h1>scikit-learn User Guide</h1>
+                <p class="subtitle">Complete illustrated guide to machine learning in Python</p>
+                <div class="hero-meta">
+                    <span><span class="icon">📦</span> Version 1.8.0</span>
+                    <span><span class="icon">🐍</span> Python Library</span>
+                    <span><span class="icon">📚</span> BSD License</span>
+                    <span><span class="icon">💬</span> Click paragraphs for commentary</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-item"><div class="stat-value">200+</div><div class="stat-label">Algorithms</div></div>
+            <div class="stat-item"><div class="stat-value">14</div><div class="stat-label">Main Modules</div></div>
+            <div class="stat-item"><div class="stat-value">50+</div><div class="stat-label">Datasets</div></div>
+            <div class="stat-item"><div class="stat-value">1M+</div><div class="stat-label">Daily Downloads</div></div>
+            <div class="stat-item"><div class="stat-value">2007</div><div class="stat-label">First Release</div></div>
+        </div>
+
+        <div class="content">
+            <div class="section-header">
+                <h2>Complete Illustrated Analysis</h2>
+                <p>From linear regression to neural networks - the essential ML toolkit explained</p>
+            </div>
+
+            <!-- Chapter 1: Linear Models -->
+            <section class="chapter" id="ch1">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 1.1</div>
+                    <h2 class="chapter-title">Linear Models</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">Linear models are a class of models that make predictions using a linear function of the input features. They are the foundation of machine learning and remain highly effective for many real-world problems.</div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Why Start with Linear Models?</h4>
+                            <p>Linear models are interpretable, fast, and often surprisingly effective. They form the basis for understanding more complex models. Even neural networks are stacks of linear transformations with non-linear activations.</p>
+                            <h4>Key Advantages</h4>
+                            <ul>
+                                <li><strong>Interpretability:</strong> Coefficients directly show feature importance</li>
+                                <li><strong>Speed:</strong> Train in seconds on millions of samples</li>
+                                <li><strong>Scalability:</strong> Work with sparse data efficiently</li>
+                                <li><strong>Baseline:</strong> Always try a linear model first!</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="formula-box">
+                        <span class="label">Linear Model Formula</span>
+                        ŷ = w₀ + w₁x₁ + w₂x₂ + ... + wₙxₙ = <span class="highlight">w<sup>T</sup>x + b</span>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Ordinary Least Squares (OLS)</h3>
+                        <div class="para">
+                            <div class="para-text">LinearRegression fits a linear model with coefficients w = (w₁, ..., wₚ) to minimize the residual sum of squares between the observed targets and the predictions.</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>The Objective</h4>
+                                <p>OLS minimizes: Σ(yᵢ - ŷᵢ)² = ||y - Xw||²</p>
+                                <h4>Closed-Form Solution</h4>
+                                <p>w = (X<sup>T</sup>X)<sup>-1</sup>X<sup>T</sup>y</p>
+                                <p>This has a direct solution - no iteration needed! But it can be numerically unstable and doesn't handle multicollinearity well.</p>
+                            </div>
+                        </div>
+
+                        <div class="code-box">
+                            <span class="label">Python Example</span>
+<pre><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> <span class="class">LinearRegression</span>
+
+<span class="comment"># Create and fit model</span>
+model = <span class="class">LinearRegression</span>()
+model.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Get coefficients</span>
+<span class="keyword">print</span>(f<span class="string">"Coefficients: {model.coef_}"</span>)
+<span class="keyword">print</span>(f<span class="string">"Intercept: {model.intercept_}"</span>)
+
+<span class="comment"># Make predictions</span>
+y_pred = model.<span class="function">predict</span>(X_test)</pre>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Ridge Regression (L2 Regularization)</h3>
+                        <div class="para">
+                            <div class="para-text">Ridge regression addresses some of the problems of Ordinary Least Squares by imposing a penalty on the size of the coefficients. The ridge coefficients minimize a penalized residual sum of squares.</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>The Ridge Objective</h4>
+                                <p>Minimize: ||y - Xw||² + α||w||²</p>
+                                <h4>Why Regularization?</h4>
+                                <ul>
+                                    <li><strong>Prevents overfitting:</strong> Penalizes large weights</li>
+                                    <li><strong>Handles multicollinearity:</strong> Stabilizes solution</li>
+                                    <li><strong>Shrinks coefficients:</strong> But never to exactly zero</li>
+                                </ul>
+                                <h4>The α Parameter</h4>
+                                <p>α = 0: Ordinary least squares. α → ∞: All weights → 0. Use cross-validation to find optimal α.</p>
+                            </div>
+                        </div>
+
+                        <div class="formula-box">
+                            <span class="label">Ridge Regression Loss</span>
+                            L(w) = ||y - Xw||² + <span class="highlight">α||w||²</span>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Lasso Regression (L1 Regularization)</h3>
+                        <div class="para">
+                            <div class="para-text">The Lasso is a linear model that estimates sparse coefficients. It tends to prefer solutions with fewer non-zero coefficients, effectively reducing the number of features.</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>The Lasso Objective</h4>
+                                <p>Minimize: (1/2n)||y - Xw||² + α||w||₁</p>
+                                <h4>Feature Selection</h4>
+                                <p>Unlike Ridge, Lasso can set coefficients exactly to zero. This is automatic feature selection! Great when you believe only a few features matter.</p>
+                                <h4>When to Use Lasso vs Ridge</h4>
+                                <ul>
+                                    <li><strong>Lasso:</strong> When you expect sparse solutions (few important features)</li>
+                                    <li><strong>Ridge:</strong> When many features contribute small amounts</li>
+                                    <li><strong>Elastic Net:</strong> Combines both (best of both worlds)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Logistic Regression</h3>
+                        <div class="para">
+                            <div class="para-text">Despite its name, logistic regression is a linear model for classification rather than regression. It models the probability that an instance belongs to a particular class using the logistic function.</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>The Logistic Function (Sigmoid)</h4>
+                                <p>P(y=1|x) = 1 / (1 + e<sup>-w<sup>T</sup>x</sup>)</p>
+                                <h4>Why "Regression" for Classification?</h4>
+                                <p>It regresses the log-odds: log(P/(1-P)) = w<sup>T</sup>x. The output is transformed into probabilities via sigmoid.</p>
+                                <h4>Multiclass: One-vs-Rest or Softmax</h4>
+                                <ul>
+                                    <li><strong>OvR:</strong> Train K binary classifiers</li>
+                                    <li><strong>Multinomial (Softmax):</strong> Single model, K outputs</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="code-box">
+                            <span class="label">Logistic Regression Example</span>
+<pre><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> <span class="class">LogisticRegression</span>
+
+<span class="comment"># For binary classification</span>
+clf = <span class="class">LogisticRegression</span>(C=1.0, solver=<span class="string">'lbfgs'</span>)
+clf.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Predict probabilities</span>
+probs = clf.<span class="function">predict_proba</span>(X_test)
+
+<span class="comment"># Predict classes</span>
+y_pred = clf.<span class="function">predict</span>(X_test)</pre>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Model</th><th>Regularization</th><th>Feature Selection</th><th>Use Case</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>LinearRegression</td><td>None</td><td>No</td><td>Baseline, interpretability</td></tr>
+                                <tr><td>Ridge</td><td>L2 (||w||²)</td><td>No</td><td>Multicollinearity, many features</td></tr>
+                                <tr><td>Lasso</td><td>L1 (||w||₁)</td><td>Yes</td><td>Sparse solutions, feature selection</td></tr>
+                                <tr><td>ElasticNet</td><td>L1 + L2</td><td>Yes</td><td>Best of both worlds</td></tr>
+                                <tr><td>LogisticRegression</td><td>L1/L2/ElasticNet</td><td>With L1</td><td>Classification</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">Linear models predict using ŷ = w<sup>T</sup>x + b. Regularization (Ridge/Lasso) prevents overfitting. Lasso performs automatic feature selection. Always try a linear model as your baseline!</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 2: Support Vector Machines -->
+            <section class="chapter" id="ch2">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 1.4</div>
+                    <h2 class="chapter-title">Support Vector Machines</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">Support vector machines (SVMs) are a set of supervised learning methods used for classification, regression and outliers detection. They are effective in high dimensional spaces and memory efficient.</div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>The Core Idea</h4>
+                            <p>Find the hyperplane that maximizes the margin between classes. The "support vectors" are the data points closest to this hyperplane - they define the decision boundary.</p>
+                            <h4>Why SVMs Excel</h4>
+                            <ul>
+                                <li><strong>High dimensions:</strong> Work well when features > samples</li>
+                                <li><strong>Kernel trick:</strong> Non-linear boundaries without explicit transformation</li>
+                                <li><strong>Robust:</strong> Only support vectors matter, not all data</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="img-block">
+                        <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_separating_hyperplane_001.png" alt="SVM separating hyperplane">
+                        <div class="img-caption"><strong>Figure:</strong> SVM finds the maximum-margin hyperplane. Support vectors (circled) define the decision boundary.</div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>SVC: Support Vector Classification</h3>
+                        <div class="para">
+                            <div class="para-text">SVC implements the "C-Support Vector Classification" based on libsvm. The fit time scales at least quadratically with the number of samples, making it hard to scale to datasets with more than a few 10,000 samples.</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>The C Parameter</h4>
+                                <p>C controls the trade-off between smooth decision boundary and classifying training points correctly.</p>
+                                <ul>
+                                    <li><strong>Small C:</strong> Smoother boundary, more misclassifications allowed</li>
+                                    <li><strong>Large C:</strong> Harder boundary, fewer misclassifications</li>
+                                </ul>
+                                <h4>Scaling Limitation</h4>
+                                <p>O(n²) to O(n³) complexity. For >10K samples, consider LinearSVC or SGDClassifier with hinge loss.</p>
+                            </div>
+                        </div>
+
+                        <div class="code-box">
+                            <span class="label">SVC Example</span>
+<pre><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> <span class="class">SVC</span>
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> <span class="class">StandardScaler</span>
+
+<span class="comment"># IMPORTANT: Scale your data!</span>
+scaler = <span class="class">StandardScaler</span>()
+X_train_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+X_test_scaled = scaler.<span class="function">transform</span>(X_test)
+
+<span class="comment"># RBF kernel (default)</span>
+clf = <span class="class">SVC</span>(kernel=<span class="string">'rbf'</span>, C=1.0, gamma=<span class="string">'scale'</span>)
+clf.<span class="function">fit</span>(X_train_scaled, y_train)</pre>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Kernel Functions</h3>
+                        <div class="para">
+                            <div class="para-text">The kernel function computes the dot product in a high-dimensional feature space without explicitly computing the coordinates. This is known as the "kernel trick".</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>Common Kernels</h4>
+                                <ul>
+                                    <li><strong>Linear:</strong> K(x,y) = x<sup>T</sup>y - for linearly separable data</li>
+                                    <li><strong>RBF (Gaussian):</strong> K(x,y) = exp(-γ||x-y||²) - most versatile</li>
+                                    <li><strong>Polynomial:</strong> K(x,y) = (γx<sup>T</sup>y + r)<sup>d</sup></li>
+                                    <li><strong>Sigmoid:</strong> K(x,y) = tanh(γx<sup>T</sup>y + r)</li>
+                                </ul>
+                                <h4>The RBF Gamma Parameter</h4>
+                                <p>γ controls how far the influence of a single training example reaches. Low γ = far reach (smoother), high γ = close reach (more complex).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="img-grid">
+                        <div class="img-block">
+                            <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_iris_svc_001.png" alt="SVM with different kernels">
+                            <div class="img-caption"><strong>Figure:</strong> Different kernels produce different decision boundaries on the Iris dataset.</div>
+                        </div>
+                        <div class="img-block">
+                            <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_rbf_parameters_001.png" alt="RBF parameters">
+                            <div class="img-caption"><strong>Figure:</strong> Effect of C and γ parameters on RBF kernel SVM decision boundary.</div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4>⚠️ Important: Scale Your Data!</h4>
+                        <p>SVMs are sensitive to feature scales. Always use StandardScaler or MinMaxScaler before fitting. Without scaling, features with larger values will dominate the kernel computation.</p>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">SVMs find maximum-margin hyperplanes. The kernel trick enables non-linear boundaries. Key parameters: C (regularization), kernel type, and γ (for RBF). Always scale your data first!</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 3: Nearest Neighbors -->
+            <section class="chapter" id="ch3">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 1.6</div>
+                    <h2 class="chapter-title">Nearest Neighbors</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">The principle behind nearest neighbor methods is to find a predefined number of training samples closest in distance to the new point, and predict the label from these. The number of samples can be a user-defined constant (k-nearest neighbor learning).</div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>The Simplest ML Algorithm</h4>
+                            <p>KNN is a "lazy learner" - it doesn't build a model, just stores training data. Prediction is: "find k closest points, vote/average their labels."</p>
+                            <h4>Advantages</h4>
+                            <ul>
+                                <li><strong>Simple:</strong> No training phase, easy to understand</li>
+                                <li><strong>Non-parametric:</strong> Makes no assumptions about data distribution</li>
+                                <li><strong>Versatile:</strong> Works for classification and regression</li>
+                            </ul>
+                            <h4>Disadvantages</h4>
+                            <ul>
+                                <li><strong>Slow prediction:</strong> Must search all training data</li>
+                                <li><strong>Memory intensive:</strong> Stores all training data</li>
+                                <li><strong>Curse of dimensionality:</strong> Distance becomes meaningless in high dimensions</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">KNN Example</span>
+<pre><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> <span class="class">KNeighborsClassifier</span>
+
+<span class="comment"># k=5 is a common default</span>
+knn = <span class="class">KNeighborsClassifier</span>(n_neighbors=5, weights=<span class="string">'uniform'</span>)
+knn.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Predict</span>
+y_pred = knn.<span class="function">predict</span>(X_test)
+
+<span class="comment"># Get probabilities (based on neighbor votes)</span>
+y_proba = knn.<span class="function">predict_proba</span>(X_test)</pre>
+                    </div>
+
+                    <div class="algorithm-box">
+                        <h4>KNN Algorithm</h4>
+                        <ol>
+                            <li>Store all training data</li>
+                            <li>For a new point x, compute distance to all training points</li>
+                            <li>Find the k nearest neighbors</li>
+                            <li>Classification: majority vote of neighbors' labels</li>
+                            <li>Regression: average (or weighted average) of neighbors' values</li>
+                        </ol>
+                    </div>
+
+                    <div class="img-block">
+                        <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_classification_001.png" alt="KNN classification">
+                        <div class="img-caption"><strong>Figure:</strong> KNN classifier decision boundaries with different k values. Smaller k = more complex boundary.</div>
+                    </div>
+
+                    <div class="use-case">
+                        <h4>When to Use KNN</h4>
+                        <ul>
+                            <li>Small to medium datasets (< 100K samples)</li>
+                            <li>Low to medium dimensionality</li>
+                            <li>When you need a quick baseline</li>
+                            <li>Recommendation systems (find similar items)</li>
+                            <li>Anomaly detection (points far from neighbors)</li>
+                        </ul>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">KNN predicts by finding k closest training points and voting/averaging. No training phase, but slow prediction. Choose k via cross-validation (odd k for binary classification to avoid ties).</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 4: Decision Trees -->
+            <section class="chapter" id="ch4">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 1.10</div>
+                    <h2 class="chapter-title">Decision Trees</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">Decision Trees are a non-parametric supervised learning method used for classification and regression. The goal is to create a model that predicts the value of a target variable by learning simple decision rules inferred from the data features.</div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>How Trees Work</h4>
+                            <p>A tree recursively splits the data based on feature thresholds. Each internal node is a "question" (e.g., "is feature X > 5?"). Leaves contain predictions.</p>
+                            <h4>Key Advantages</h4>
+                            <ul>
+                                <li><strong>Interpretable:</strong> You can visualize and explain the logic</li>
+                                <li><strong>No scaling needed:</strong> Works with raw features</li>
+                                <li><strong>Handles mixed types:</strong> Numerical and categorical</li>
+                                <li><strong>Feature importance:</strong> Built-in feature ranking</li>
+                            </ul>
+                            <h4>Key Disadvantages</h4>
+                            <ul>
+                                <li><strong>Overfitting:</strong> Deep trees memorize training data</li>
+                                <li><strong>Instability:</strong> Small data changes → different trees</li>
+                                <li><strong>Axis-aligned:</strong> Can't capture diagonal boundaries easily</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="img-block">
+                        <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_iris_dtc_001.png" alt="Decision tree visualization">
+                        <div class="img-caption"><strong>Figure:</strong> Decision tree visualization on Iris dataset. Each node shows the split condition, samples, and class distribution.</div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">Decision Tree Example</span>
+<pre><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> <span class="class">DecisionTreeClassifier</span>, <span class="function">plot_tree</span>
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Create tree with max_depth to prevent overfitting</span>
+tree = <span class="class">DecisionTreeClassifier</span>(max_depth=3, random_state=42)
+tree.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Visualize the tree</span>
+plt.<span class="function">figure</span>(figsize=(20, 10))
+<span class="function">plot_tree</span>(tree, feature_names=feature_names,
+          class_names=class_names, filled=<span class="keyword">True</span>)
+plt.<span class="function">show</span>()
+
+<span class="comment"># Feature importances</span>
+<span class="keyword">print</span>(tree.feature_importances_)</pre>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Splitting Criteria</h3>
+                        <div class="para">
+                            <div class="para-text">The tree chooses splits to maximize information gain (or minimize impurity). For classification, scikit-learn supports Gini impurity and entropy. For regression, it uses MSE or MAE.</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>Gini Impurity</h4>
+                                <p>Gini = 1 - Σpᵢ² where pᵢ is the probability of class i. Gini = 0 means pure node (all same class).</p>
+                                <h4>Entropy</h4>
+                                <p>Entropy = -Σpᵢ log(pᵢ). Information gain = parent entropy - weighted child entropy.</p>
+                                <h4>In Practice</h4>
+                                <p>Gini and entropy usually give similar results. Gini is slightly faster (no log computation).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Parameter</th><th>Purpose</th><th>Effect on Overfitting</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>max_depth</td><td>Maximum tree depth</td><td>Lower = less overfitting</td></tr>
+                                <tr><td>min_samples_split</td><td>Min samples to split a node</td><td>Higher = less overfitting</td></tr>
+                                <tr><td>min_samples_leaf</td><td>Min samples in a leaf</td><td>Higher = less overfitting</td></tr>
+                                <tr><td>max_features</td><td>Features to consider for split</td><td>Lower = less overfitting</td></tr>
+                                <tr><td>ccp_alpha</td><td>Cost-complexity pruning</td><td>Higher = more pruning</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">Decision trees split data recursively based on feature thresholds. Highly interpretable but prone to overfitting. Control complexity with max_depth, min_samples_leaf, or pruning. Foundation for ensemble methods.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 5: Ensemble Methods -->
+            <section class="chapter" id="ch5">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 1.11</div>
+                    <h2 class="chapter-title">Ensemble Methods</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">The goal of ensemble methods is to combine the predictions of several base estimators built with a given learning algorithm in order to improve generalizability and robustness over a single estimator.</div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Why Ensembles Work</h4>
+                            <p>Different models make different errors. By combining them, errors can cancel out. "Wisdom of the crowd" - many weak learners → one strong learner.</p>
+                            <h4>Two Main Strategies</h4>
+                            <ul>
+                                <li><strong>Bagging:</strong> Train models independently in parallel, average results (reduces variance)</li>
+                                <li><strong>Boosting:</strong> Train models sequentially, each fixing previous errors (reduces bias)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Random Forest</h3>
+                        <div class="para">
+                            <div class="para-text">A random forest is a meta estimator that fits a number of decision tree classifiers on various sub-samples of the dataset and uses averaging to improve the predictive accuracy and control over-fitting.</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>How Random Forest Works</h4>
+                                <ol>
+                                    <li>Create N bootstrap samples (random sampling with replacement)</li>
+                                    <li>For each sample, train a decision tree</li>
+                                    <li>At each split, consider only √features (random feature subset)</li>
+                                    <li>Aggregate predictions: majority vote (classification) or average (regression)</li>
+                                </ol>
+                                <h4>Why It Works</h4>
+                                <p>Bootstrap + random features → decorrelated trees → reduced variance. Individual trees may overfit, but their errors are different and cancel out!</p>
+                            </div>
+                        </div>
+
+                        <div class="code-box">
+                            <span class="label">Random Forest Example</span>
+<pre><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> <span class="class">RandomForestClassifier</span>
+
+<span class="comment"># Create forest with 100 trees</span>
+rf = <span class="class">RandomForestClassifier</span>(
+    n_estimators=100,      <span class="comment"># number of trees</span>
+    max_depth=<span class="keyword">None</span>,        <span class="comment"># let trees grow fully</span>
+    min_samples_split=2,
+    max_features=<span class="string">'sqrt'</span>,   <span class="comment"># √features at each split</span>
+    n_jobs=-1,             <span class="comment"># use all CPU cores</span>
+    random_state=42
+)
+rf.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Feature importances (averaged across all trees)</span>
+importances = rf.feature_importances_</pre>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>Gradient Boosting</h3>
+                        <div class="para">
+                            <div class="para-text">Gradient Tree Boosting builds an additive model in a forward stage-wise fashion; it allows for the optimization of arbitrary differentiable loss functions. In each stage a regression tree is fit on the negative gradient of the loss function.</div>
+                            <div class="para-hint">Click for commentary</div>
+                            <div class="commentary">
+                                <div class="commentary-head">
+                                    <div class="commentary-icon">💡</div>
+                                    <div class="commentary-title">Analysis</div>
+                                </div>
+                                <h4>How Gradient Boosting Works</h4>
+                                <ol>
+                                    <li>Start with a simple prediction (e.g., mean)</li>
+                                    <li>Compute residuals (errors)</li>
+                                    <li>Fit a tree to predict the residuals</li>
+                                    <li>Add tree's predictions (scaled by learning rate) to model</li>
+                                    <li>Repeat: fit new trees to new residuals</li>
+                                </ol>
+                                <h4>Key Parameters</h4>
+                                <ul>
+                                    <li><strong>n_estimators:</strong> Number of boosting stages</li>
+                                    <li><strong>learning_rate:</strong> Shrinks each tree's contribution (lower = more trees needed)</li>
+                                    <li><strong>max_depth:</strong> Usually shallow (3-10) for boosting</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="img-grid">
+                        <div class="img-block">
+                            <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_forest_importances_001.png" alt="Feature importances">
+                            <div class="img-caption"><strong>Figure:</strong> Random Forest feature importances with standard deviation across trees.</div>
+                        </div>
+                        <div class="img-block">
+                            <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_gradient_boosting_regression_001.png" alt="Gradient boosting">
+                            <div class="img-caption"><strong>Figure:</strong> Gradient Boosting regression showing iterative improvement.</div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Method</th><th>Strategy</th><th>Trees</th><th>Speed</th><th>Best For</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>RandomForest</td><td>Bagging</td><td>Parallel, deep</td><td>Fast (parallel)</td><td>General purpose, feature importance</td></tr>
+                                <tr><td>GradientBoosting</td><td>Boosting</td><td>Sequential, shallow</td><td>Slower</td><td>High accuracy, tuned models</td></tr>
+                                <tr><td>HistGradientBoosting</td><td>Boosting</td><td>Sequential, histogram</td><td>Very fast</td><td>Large datasets, native NaN handling</td></tr>
+                                <tr><td>AdaBoost</td><td>Boosting</td><td>Sequential, stumps</td><td>Fast</td><td>Simple boosting baseline</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">Ensembles combine multiple models to reduce error. Random Forest (bagging) trains trees in parallel on bootstrap samples. Gradient Boosting trains trees sequentially to correct errors. For large data, use HistGradientBoostingClassifier.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 6: Neural Networks -->
+            <section class="chapter" id="ch6">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 1.17</div>
+                    <h2 class="chapter-title">Neural Network Models</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">
+                            scikit-learn provides Multi-layer Perceptron (MLP) implementations for both classification and regression. MLPClassifier and MLPRegressor implement feedforward neural networks with backpropagation. While not as powerful as deep learning frameworks like TensorFlow or PyTorch, they're perfect for quick experimentation and smaller datasets.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>When to Use sklearn's Neural Networks</h4>
+                            <p>sklearn's MLP is ideal for tabular data where you want neural network benefits without deep learning complexity. It follows the standard fit/predict API, integrates with cross-validation and pipelines, and requires no GPU setup.</p>
+                            <h4>Limitations to Consider</h4>
+                            <ul>
+                                <li><strong>No GPU support:</strong> CPU-only, slower for large networks</li>
+                                <li><strong>Limited architectures:</strong> Only fully-connected layers</li>
+                                <li><strong>No custom layers:</strong> Can't build CNNs, RNNs, or transformers</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">MLPClassifier Example</span>
+<pre><span class="keyword">from</span> sklearn.neural_network <span class="keyword">import</span> <span class="class">MLPClassifier</span>
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> <span class="class">StandardScaler</span>
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> make_pipeline
+
+<span class="comment"># Neural networks REQUIRE scaling!</span>
+clf = make_pipeline(
+    <span class="class">StandardScaler</span>(),
+    <span class="class">MLPClassifier</span>(
+        hidden_layer_sizes=(100, 50),  <span class="comment"># 2 hidden layers</span>
+        activation=<span class="string">'relu'</span>,            <span class="comment"># ReLU activation</span>
+        solver=<span class="string">'adam'</span>,                <span class="comment"># Adam optimizer</span>
+        max_iter=500,
+        early_stopping=<span class="keyword">True</span>,         <span class="comment"># Prevent overfitting</span>
+        random_state=42
+    )
+)
+
+clf.<span class="function">fit</span>(X_train, y_train)
+<span class="keyword">print</span>(f<span class="string">"Accuracy: {clf.score(X_test, y_test):.3f}"</span>)</pre>
+                    </div>
+
+                    <div class="para">
+                        <div class="para-text">
+                            The hidden_layer_sizes parameter defines the network architecture. A tuple like (100, 50) creates two hidden layers with 100 and 50 neurons respectively. The activation function (relu, tanh, logistic) determines how neurons transform their inputs. Solvers include 'adam' (adaptive moment estimation), 'sgd' (stochastic gradient descent), and 'lbfgs' (quasi-Newton method for small datasets).
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Choosing Architecture Size</h4>
+                            <ul>
+                                <li><strong>Start small:</strong> (100,) often works well</li>
+                                <li><strong>Add depth:</strong> (100, 50) for more complex patterns</li>
+                                <li><strong>Rule of thumb:</strong> Total neurons < training samples</li>
+                            </ul>
+                            <h4>Solver Selection</h4>
+                            <ul>
+                                <li><strong>adam:</strong> Default, works well for most cases</li>
+                                <li><strong>lbfgs:</strong> Better for small datasets (&lt;10k samples)</li>
+                                <li><strong>sgd:</strong> More control, requires tuning learning rate</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Parameter</th><th>Options</th><th>Default</th><th>When to Change</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>hidden_layer_sizes</td><td>tuple of ints</td><td>(100,)</td><td>Complex data needs more layers</td></tr>
+                                <tr><td>activation</td><td>relu, tanh, logistic</td><td>relu</td><td>Rarely - relu works well</td></tr>
+                                <tr><td>solver</td><td>adam, sgd, lbfgs</td><td>adam</td><td>lbfgs for small data</td></tr>
+                                <tr><td>alpha</td><td>float</td><td>0.0001</td><td>Increase for regularization</td></tr>
+                                <tr><td>learning_rate_init</td><td>float</td><td>0.001</td><td>Lower if not converging</td></tr>
+                                <tr><td>early_stopping</td><td>bool</td><td>False</td><td>True to prevent overfitting</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">MLP neural networks in sklearn are great for quick experiments on tabular data. Always scale your features first (StandardScaler), start with simple architectures, and use early_stopping=True to prevent overfitting. For images, text, or large-scale deep learning, use TensorFlow or PyTorch instead.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 7: Clustering -->
+            <section class="chapter" id="ch7">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 2.3</div>
+                    <h2 class="chapter-title">Clustering: Unsupervised Grouping</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">
+                            Clustering algorithms find natural groupings in unlabeled data. Unlike classification, there are no target labels—the algorithm discovers structure on its own. Common applications include customer segmentation, anomaly detection, image compression, and exploratory data analysis.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>The Unsupervised Learning Paradigm</h4>
+                            <p>Without labels, clustering algorithms use different criteria to define "good" clusters: minimizing within-cluster variance (KMeans), maximizing density (DBSCAN), or building hierarchies (AgglomerativeClustering). The right choice depends on your data's shape and your goals.</p>
+                            <h4>Real-World Applications</h4>
+                            <ul>
+                                <li><strong>Customer segmentation:</strong> Group users by behavior</li>
+                                <li><strong>Anomaly detection:</strong> Points far from clusters are outliers</li>
+                                <li><strong>Data compression:</strong> Replace points with cluster centers</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="img-grid">
+                        <div class="img-block">
+                            <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_kmeans_digits_001.png" alt="KMeans clustering">
+                            <div class="img-caption"><strong>Figure:</strong> KMeans clustering on handwritten digits, showing discovered cluster centers.</div>
+                        </div>
+                        <div class="img-block">
+                            <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_cluster_comparison_001.png" alt="Clustering comparison">
+                            <div class="img-caption"><strong>Figure:</strong> Comparison of clustering algorithms on different data distributions.</div>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">KMeans Clustering</span>
+<pre><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> <span class="class">KMeans</span>
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> <span class="class">StandardScaler</span>
+
+<span class="comment"># Scale features (important for distance-based methods)</span>
+X_scaled = <span class="class">StandardScaler</span>().<span class="function">fit_transform</span>(X)
+
+<span class="comment"># Fit KMeans with 5 clusters</span>
+kmeans = <span class="class">KMeans</span>(n_clusters=5, random_state=42, n_init=10)
+labels = kmeans.<span class="function">fit_predict</span>(X_scaled)
+
+<span class="comment"># Cluster centers and inertia</span>
+centers = kmeans.cluster_centers_
+inertia = kmeans.inertia_  <span class="comment"># Sum of squared distances to centers</span></pre>
+                    </div>
+
+                    <div class="para">
+                        <div class="para-text">
+                            <strong>KMeans</strong> partitions data into K clusters by minimizing within-cluster variance. It's fast and scalable but assumes spherical, equally-sized clusters. You must specify K in advance. <strong>DBSCAN</strong> (Density-Based Spatial Clustering) finds arbitrarily-shaped clusters based on point density. It automatically determines the number of clusters and identifies outliers as noise points. <strong>AgglomerativeClustering</strong> builds a hierarchy of clusters using a bottom-up approach, useful when you want a dendrogram visualization.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Choosing the Right Algorithm</h4>
+                            <ul>
+                                <li><strong>KMeans:</strong> Fast, spherical clusters, need to know K</li>
+                                <li><strong>DBSCAN:</strong> Arbitrary shapes, handles outliers, no K needed</li>
+                                <li><strong>Agglomerative:</strong> Hierarchical view, works with any linkage</li>
+                                <li><strong>MiniBatchKMeans:</strong> Very large datasets</li>
+                            </ul>
+                            <h4>The K Selection Problem</h4>
+                            <p>For KMeans, use the elbow method (plot inertia vs K) or silhouette scores. DBSCAN avoids this but requires tuning eps (neighborhood radius) and min_samples.</p>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">DBSCAN for Density-Based Clustering</span>
+<pre><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> <span class="class">DBSCAN</span>
+
+<span class="comment"># eps: max distance between neighbors</span>
+<span class="comment"># min_samples: minimum points to form a cluster</span>
+dbscan = <span class="class">DBSCAN</span>(eps=0.5, min_samples=5)
+labels = dbscan.<span class="function">fit_predict</span>(X_scaled)
+
+<span class="comment"># -1 labels indicate noise/outliers</span>
+n_clusters = len(set(labels)) - (1 <span class="keyword">if</span> -1 <span class="keyword">in</span> labels <span class="keyword">else</span> 0)
+n_outliers = list(labels).count(-1)
+<span class="keyword">print</span>(f<span class="string">"Found {n_clusters} clusters, {n_outliers} outliers"</span>)</pre>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Algorithm</th><th>Cluster Shape</th><th>Scalability</th><th>Requires K?</th><th>Handles Outliers?</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>KMeans</td><td>Spherical</td><td>O(n)</td><td>Yes</td><td>No</td></tr>
+                                <tr><td>MiniBatchKMeans</td><td>Spherical</td><td>Very fast</td><td>Yes</td><td>No</td></tr>
+                                <tr><td>DBSCAN</td><td>Arbitrary</td><td>O(n²) or O(n log n)</td><td>No</td><td>Yes</td></tr>
+                                <tr><td>AgglomerativeClustering</td><td>Depends on linkage</td><td>O(n²)</td><td>Yes</td><td>No</td></tr>
+                                <tr><td>HDBSCAN</td><td>Arbitrary</td><td>O(n log n)</td><td>No</td><td>Yes</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">Clustering finds structure in unlabeled data. KMeans is fast for spherical clusters when you know K. DBSCAN handles arbitrary shapes and outliers without specifying K. Always scale your features before clustering, and use metrics like silhouette score to evaluate results.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 8: Dimensionality Reduction -->
+            <section class="chapter" id="ch8">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 2.5</div>
+                    <h2 class="chapter-title">Dimensionality Reduction</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">
+                            Dimensionality reduction transforms high-dimensional data into fewer dimensions while preserving important information. This speeds up learning, reduces storage, enables visualization, and can improve model performance by removing noise. PCA (Principal Component Analysis) is the most common technique, finding orthogonal directions of maximum variance.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Why Reduce Dimensions?</h4>
+                            <ul>
+                                <li><strong>Curse of dimensionality:</strong> Many algorithms degrade with high dimensions</li>
+                                <li><strong>Visualization:</strong> Project to 2D/3D for human understanding</li>
+                                <li><strong>Noise reduction:</strong> Remove low-variance (noisy) components</li>
+                                <li><strong>Speed:</strong> Faster training with fewer features</li>
+                            </ul>
+                            <h4>PCA Intuition</h4>
+                            <p>PCA finds new axes (principal components) aligned with the directions of maximum variance. The first component captures the most variance, the second captures the most remaining variance orthogonal to the first, and so on.</p>
+                        </div>
+                    </div>
+
+                    <div class="img-grid">
+                        <div class="img-block">
+                            <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_pca_vs_lda_001.png" alt="PCA vs LDA">
+                            <div class="img-caption"><strong>Figure:</strong> PCA vs LDA on Iris dataset—PCA maximizes variance, LDA maximizes class separation.</div>
+                        </div>
+                        <div class="img-block">
+                            <img src="https://scikit-learn.org/stable/_images/sphx_glr_plot_pca_iris_001.png" alt="PCA visualization">
+                            <div class="img-caption"><strong>Figure:</strong> First two principal components of 4D Iris data, showing clear cluster structure.</div>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">PCA Example</span>
+<pre><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> <span class="class">PCA</span>
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> <span class="class">StandardScaler</span>
+
+<span class="comment"># Always standardize before PCA</span>
+scaler = <span class="class">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># Keep components explaining 95% variance</span>
+pca = <span class="class">PCA</span>(n_components=0.95)
+X_reduced = pca.<span class="function">fit_transform</span>(X_scaled)
+
+<span class="keyword">print</span>(f<span class="string">"Reduced: {X.shape[1]} → {X_reduced.shape[1]} features"</span>)
+<span class="keyword">print</span>(f<span class="string">"Variance explained: {pca.explained_variance_ratio_.sum():.1%}"</span>)</pre>
+                    </div>
+
+                    <div class="para">
+                        <div class="para-text">
+                            Beyond PCA, sklearn offers specialized dimensionality reduction methods. <strong>TruncatedSVD</strong> works on sparse matrices (unlike PCA) and is used in LSA for text. <strong>LDA</strong> (Linear Discriminant Analysis) is supervised—it finds projections that maximize class separation. <strong>t-SNE</strong> and <strong>UMAP</strong> are nonlinear methods excellent for visualization but shouldn't be used for preprocessing.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Choosing the Right Method</h4>
+                            <ul>
+                                <li><strong>PCA:</strong> General purpose, linear, unsupervised</li>
+                                <li><strong>TruncatedSVD:</strong> Sparse data (text, counts)</li>
+                                <li><strong>LDA:</strong> When you have labels and want class separation</li>
+                                <li><strong>t-SNE:</strong> Visualization only (slow, non-deterministic)</li>
+                            </ul>
+                            <h4>How Many Components?</h4>
+                            <p>Use n_components=0.95 to keep 95% variance, or plot cumulative explained variance ratio to find the "elbow". For visualization, use n_components=2 or 3.</p>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">Using PCA in a Pipeline</span>
+<pre><span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> <span class="class">Pipeline</span>
+<span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> <span class="class">PCA</span>
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> <span class="class">LogisticRegression</span>
+
+<span class="comment"># PCA as preprocessing in a pipeline</span>
+pipe = <span class="class">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="class">StandardScaler</span>()),
+    (<span class="string">'pca'</span>, <span class="class">PCA</span>(n_components=50)),
+    (<span class="string">'clf'</span>, <span class="class">LogisticRegression</span>())
+])
+
+<span class="comment"># Tune n_components with GridSearchCV</span>
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> <span class="class">GridSearchCV</span>
+param_grid = {<span class="string">'pca__n_components'</span>: [10, 30, 50, 100]}
+search = <span class="class">GridSearchCV</span>(pipe, param_grid, cv=5)
+search.<span class="function">fit</span>(X_train, y_train)</pre>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Method</th><th>Type</th><th>Supervised?</th><th>Best For</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>PCA</td><td>Linear</td><td>No</td><td>General preprocessing, variance preservation</td></tr>
+                                <tr><td>TruncatedSVD</td><td>Linear</td><td>No</td><td>Sparse matrices, text data (LSA)</td></tr>
+                                <tr><td>LDA</td><td>Linear</td><td>Yes</td><td>Classification preprocessing</td></tr>
+                                <tr><td>t-SNE</td><td>Nonlinear</td><td>No</td><td>Visualization only</td></tr>
+                                <tr><td>UMAP</td><td>Nonlinear</td><td>No</td><td>Visualization, faster than t-SNE</td></tr>
+                                <tr><td>NMF</td><td>Linear</td><td>No</td><td>Non-negative data (images, text)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">PCA reduces dimensions by finding directions of maximum variance. Always standardize first. Use n_components=0.95 to retain 95% variance, or tune it with cross-validation. For sparse data use TruncatedSVD; for visualization use t-SNE. LDA is supervised and maximizes class separation.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 9: Model Selection -->
+            <section class="chapter" id="ch9">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 3.1</div>
+                    <h2 class="chapter-title">Cross-Validation and Model Selection</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">
+                            Cross-validation evaluates model performance by training on subsets of data and testing on held-out portions. This gives more reliable estimates than a single train/test split. K-fold cross-validation splits data into K folds, trains on K-1 folds, tests on the remaining one, and rotates through all folds.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Why Cross-Validation Matters</h4>
+                            <p>A single train/test split can be lucky or unlucky. Cross-validation averages over multiple splits, giving you both a mean score and standard deviation. This helps detect if your model's performance varies wildly across different data subsets.</p>
+                            <h4>Common CV Strategies</h4>
+                            <ul>
+                                <li><strong>KFold:</strong> Standard K splits, default K=5</li>
+                                <li><strong>StratifiedKFold:</strong> Preserves class proportions (classification)</li>
+                                <li><strong>LeaveOneOut:</strong> K = n, expensive but unbiased</li>
+                                <li><strong>TimeSeriesSplit:</strong> Respects temporal order</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">Cross-Validation Basics</span>
+<pre><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score, cross_validate
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> <span class="class">RandomForestClassifier</span>
+
+clf = <span class="class">RandomForestClassifier</span>(n_estimators=100)
+
+<span class="comment"># Simple: Get array of scores</span>
+scores = <span class="function">cross_val_score</span>(clf, X, y, cv=5, scoring=<span class="string">'accuracy'</span>)
+<span class="keyword">print</span>(f<span class="string">"Accuracy: {scores.mean():.3f} (+/- {scores.std()*2:.3f})"</span>)
+
+<span class="comment"># Detailed: Multiple metrics, timing</span>
+results = <span class="function">cross_validate</span>(clf, X, y, cv=5,
+    scoring=[<span class="string">'accuracy'</span>, <span class="string">'f1_macro'</span>],
+    return_train_score=<span class="keyword">True</span>
+)
+<span class="keyword">print</span>(results[<span class="string">'test_accuracy'</span>])
+<span class="keyword">print</span>(results[<span class="string">'fit_time'</span>])</pre>
+                    </div>
+
+                    <div class="para">
+                        <div class="para-text">
+                            <strong>GridSearchCV</strong> performs exhaustive search over a parameter grid, evaluating all combinations with cross-validation. <strong>RandomizedSearchCV</strong> samples from distributions, more efficient for large parameter spaces. Both return the best parameters and can refit on full training data.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Grid vs Random Search</h4>
+                            <ul>
+                                <li><strong>GridSearchCV:</strong> Tests all combinations. Good for small grids.</li>
+                                <li><strong>RandomizedSearchCV:</strong> Samples n_iter combinations. Better for large spaces.</li>
+                                <li><strong>Research shows:</strong> 60 random iterations often beats exhaustive grid search</li>
+                            </ul>
+                            <h4>Avoiding Data Leakage</h4>
+                            <p>Always put preprocessing inside the cross-validation loop. Use Pipeline to ensure scaling/encoding is fit only on training folds, not the entire dataset.</p>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">GridSearchCV with Pipeline</span>
+<pre><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> <span class="class">GridSearchCV</span>
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> <span class="class">Pipeline</span>
+<span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> <span class="class">SVC</span>
+
+<span class="comment"># Pipeline ensures no data leakage</span>
+pipe = <span class="class">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="class">StandardScaler</span>()),
+    (<span class="string">'svc'</span>, <span class="class">SVC</span>())
+])
+
+<span class="comment"># Parameter grid (use double underscore for nested params)</span>
+param_grid = {
+    <span class="string">'svc__C'</span>: [0.1, 1, 10, 100],
+    <span class="string">'svc__kernel'</span>: [<span class="string">'rbf'</span>, <span class="string">'linear'</span>],
+    <span class="string">'svc__gamma'</span>: [<span class="string">'scale'</span>, <span class="string">'auto'</span>, 0.1, 0.01]
+}
+
+search = <span class="class">GridSearchCV</span>(pipe, param_grid, cv=5, scoring=<span class="string">'f1_macro'</span>, n_jobs=-1)
+search.<span class="function">fit</span>(X_train, y_train)
+
+<span class="keyword">print</span>(f<span class="string">"Best params: {search.best_params_}"</span>)
+<span class="keyword">print</span>(f<span class="string">"Best CV score: {search.best_score_:.3f}"</span>)
+<span class="keyword">print</span>(f<span class="string">"Test score: {search.score(X_test, y_test):.3f}"</span>)</pre>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Scorer</th><th>Task</th><th>Best When</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>accuracy</td><td>Classification</td><td>Balanced classes</td></tr>
+                                <tr><td>f1, f1_macro, f1_weighted</td><td>Classification</td><td>Imbalanced classes</td></tr>
+                                <tr><td>roc_auc</td><td>Binary classification</td><td>Ranking quality matters</td></tr>
+                                <tr><td>neg_mean_squared_error</td><td>Regression</td><td>General regression</td></tr>
+                                <tr><td>r2</td><td>Regression</td><td>Variance explained</td></tr>
+                                <tr><td>neg_log_loss</td><td>Classification</td><td>Probability calibration matters</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">Cross-validation gives reliable performance estimates. Use StratifiedKFold for classification. GridSearchCV finds optimal hyperparameters—always wrap preprocessing in a Pipeline to prevent data leakage. RandomizedSearchCV is more efficient for large parameter spaces.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 10: Preprocessing -->
+            <section class="chapter" id="ch10">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 6.3</div>
+                    <h2 class="chapter-title">Data Preprocessing</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">
+                            Preprocessing transforms raw data into a suitable format for machine learning. Key tasks include scaling features to similar ranges, encoding categorical variables, handling missing values, and creating new features. The sklearn.preprocessing module provides transformers that follow the fit/transform API and integrate with pipelines.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Why Preprocessing Matters</h4>
+                            <ul>
+                                <li><strong>Scaling:</strong> Many algorithms (SVM, KNN, neural nets) are sensitive to feature scales</li>
+                                <li><strong>Encoding:</strong> ML models need numeric inputs, not strings</li>
+                                <li><strong>Missing values:</strong> Most algorithms can't handle NaN</li>
+                            </ul>
+                            <h4>Fit vs Transform</h4>
+                            <p>Fit learns parameters from training data (mean, std, categories). Transform applies those parameters. Always fit on training data only, then transform both train and test to avoid data leakage.</p>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">Feature Scaling</span>
+<pre><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> <span class="class">StandardScaler</span>, <span class="class">MinMaxScaler</span>, <span class="class">RobustScaler</span>
+
+<span class="comment"># StandardScaler: zero mean, unit variance (most common)</span>
+scaler = <span class="class">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+X_test_scaled = scaler.<span class="function">transform</span>(X_test)  <span class="comment"># Use train params!</span>
+
+<span class="comment"># MinMaxScaler: scale to [0, 1] range</span>
+scaler = <span class="class">MinMaxScaler</span>()
+
+<span class="comment"># RobustScaler: use median/IQR, robust to outliers</span>
+scaler = <span class="class">RobustScaler</span>()</pre>
+                    </div>
+
+                    <div class="para">
+                        <div class="para-text">
+                            Categorical features must be encoded numerically. <strong>OrdinalEncoder</strong> assigns integers to categories (use when order matters). <strong>OneHotEncoder</strong> creates binary columns for each category (use when no order). <strong>LabelEncoder</strong> is for target variables only. For new/unseen categories in test data, set handle_unknown='ignore'.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Encoding Strategy</h4>
+                            <ul>
+                                <li><strong>Ordinal:</strong> Education level (high school < bachelor < master)</li>
+                                <li><strong>One-Hot:</strong> Colors, countries, product categories</li>
+                                <li><strong>Target encoding:</strong> High-cardinality categories (use category_encoders library)</li>
+                            </ul>
+                            <h4>Common Pitfall</h4>
+                            <p>Don't use OneHot for high-cardinality features (1000+ categories). This creates sparse matrices and can cause overfitting. Consider target encoding or hashing instead.</p>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">Encoding and ColumnTransformer</span>
+<pre><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> <span class="class">OneHotEncoder</span>, <span class="class">StandardScaler</span>
+<span class="keyword">from</span> sklearn.compose <span class="keyword">import</span> <span class="class">ColumnTransformer</span>
+<span class="keyword">from</span> sklearn.impute <span class="keyword">import</span> <span class="class">SimpleImputer</span>
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> <span class="class">Pipeline</span>
+
+<span class="comment"># Define column groups</span>
+numeric_features = [<span class="string">'age'</span>, <span class="string">'income'</span>, <span class="string">'score'</span>]
+categorical_features = [<span class="string">'gender'</span>, <span class="string">'city'</span>, <span class="string">'category'</span>]
+
+<span class="comment"># Create preprocessing pipelines for each type</span>
+numeric_transformer = <span class="class">Pipeline</span>([
+    (<span class="string">'imputer'</span>, <span class="class">SimpleImputer</span>(strategy=<span class="string">'median'</span>)),
+    (<span class="string">'scaler'</span>, <span class="class">StandardScaler</span>())
+])
+
+categorical_transformer = <span class="class">Pipeline</span>([
+    (<span class="string">'imputer'</span>, <span class="class">SimpleImputer</span>(strategy=<span class="string">'constant'</span>, fill_value=<span class="string">'missing'</span>)),
+    (<span class="string">'onehot'</span>, <span class="class">OneHotEncoder</span>(handle_unknown=<span class="string">'ignore'</span>))
+])
+
+<span class="comment"># Combine with ColumnTransformer</span>
+preprocessor = <span class="class">ColumnTransformer</span>([
+    (<span class="string">'num'</span>, numeric_transformer, numeric_features),
+    (<span class="string">'cat'</span>, categorical_transformer, categorical_features)
+])</pre>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Scaler</th><th>Formula</th><th>Use When</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>StandardScaler</td><td>(x - mean) / std</td><td>Default choice, assumes Gaussian</td></tr>
+                                <tr><td>MinMaxScaler</td><td>(x - min) / (max - min)</td><td>Bounded features, neural networks</td></tr>
+                                <tr><td>RobustScaler</td><td>(x - median) / IQR</td><td>Data has outliers</td></tr>
+                                <tr><td>MaxAbsScaler</td><td>x / max(|x|)</td><td>Sparse data, preserves zeros</td></tr>
+                                <tr><td>Normalizer</td><td>x / ||x||</td><td>Per-sample L2 normalization (text)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">Preprocessing is critical: scale numeric features (StandardScaler), encode categoricals (OneHotEncoder), impute missing values (SimpleImputer). Use ColumnTransformer to apply different transformations to different columns. Always fit on training data only to prevent data leakage.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 11: Pipelines -->
+            <section class="chapter" id="ch11">
+                <div class="chapter-header">
+                    <div class="chapter-number">Section 6.1</div>
+                    <h2 class="chapter-title">Pipelines and Composite Estimators</h2>
+                </div>
+                <div class="chapter-content">
+                    <div class="para">
+                        <div class="para-text">
+                            Pipelines chain multiple transformers and a final estimator into a single object. This ensures correct fit/transform sequencing, prevents data leakage during cross-validation, simplifies code, and makes models reproducible and deployable. Every sklearn workflow should use pipelines.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Why Pipelines Are Essential</h4>
+                            <ul>
+                                <li><strong>No data leakage:</strong> Fit only sees training fold in CV</li>
+                                <li><strong>Clean code:</strong> One object does fit → transform → predict</li>
+                                <li><strong>Reproducible:</strong> Same pipeline produces same results</li>
+                                <li><strong>Deployable:</strong> Pickle the pipeline, deploy anywhere</li>
+                            </ul>
+                            <h4>Pipeline Behavior</h4>
+                            <p>When you call pipeline.fit(X, y), it calls fit_transform on all transformers in sequence, then fit on the final estimator. predict() calls transform on all transformers, then predict on the final estimator.</p>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">Complete Pipeline Example</span>
+<pre><span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> <span class="class">Pipeline</span>
+<span class="keyword">from</span> sklearn.compose <span class="keyword">import</span> <span class="class">ColumnTransformer</span>
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> <span class="class">StandardScaler</span>, <span class="class">OneHotEncoder</span>
+<span class="keyword">from</span> sklearn.impute <span class="keyword">import</span> <span class="class">SimpleImputer</span>
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> <span class="class">RandomForestClassifier</span>
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> <span class="class">GridSearchCV</span>
+
+<span class="comment"># Feature groups</span>
+num_cols = [<span class="string">'age'</span>, <span class="string">'balance'</span>]
+cat_cols = [<span class="string">'job'</span>, <span class="string">'education'</span>]
+
+<span class="comment"># Preprocessor</span>
+preprocessor = <span class="class">ColumnTransformer</span>([
+    (<span class="string">'num'</span>, <span class="class">Pipeline</span>([
+        (<span class="string">'impute'</span>, <span class="class">SimpleImputer</span>(strategy=<span class="string">'median'</span>)),
+        (<span class="string">'scale'</span>, <span class="class">StandardScaler</span>())
+    ]), num_cols),
+    (<span class="string">'cat'</span>, <span class="class">Pipeline</span>([
+        (<span class="string">'impute'</span>, <span class="class">SimpleImputer</span>(strategy=<span class="string">'most_frequent'</span>)),
+        (<span class="string">'encode'</span>, <span class="class">OneHotEncoder</span>(handle_unknown=<span class="string">'ignore'</span>))
+    ]), cat_cols)
+])
+
+<span class="comment"># Full pipeline</span>
+pipe = <span class="class">Pipeline</span>([
+    (<span class="string">'preprocess'</span>, preprocessor),
+    (<span class="string">'classifier'</span>, <span class="class">RandomForestClassifier</span>())
+])
+
+<span class="comment"># GridSearch with nested parameter names</span>
+param_grid = {
+    <span class="string">'classifier__n_estimators'</span>: [100, 200],
+    <span class="string">'classifier__max_depth'</span>: [10, 20, <span class="keyword">None</span>]
+}
+
+search = <span class="class">GridSearchCV</span>(pipe, param_grid, cv=5, n_jobs=-1)
+search.<span class="function">fit</span>(X_train, y_train)
+<span class="keyword">print</span>(f<span class="string">"Best score: {search.best_score_:.3f}"</span>)</pre>
+                    </div>
+
+                    <div class="para">
+                        <div class="para-text">
+                            <strong>FeatureUnion</strong> combines multiple transformers in parallel (horizontally), concatenating their outputs. Use it to create features from multiple sources—e.g., combine text TF-IDF with numeric features. <strong>make_pipeline</strong> and <strong>make_union</strong> are convenience functions that auto-generate step names.
+                        </div>
+                        <div class="para-hint">Click for commentary</div>
+                        <div class="commentary">
+                            <div class="commentary-head">
+                                <div class="commentary-icon">💡</div>
+                                <div class="commentary-title">Analysis</div>
+                            </div>
+                            <h4>Pipeline vs FeatureUnion</h4>
+                            <ul>
+                                <li><strong>Pipeline:</strong> Sequential (A → B → C), output of A is input to B</li>
+                                <li><strong>FeatureUnion:</strong> Parallel, same input to A, B, C; outputs concatenated</li>
+                                <li><strong>ColumnTransformer:</strong> Different columns to different transformers</li>
+                            </ul>
+                            <h4>make_pipeline Shortcut</h4>
+                            <p>Use make_pipeline(StandardScaler(), PCA(50), LogisticRegression()) for quick pipelines. Step names are auto-generated from class names (lowercase).</p>
+                        </div>
+                    </div>
+
+                    <div class="code-box">
+                        <span class="label">Model Persistence</span>
+<pre><span class="keyword">import</span> joblib
+
+<span class="comment"># Save the fitted pipeline</span>
+joblib.<span class="function">dump</span>(pipe, <span class="string">'model_pipeline.pkl'</span>)
+
+<span class="comment"># Load for inference</span>
+loaded_pipe = joblib.<span class="function">load</span>(<span class="string">'model_pipeline.pkl'</span>)
+predictions = loaded_pipe.<span class="function">predict</span>(new_data)
+
+<span class="comment"># The loaded pipeline includes ALL preprocessing</span>
+<span class="comment"># Just pass raw data - it handles everything</span></pre>
+                    </div>
+
+                    <div class="key-concept">
+                        <div class="key-concept-label">Key Concept</div>
+                        <div class="key-concept-text">Always use Pipelines. They chain preprocessing and modeling, prevent data leakage in cross-validation, and create deployable artifacts. Use ColumnTransformer for different column types, GridSearchCV with nested parameter names (step__param), and joblib to save/load entire pipelines.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Glossary Section -->
+            <div class="specs-section" id="glossary">
+                <div class="section-header">
+                    <h2>Glossary</h2>
+                    <p>Key terms and concepts in scikit-learn</p>
+                </div>
+
+                <div class="glossary-grid">
+                    <div class="glossary-item"><div class="glossary-term">Estimator</div><div class="glossary-def">Any object that learns from data; has a fit() method</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Transformer</div><div class="glossary-def">Estimator that can transform data; has transform() method</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Predictor</div><div class="glossary-def">Estimator that can make predictions; has predict() method</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Pipeline</div><div class="glossary-def">Chain of transformers ending with an estimator</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Cross-Validation</div><div class="glossary-def">Technique to evaluate models by training on subsets</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Hyperparameter</div><div class="glossary-def">Model setting not learned from data (e.g., max_depth)</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Regularization</div><div class="glossary-def">Technique to prevent overfitting by penalizing complexity</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Feature Scaling</div><div class="glossary-def">Normalizing features to similar ranges (StandardScaler, MinMaxScaler)</div></div>
+                    <div class="glossary-item"><div class="glossary-term">One-Hot Encoding</div><div class="glossary-def">Converting categorical variables to binary columns</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Overfitting</div><div class="glossary-def">Model learns noise in training data, poor generalization</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Underfitting</div><div class="glossary-def">Model too simple to capture patterns</div></div>
+                    <div class="glossary-item"><div class="glossary-term">Bias-Variance Tradeoff</div><div class="glossary-def">Balance between model simplicity and flexibility</div></div>
+                </div>
+            </div>
+
+            <!-- Cheat Sheet -->
+            <div class="specs-section" id="cheatsheet">
+                <div class="section-header">
+                    <h2>Quick Reference Cheat Sheet</h2>
+                    <p>Common patterns and best practices</p>
+                </div>
+
+                <h3>The Universal API Pattern</h3>
+                <div class="code-box">
+                    <span class="label">Every scikit-learn model follows this pattern</span>
+<pre><span class="keyword">from</span> sklearn.module <span class="keyword">import</span> <span class="class">ModelClass</span>
+
+<span class="comment"># 1. Instantiate</span>
+model = <span class="class">ModelClass</span>(hyperparameters)
+
+<span class="comment"># 2. Fit</span>
+model.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># 3. Predict</span>
+y_pred = model.<span class="function">predict</span>(X_test)
+
+<span class="comment"># 4. Evaluate</span>
+score = model.<span class="function">score</span>(X_test, y_test)</pre>
+                </div>
+
+                <h3>Common Workflow</h3>
+                <div class="code-box">
+                    <span class="label">Complete ML Pipeline</span>
+<pre><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split, cross_val_score
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> <span class="class">StandardScaler</span>
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> <span class="class">Pipeline</span>
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> <span class="class">RandomForestClassifier</span>
+
+<span class="comment"># Split data</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, test_size=0.2, random_state=42
+)
+
+<span class="comment"># Create pipeline</span>
+pipe = <span class="class">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="class">StandardScaler</span>()),
+    (<span class="string">'clf'</span>, <span class="class">RandomForestClassifier</span>())
+])
+
+<span class="comment"># Cross-validation</span>
+scores = <span class="function">cross_val_score</span>(pipe, X_train, y_train, cv=5)
+<span class="keyword">print</span>(f<span class="string">"CV Score: {scores.mean():.3f} (+/- {scores.std():.3f})"</span>)
+
+<span class="comment"># Final fit and evaluation</span>
+pipe.<span class="function">fit</span>(X_train, y_train)
+<span class="keyword">print</span>(f<span class="string">"Test Score: {pipe.score(X_test, y_test):.3f}"</span>)</pre>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer style="text-align: center; padding: 50px 0; color: var(--gray-500); border-top: 1px solid var(--gray-200); margin-top: 50px;">
+                <p style="font-size: 1.1rem; margin-bottom: 8px;">Illustrated Analysis of</p>
+                <p style="font-size: 1.2rem; color: var(--gray-700);"><strong>scikit-learn User Guide</strong></p>
+                <p>Machine Learning in Python</p>
+                <p style="margin-top: 15px;"><a href="https://scikit-learn.org/stable/user_guide.html" target="_blank" style="color: var(--primary);">Read Official Documentation →</a></p>
+            </footer>
+        </div>
+    </main>
+
+    <!-- Back to Top -->
+    <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Expand/collapse paragraphs
+            document.addEventListener('click', function(e) {
+                const para = e.target.closest('.para');
+                if (para) {
+                    e.stopPropagation();
+                    para.classList.toggle('expanded');
+                }
+            });
+
+            // Close sidebar on mobile link click
+            document.querySelectorAll('.sidebar a').forEach(function(a) {
+                a.addEventListener('click', function() {
+                    if (window.innerWidth <= 1024) {
+                        document.getElementById('sidebar').classList.remove('open');
+                    }
+                });
+            });
+
+            // Back to top visibility
+            window.addEventListener('scroll', function() {
+                var backTop = document.getElementById('backTop');
+                if (backTop) backTop.classList.toggle('visible', window.scrollY > 500);
+
+                // Progress bar
+                var h = document.documentElement;
+                var progress = (window.scrollY / (h.scrollHeight - h.clientHeight)) * 100;
+                var progressBar = document.getElementById('progressBar');
+                if (progressBar) progressBar.style.width = progress + '%';
+            });
+
+            // Print: expand all
+            window.addEventListener('beforeprint', function() {
+                document.querySelectorAll('.para').forEach(function(p) {
+                    p.classList.add('expanded');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
