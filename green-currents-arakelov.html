@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meromorphic Continuation of Green Currents - Interactive Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-main) 0%, #1a1f3a 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .author-info {
+            margin-top: 1rem;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+
+        .card h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card h3 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .simulator {
+            background: var(--bg-main);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        canvas {
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            background: #000;
+            cursor: crosshair;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--accent);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: var(--bg-main);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .formula {
+            background: var(--bg-main);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .info-box {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .info-box h4 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .result {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid var(--success);
+        }
+
+        .result h4 {
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-container {
+            margin-top: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .concept-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .concept-list li {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: var(--bg-main);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .concept-list li:before {
+            content: "→";
+            color: var(--accent);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        code {
+            background: var(--bg-main);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Meromorphic Continuation of Green Currents</h1>
+            <div class="subtitle">An Interactive Exploration of Arakelov Theory</div>
+            <div class="author-info">
+                <strong>Nicușor Dan</strong> | Mathematische Annalen | DOI: 10.1007/s002080100302
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Overview Card -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    Paper Overview
+                </h2>
+                <p>This groundbreaking work in <strong>Arakelov theory</strong> constructs currents on complex quasi-projective varieties that depend on a holomorphic parameter. The paper establishes regularity and holomorphy results for these Green currents and their products, providing a rigorous foundation for the <strong>*-product</strong> in Arakelov geometry.</p>
+
+                <h3>Key Contributions</h3>
+                <ul class="concept-list">
+                    <li>Construction of parameter-dependent Green currents extending integration currents</li>
+                    <li>Proof that the *-product can be defined via meromorphic continuation</li>
+                    <li>New proof of commutativity and associativity of the *-product</li>
+                    <li>Explicit formulas for Fubini-Study heights of quadrics</li>
+                    <li>Analysis of associated Igusa zeta functions</li>
+                </ul>
+            </div>
+
+            <!-- Green Current Visualizer -->
+            <div class="card">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+                    Green Current Visualizer
+                </h2>
+                <p>Visualize Green currents as they evolve with a complex parameter. Green currents generalize integration over subvarieties.</p>
+
+                <div class="simulator">
+                    <canvas id="greenCurrentCanvas"></canvas>
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>Real Parameter (Re s): <span class="value-display" id="reValue">0</span></label>
+                            <input type="range" id="reSlider" min="-5" max="5" step="0.1" value="0">
+                        </div>
+                        <div class="control-group">
+                            <label>Imaginary Parameter (Im s): <span class="value-display" id="imValue">0</span></label>
+                            <input type="range" id="imSlider" min="-5" max="5" step="0.1" value="0">
+                        </div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #06b6d4;"></div>
+                            <span>Current Magnitude</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #7c3aed;"></div>
+                            <span>Poles</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #10b981;"></div>
+                            <span>Regular Region</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>What are Green Currents?</h4>
+                    <p>Green currents are differential forms that generalize the notion of integration over subvarieties. They play a crucial role in Arakelov geometry by providing a way to work with "arithmetic divisors".</p>
+                </div>
+            </div>
+
+            <!-- Meromorphic Continuation Explorer -->
+            <div class="card">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+                    Meromorphic Continuation
+                </h2>
+                <p>Explore how functions can be analytically continued beyond their original domain, revealing poles and singularities.</p>
+
+                <div class="simulator">
+                    <canvas id="meromorphicCanvas"></canvas>
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>Number of Poles: <span class="value-display" id="poleCount">3</span></label>
+                            <input type="range" id="poleSlider" min="1" max="8" step="1" value="3">
+                        </div>
+                        <div class="control-group">
+                            <label>View Mode:</label>
+                            <button onclick="toggleMeromorphicView()">Toggle Phase/Magnitude</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formula">
+                    The key insight: A product of currents can be continued from<br>
+                    Re(s) >> 0 to the entire complex plane with meromorphic structure
+                </div>
+            </div>
+
+            <!-- Star Product Calculator -->
+            <div class="card">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    *-Product in Arakelov Theory
+                </h2>
+                <p>The *-product is a fundamental operation in Arakelov geometry, combining arithmetic and geometric data.</p>
+
+                <div class="simulator">
+                    <div class="tab-container">
+                        <div class="tabs">
+                            <button class="tab active" onclick="switchTab(0)">Definition</button>
+                            <button class="tab" onclick="switchTab(1)">Properties</button>
+                            <button class="tab" onclick="switchTab(2)">Calculator</button>
+                        </div>
+
+                        <div class="tab-content active" id="tab0">
+                            <p>The *-product combines Green currents in a way that respects both the algebraic structure of varieties and the metric structure from complex geometry.</p>
+                            <div class="formula">
+                                g₁ * g₂ = lim_{s→0} ⟨g₁(s), g₂⟩<br>
+                                where g₁(s) is the meromorphic continuation
+                            </div>
+                            <div class="info-box">
+                                <h4>Dan's Contribution</h4>
+                                <p>This paper proves that the *-product can be rigorously defined through meromorphic continuation, avoiding previous technical difficulties.</p>
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="tab1">
+                            <h4>Key Properties Proven:</h4>
+                            <ul class="concept-list">
+                                <li><strong>Commutativity:</strong> g₁ * g₂ = g₂ * g₁</li>
+                                <li><strong>Associativity:</strong> (g₁ * g₂) * g₃ = g₁ * (g₂ * g₃)</li>
+                                <li><strong>Functoriality:</strong> Respects pullbacks under morphisms</li>
+                                <li><strong>Regularity:</strong> Results are smooth differential forms</li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-content" id="tab2">
+                            <p>Simulate the *-product of two simple currents:</p>
+                            <div class="controls">
+                                <div class="control-group">
+                                    <label>Current 1 Coefficient:</label>
+                                    <input type="number" id="coeff1" value="1" step="0.1">
+                                </div>
+                                <div class="control-group">
+                                    <label>Current 2 Coefficient:</label>
+                                    <input type="number" id="coeff2" value="1" step="0.1">
+                                </div>
+                            </div>
+                            <button onclick="calculateStarProduct()">Calculate *-Product</button>
+                            <div id="starResult" class="result" style="display:none;">
+                                <h4>Result</h4>
+                                <p id="starResultText"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complex Variety Visualizer -->
+            <div class="card">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z"/></svg>
+                    Complex Quasi-Projective Varieties
+                </h2>
+                <p>Visualize the geometric objects on which Green currents live.</p>
+
+                <div class="simulator">
+                    <canvas id="varietyCanvas"></canvas>
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>Rotation: <span class="value-display" id="rotValue">0°</span></label>
+                            <input type="range" id="rotSlider" min="0" max="360" step="1" value="0">
+                        </div>
+                        <div class="control-group">
+                            <label>Variety Type:</label>
+                            <select id="varietyType" onchange="updateVariety()" style="width: 100%; padding: 0.75rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary);">
+                                <option value="elliptic">Elliptic Curve</option>
+                                <option value="cubic">Cubic Surface</option>
+                                <option value="quadric">Quadric</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>Why Quasi-Projective?</h4>
+                    <p>Quasi-projective varieties are open subsets of projective varieties. They provide enough flexibility to work with, while still maintaining good compactification properties.</p>
+                </div>
+            </div>
+
+            <!-- Height Function Calculator -->
+            <div class="card">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                    Fubini-Study Height Calculator
+                </h2>
+                <p>Compute heights of points on varieties - a key invariant in Arakelov theory.</p>
+
+                <div class="simulator">
+                    <p>For a quadric in projective space, enter homogeneous coordinates:</p>
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>x₀:</label>
+                            <input type="number" id="x0" value="1" step="0.1">
+                        </div>
+                        <div class="control-group">
+                            <label>x₁:</label>
+                            <input type="number" id="x1" value="0" step="0.1">
+                        </div>
+                        <div class="control-group">
+                            <label>x₂:</label>
+                            <input type="number" id="x2" value="0" step="0.1">
+                        </div>
+                    </div>
+                    <button onclick="calculateHeight()">Calculate Height</button>
+                    <div id="heightResult" class="result" style="display:none;">
+                        <h4>Fubini-Study Height</h4>
+                        <p id="heightValue"></p>
+                        <div class="formula" id="heightFormula"></div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>What is a Height Function?</h4>
+                    <p>Heights measure the "arithmetic complexity" of points on varieties. The Fubini-Study height uses the standard metric on projective space.</p>
+                </div>
+            </div>
+
+            <!-- Igusa Zeta Function Explorer -->
+            <div class="card">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M14.59 2.59c-.38-.38-.89-.59-1.42-.59H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8.83c0-.53-.21-1.04-.59-1.41l-4.82-4.83zM15 18H9v-2h6v2zm0-4H9v-2h6v2zm-3-6V3.5L18.5 10H13c-.55 0-1-.45-1-1z"/></svg>
+                    Igusa Zeta Function
+                </h2>
+                <p>Explore the zeta functions associated with the singularities of varieties.</p>
+
+                <div class="simulator">
+                    <canvas id="zetaCanvas"></canvas>
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>Parameter s (real part): <span class="value-display" id="zetaSValue">1.0</span></label>
+                            <input type="range" id="zetaSSlider" min="0.1" max="3" step="0.1" value="1">
+                        </div>
+                    </div>
+                    <div class="formula">
+                        Z(s) = ∫ |f(x)|^s dx<br>
+                        The Igusa zeta function encodes data about singularities
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>Connection to Green Currents</h4>
+                    <p>Igusa zeta functions are intimately connected to meromorphic continuation. Their poles reveal geometric information about the singular locus.</p>
+                </div>
+            </div>
+
+            <!-- Mathematical Background -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M9 4v1.38c-.83-.33-1.72-.5-2.61-.5-1.79 0-3.58.68-4.95 2.05l3.33 3.33h1.11v1.11c.86.86 1.98 1.31 3.11 1.36V15H6v3c0 1.1.9 2 2 2h10c1.66 0 3-1.34 3-3V4H9zm-1.11 6.41V8.26H5.61L4.57 7.22c.67-.7 1.46-1.02 2.04-1.02.37 0 .74.13 1.03.38.28.24.47.58.51.96h1.11c.86.86 1.98 1.31 3.11 1.36V11H9v3H6v-3.59z"/></svg>
+                    Mathematical Foundations
+                </h2>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <h3>Arakelov Theory</h3>
+                        <p>Arakelov theory extends algebraic geometry to include "infinite primes" by incorporating metrics and analysis. It provides tools for studying arithmetic questions using geometric methods.</p>
+                        <ul class="concept-list">
+                            <li>Arithmetic intersection theory</li>
+                            <li>Heights on varieties</li>
+                            <li>Metrics on line bundles</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3>Green Currents</h3>
+                        <p>Generalize the concept of integration currents to include logarithmic singularities. Essential for defining arithmetic intersections.</p>
+                        <div class="formula">
+                            dd^c g + δ_D = [ω]<br>
+                            where g is Green, D is divisor
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3>Meromorphic Functions</h3>
+                        <p>Holomorphic except at isolated poles. The meromorphic continuation extends functions from one domain to a larger one.</p>
+                        <ul class="concept-list">
+                            <li>Analytic continuation</li>
+                            <li>Pole structure</li>
+                            <li>Residue theory</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                    Applications & Significance
+                </h2>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                    <div class="info-box">
+                        <h4>Number Theory</h4>
+                        <p>Heights on varieties are crucial for studying rational points and Diophantine equations. The rigorous *-product enables precise computations in arithmetic geometry.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Algebraic Geometry</h4>
+                        <p>The meromorphic continuation techniques provide new tools for intersection theory on arithmetic varieties, extending classical results.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Complex Analysis</h4>
+                        <p>The methods develop new understanding of currents on complex manifolds and their regularization properties.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 2rem; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 2rem;">
+            <p>Interactive Dashboard for "Prolongement méromorphe des courants de Green" by Nicușor Dan</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                Published in Mathematische Annalen |
+                <a href="https://link.springer.com/article/10.1007/s002080100302" style="color: var(--accent);" target="_blank">View Original Paper</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Green Current Visualizer
+        const gcCanvas = document.getElementById('greenCurrentCanvas');
+        const gcCtx = gcCanvas.getContext('2d');
+        let reParam = 0, imParam = 0;
+        let meromorphicView = 'magnitude';
+        let currentVariety = 'elliptic';
+        let rotation = 0;
+
+        function resizeCanvas(canvas) {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = 300;
+        }
+
+        resizeCanvas(gcCanvas);
+        window.addEventListener('resize', () => {
+            resizeCanvas(gcCanvas);
+            drawGreenCurrent();
+        });
+
+        document.getElementById('reSlider').addEventListener('input', (e) => {
+            reParam = parseFloat(e.target.value);
+            document.getElementById('reValue').textContent = reParam.toFixed(1);
+            drawGreenCurrent();
+        });
+
+        document.getElementById('imSlider').addEventListener('input', (e) => {
+            imParam = parseFloat(e.target.value);
+            document.getElementById('imValue').textContent = imParam.toFixed(1);
+            drawGreenCurrent();
+        });
+
+        function drawGreenCurrent() {
+            const w = gcCanvas.width;
+            const h = gcCanvas.height;
+            gcCtx.fillStyle = '#000';
+            gcCtx.fillRect(0, 0, w, h);
+
+            const centerX = w / 2;
+            const centerY = h / 2;
+            const scale = 40;
+
+            // Draw grid
+            gcCtx.strokeStyle = '#1e293b';
+            gcCtx.lineWidth = 1;
+            for (let x = 0; x < w; x += 30) {
+                gcCtx.beginPath();
+                gcCtx.moveTo(x, 0);
+                gcCtx.lineTo(x, h);
+                gcCtx.stroke();
+            }
+            for (let y = 0; y < h; y += 30) {
+                gcCtx.beginPath();
+                gcCtx.moveTo(0, y);
+                gcCtx.lineTo(w, y);
+                gcCtx.stroke();
+            }
+
+            // Draw Green current visualization
+            const imageData = gcCtx.createImageData(w, h);
+            for (let x = 0; x < w; x++) {
+                for (let y = 0; y < h; y++) {
+                    const re = (x - centerX) / scale;
+                    const im = (centerY - y) / scale;
+
+                    // Simulate Green current: current depends on parameter s = reParam + i*imParam
+                    const dist = Math.sqrt(re * re + im * im);
+                    const angle = Math.atan2(im, re);
+
+                    // Add singularities (poles)
+                    let value = 0;
+                    const poles = [
+                        {x: -2, y: 0},
+                        {x: 2, y: 0},
+                        {x: 0, y: 1.5}
+                    ];
+
+                    for (let pole of poles) {
+                        const d = Math.sqrt((re - pole.x) ** 2 + (im - pole.y) ** 2);
+                        if (d < 0.1) {
+                            value = 10; // Pole
+                        } else {
+                            value += 1 / (1 + d);
+                        }
+                    }
+
+                    // Parameter dependence
+                    const paramEffect = Math.exp(-Math.abs(reParam) * dist / 5) * Math.cos(imParam * angle);
+                    value *= (1 + paramEffect);
+
+                    // Color mapping
+                    const intensity = Math.min(255, Math.max(0, value * 25));
+                    const idx = (y * w + x) * 4;
+
+                    if (value > 2) {
+                        // Poles - purple
+                        imageData.data[idx] = 124;
+                        imageData.data[idx + 1] = 58;
+                        imageData.data[idx + 2] = 237;
+                    } else if (Math.abs(reParam) > 2) {
+                        // Outside regular region - cyan
+                        imageData.data[idx] = 6;
+                        imageData.data[idx + 1] = 182;
+                        imageData.data[idx + 2] = 212;
+                    } else {
+                        // Regular region - green gradient
+                        imageData.data[idx] = intensity * 0.1;
+                        imageData.data[idx + 1] = intensity * 0.7;
+                        imageData.data[idx + 2] = intensity * 0.5;
+                    }
+                    imageData.data[idx + 3] = Math.min(255, intensity * 1.5);
+                }
+            }
+            gcCtx.putImageData(imageData, 0, 0);
+
+            // Draw axes
+            gcCtx.strokeStyle = '#cbd5e1';
+            gcCtx.lineWidth = 2;
+            gcCtx.beginPath();
+            gcCtx.moveTo(0, centerY);
+            gcCtx.lineTo(w, centerY);
+            gcCtx.moveTo(centerX, 0);
+            gcCtx.lineTo(centerX, h);
+            gcCtx.stroke();
+
+            // Labels
+            gcCtx.fillStyle = '#cbd5e1';
+            gcCtx.font = '12px Inter';
+            gcCtx.fillText('Re', w - 25, centerY - 10);
+            gcCtx.fillText('Im', centerX + 10, 15);
+        }
+
+        // Meromorphic Continuation Explorer
+        const meroCanvas = document.getElementById('meromorphicCanvas');
+        const meroCtx = meroCanvas.getContext('2d');
+        resizeCanvas(meroCanvas);
+
+        let numPoles = 3;
+
+        document.getElementById('poleSlider').addEventListener('input', (e) => {
+            numPoles = parseInt(e.target.value);
+            document.getElementById('poleCount').textContent = numPoles;
+            drawMeromorphic();
+        });
+
+        function toggleMeromorphicView() {
+            meromorphicView = meromorphicView === 'magnitude' ? 'phase' : 'magnitude';
+            drawMeromorphic();
+        }
+
+        function drawMeromorphic() {
+            const w = meroCanvas.width;
+            const h = meroCanvas.height;
+            meroCtx.fillStyle = '#000';
+            meroCtx.fillRect(0, 0, w, h);
+
+            const centerX = w / 2;
+            const centerY = h / 2;
+            const scale = 50;
+
+            const imageData = meroCtx.createImageData(w, h);
+
+            // Generate poles
+            const poles = [];
+            for (let i = 0; i < numPoles; i++) {
+                const angle = (i / numPoles) * 2 * Math.PI;
+                const radius = 2;
+                poles.push({
+                    x: radius * Math.cos(angle),
+                    y: radius * Math.sin(angle)
+                });
+            }
+
+            for (let x = 0; x < w; x++) {
+                for (let y = 0; y < h; y++) {
+                    const re = (x - centerX) / scale;
+                    const im = (centerY - y) / scale;
+
+                    // Compute meromorphic function
+                    let valueRe = 1, valueIm = 0;
+
+                    for (let pole of poles) {
+                        const dx = re - pole.x;
+                        const dy = im - pole.y;
+                        const d2 = dx * dx + dy * dy;
+
+                        if (d2 < 0.01) {
+                            valueRe = 100;
+                            valueIm = 0;
+                        } else {
+                            const oldRe = valueRe;
+                            const oldIm = valueIm;
+                            valueRe = (oldRe * dx - oldIm * dy) / d2;
+                            valueIm = (oldRe * dy + oldIm * dx) / d2;
+                        }
+                    }
+
+                    const magnitude = Math.sqrt(valueRe * valueRe + valueIm * valueIm);
+                    const phase = Math.atan2(valueIm, valueRe);
+
+                    const idx = (y * w + x) * 4;
+
+                    if (meromorphicView === 'magnitude') {
+                        const intensity = Math.min(255, magnitude * 20);
+                        imageData.data[idx] = intensity * 0.2;
+                        imageData.data[idx + 1] = intensity * 0.6;
+                        imageData.data[idx + 2] = intensity;
+                        imageData.data[idx + 3] = 255;
+                    } else {
+                        // Phase coloring
+                        const hue = (phase + Math.PI) / (2 * Math.PI);
+                        const rgb = hslToRgb(hue, 1, 0.5);
+                        imageData.data[idx] = rgb[0];
+                        imageData.data[idx + 1] = rgb[1];
+                        imageData.data[idx + 2] = rgb[2];
+                        imageData.data[idx + 3] = 255;
+                    }
+                }
+            }
+            meroCtx.putImageData(imageData, 0, 0);
+
+            // Mark poles
+            meroCtx.fillStyle = '#7c3aed';
+            for (let pole of poles) {
+                const px = centerX + pole.x * scale;
+                const py = centerY - pole.y * scale;
+                meroCtx.beginPath();
+                meroCtx.arc(px, py, 5, 0, 2 * Math.PI);
+                meroCtx.fill();
+            }
+        }
+
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+
+        // Variety Visualizer
+        const varCanvas = document.getElementById('varietyCanvas');
+        const varCtx = varCanvas.getContext('2d');
+        resizeCanvas(varCanvas);
+
+        document.getElementById('rotSlider').addEventListener('input', (e) => {
+            rotation = parseFloat(e.target.value);
+            document.getElementById('rotValue').textContent = rotation.toFixed(0) + '°';
+            drawVariety();
+        });
+
+        function updateVariety() {
+            currentVariety = document.getElementById('varietyType').value;
+            drawVariety();
+        }
+
+        function drawVariety() {
+            const w = varCanvas.width;
+            const h = varCanvas.height;
+            varCtx.fillStyle = '#000';
+            varCtx.fillRect(0, 0, w, h);
+
+            const centerX = w / 2;
+            const centerY = h / 2;
+            const rad = rotation * Math.PI / 180;
+
+            varCtx.strokeStyle = '#06b6d4';
+            varCtx.lineWidth = 2;
+
+            if (currentVariety === 'elliptic') {
+                // Draw elliptic curve: y² = x³ + ax + b
+                varCtx.beginPath();
+                for (let t = -3; t <= 3; t += 0.01) {
+                    const x = t;
+                    const y2 = x * x * x - x + 1;
+                    if (y2 >= 0) {
+                        const y = Math.sqrt(y2);
+                        const rx = x * Math.cos(rad) - y * Math.sin(rad);
+                        const ry = x * Math.sin(rad) + y * Math.cos(rad);
+                        const px = centerX + rx * 40;
+                        const py = centerY - ry * 40;
+                        if (t === -3) varCtx.moveTo(px, py);
+                        else varCtx.lineTo(px, py);
+                    }
+                }
+                varCtx.stroke();
+
+                varCtx.beginPath();
+                for (let t = -3; t <= 3; t += 0.01) {
+                    const x = t;
+                    const y2 = x * x * x - x + 1;
+                    if (y2 >= 0) {
+                        const y = -Math.sqrt(y2);
+                        const rx = x * Math.cos(rad) - y * Math.sin(rad);
+                        const ry = x * Math.sin(rad) + y * Math.cos(rad);
+                        const px = centerX + rx * 40;
+                        const py = centerY - ry * 40;
+                        if (t === -3) varCtx.moveTo(px, py);
+                        else varCtx.lineTo(px, py);
+                    }
+                }
+                varCtx.stroke();
+            } else if (currentVariety === 'quadric') {
+                // Draw quadric surface
+                for (let u = 0; u <= Math.PI * 2; u += 0.1) {
+                    varCtx.beginPath();
+                    for (let v = -1; v <= 1; v += 0.05) {
+                        const x = Math.cos(u) * Math.sqrt(1 + v * v);
+                        const y = Math.sin(u) * Math.sqrt(1 + v * v);
+                        const z = v;
+
+                        const rx = x * Math.cos(rad) - z * Math.sin(rad);
+                        const rz = x * Math.sin(rad) + z * Math.cos(rad);
+
+                        const px = centerX + rx * 50;
+                        const py = centerY - y * 50 - rz * 20;
+
+                        if (v === -1) varCtx.moveTo(px, py);
+                        else varCtx.lineTo(px, py);
+                    }
+                    varCtx.stroke();
+                }
+            } else {
+                // Cubic surface
+                for (let angle = 0; angle < Math.PI * 2; angle += 0.05) {
+                    varCtx.beginPath();
+                    for (let r = 0; r <= 3; r += 0.1) {
+                        const x = r * Math.cos(angle);
+                        const y = r * Math.sin(angle);
+                        const z = Math.sin(r) * Math.cos(angle * 3);
+
+                        const rx = x * Math.cos(rad) - z * Math.sin(rad);
+                        const rz = x * Math.sin(rad) + z * Math.cos(rad);
+
+                        const px = centerX + rx * 30;
+                        const py = centerY - y * 30 - rz * 15;
+
+                        if (r === 0) varCtx.moveTo(px, py);
+                        else varCtx.lineTo(px, py);
+                    }
+                    varCtx.stroke();
+                }
+            }
+        }
+
+        // Zeta Function
+        const zetaCanvas = document.getElementById('zetaCanvas');
+        const zetaCtx = zetaCanvas.getContext('2d');
+        resizeCanvas(zetaCanvas);
+
+        let zetaS = 1.0;
+
+        document.getElementById('zetaSSlider').addEventListener('input', (e) => {
+            zetaS = parseFloat(e.target.value);
+            document.getElementById('zetaSValue').textContent = zetaS.toFixed(1);
+            drawZeta();
+        });
+
+        function drawZeta() {
+            const w = zetaCanvas.width;
+            const h = zetaCanvas.height;
+            zetaCtx.fillStyle = '#000';
+            zetaCtx.fillRect(0, 0, w, h);
+
+            zetaCtx.strokeStyle = '#10b981';
+            zetaCtx.lineWidth = 3;
+            zetaCtx.beginPath();
+
+            const scale = 50;
+            for (let x = 0; x < w; x++) {
+                const t = (x / w) * 4 - 2;
+                // Simplified Igusa-like function
+                const value = Math.abs(Math.pow(Math.abs(t), zetaS) * Math.exp(-t * t / 2));
+                const y = h - value * scale;
+
+                if (x === 0) zetaCtx.moveTo(x, y);
+                else zetaCtx.lineTo(x, y);
+            }
+            zetaCtx.stroke();
+
+            // Draw axes
+            zetaCtx.strokeStyle = '#334155';
+            zetaCtx.lineWidth = 1;
+            zetaCtx.beginPath();
+            zetaCtx.moveTo(0, h - 20);
+            zetaCtx.lineTo(w, h - 20);
+            zetaCtx.stroke();
+        }
+
+        // Tab switching
+        function switchTab(index) {
+            document.querySelectorAll('.tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === index);
+            });
+            document.querySelectorAll('.tab-content').forEach((content, i) => {
+                content.classList.toggle('active', i === index);
+            });
+        }
+
+        // Star product calculator
+        function calculateStarProduct() {
+            const c1 = parseFloat(document.getElementById('coeff1').value);
+            const c2 = parseFloat(document.getElementById('coeff2').value);
+
+            // Simplified calculation
+            const result = c1 * c2 * (1 + 0.5 * Math.log(Math.abs(c1 * c2) + 1));
+
+            document.getElementById('starResult').style.display = 'block';
+            document.getElementById('starResultText').innerHTML = `
+                g₁ * g₂ ≈ <strong>${result.toFixed(4)}</strong><br>
+                <small>This is a simplified model. The actual *-product involves meromorphic continuation and regularization.</small>
+            `;
+        }
+
+        // Height calculator
+        function calculateHeight() {
+            const x0 = parseFloat(document.getElementById('x0').value);
+            const x1 = parseFloat(document.getElementById('x1').value);
+            const x2 = parseFloat(document.getElementById('x2').value);
+
+            const norm = Math.sqrt(x0*x0 + x1*x1 + x2*x2);
+            const height = Math.log(norm);
+
+            document.getElementById('heightResult').style.display = 'block';
+            document.getElementById('heightValue').textContent = `h([${x0}:${x1}:${x2}]) = ${height.toFixed(4)}`;
+            document.getElementById('heightFormula').textContent = `h = log(√(x₀² + x₁² + x₂²)) = log(${norm.toFixed(4)})`;
+        }
+
+        // Initial drawings
+        drawGreenCurrent();
+        drawMeromorphic();
+        drawVariety();
+        drawZeta();
+    </script>
+</body>
+</html>
