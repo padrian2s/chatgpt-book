@@ -356,9 +356,150 @@
             font-family: 'JetBrains Mono', monospace;
             color: var(--accent);
         }
+
+        /* Explainer Mode Styles */
+        .explainer-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--bg-card);
+            padding: 0.75rem 1.25rem;
+            border-radius: 50px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .explainer-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(6, 182, 212, 0.5);
+        }
+
+        .explainer-toggle label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: var(--border);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        #explainerToggle:checked + .toggle-switch {
+            background: var(--accent);
+        }
+
+        #explainerToggle:checked + .toggle-switch::after {
+            transform: translateX(24px);
+        }
+
+        #explainerToggle {
+            display: none;
+        }
+
+        .simple-explanation {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .simple-explanation h4 {
+            color: var(--success);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .simple-explanation h4::before {
+            content: "💡";
+            font-size: 1.2em;
+        }
+
+        .simple-explanation p {
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .analogy {
+            background: var(--bg-main);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.75rem;
+            border-left: 4px solid var(--success);
+        }
+
+        .analogy strong {
+            color: var(--success);
+        }
+
+        body.simple-mode .simple-explanation {
+            display: block;
+        }
+
+        body.simple-mode .info-box {
+            display: none;
+        }
+
+        body.simple-mode .formula {
+            opacity: 0.5;
+        }
+
+        .toggle-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            .explainer-toggle {
+                top: 10px;
+                right: 10px;
+                font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Explainer Mode Toggle -->
+    <div class="explainer-toggle">
+        <svg class="toggle-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        <label for="explainerToggle">Simple Mode</label>
+        <input type="checkbox" id="explainerToggle">
+        <div class="toggle-switch"></div>
+    </div>
+
     <div class="container">
         <header>
             <h1>Meromorphic Continuation of Green Currents</h1>
@@ -385,6 +526,15 @@
                     <li>Explicit formulas for Fubini-Study heights of quadrics</li>
                     <li>Analysis of associated Igusa zeta functions</li>
                 </ul>
+
+                <div class="simple-explanation">
+                    <h4>For Non-Mathematicians: What's This Paper About?</h4>
+                    <p>Imagine you're trying to do calculus (finding areas, slopes, etc.) but instead of simple curves, you're working with exotic geometric shapes that also have "number theory" properties. This is incredibly difficult!</p>
+                    <div class="analogy">
+                        <strong>The Big Picture:</strong> Nicușor Dan (yes, the current mayor of Bucharest!) solved several major technical problems in this area back in 2001. He showed how to properly "extend" certain mathematical operations (like continuing a pattern beyond where it's obvious) and proved they work correctly. This is like proving that a GPS algorithm works not just on Earth, but would work correctly on any curved surface - even ones we haven't discovered yet!
+                    </div>
+                    <p style="margin-top: 1rem;"><strong>Why it matters:</strong> This work provides rigorous foundations for combining geometry and number theory, which is crucial for understanding everything from cryptographic security to the distribution of prime numbers.</p>
+                </div>
             </div>
 
             <!-- Green Current Visualizer -->
@@ -427,6 +577,14 @@
                     <h4>What are Green Currents?</h4>
                     <p>Green currents are differential forms that generalize the notion of integration over subvarieties. They play a crucial role in Arakelov geometry by providing a way to work with "arithmetic divisors".</p>
                 </div>
+
+                <div class="simple-explanation">
+                    <h4>For Non-Mathematicians: What are Green Currents?</h4>
+                    <p>Imagine you're trying to measure the "influence" of a curve or surface in space. Green currents are like special measuring tools that can detect not just where the shape is, but also how it affects the space around it.</p>
+                    <div class="analogy">
+                        <strong>Think of it like this:</strong> If a regular function is like measuring temperature at different points, a Green current is like measuring how heat flows through space from a hot wire or surface. The visualization above shows how this "flow" changes as we adjust parameters.
+                    </div>
+                </div>
             </div>
 
             <!-- Meromorphic Continuation Explorer -->
@@ -455,6 +613,14 @@
                     The key insight: A product of currents can be continued from<br>
                     Re(s) >> 0 to the entire complex plane with meromorphic structure
                 </div>
+
+                <div class="simple-explanation">
+                    <h4>For Non-Mathematicians: Meromorphic Continuation</h4>
+                    <p>Imagine you have a recipe that works perfectly for temperatures between 0°C and 100°C. Meromorphic continuation is like figuring out how to extend that recipe to work at ANY temperature, even extremely cold or hot ones.</p>
+                    <div class="analogy">
+                        <strong>The catch:</strong> At certain special temperatures (called "poles"), the recipe breaks down - like how water behaves strangely at exactly 0°C and 100°C. The purple spots in the visualization show these special "breaking points." Nicușor Dan's paper shows that we can carefully extend mathematical functions in this way while keeping track of where they break.
+                    </div>
+                </div>
             </div>
 
             <!-- Star Product Calculator -->
@@ -482,6 +648,14 @@
                             <div class="info-box">
                                 <h4>Dan's Contribution</h4>
                                 <p>This paper proves that the *-product can be rigorously defined through meromorphic continuation, avoiding previous technical difficulties.</p>
+                            </div>
+
+                            <div class="simple-explanation">
+                                <h4>For Non-Mathematicians: The *-Product</h4>
+                                <p>The *-product is like a special way of "multiplying" geometric measurements that keeps track of both their shape AND their arithmetic properties.</p>
+                                <div class="analogy">
+                                    <strong>Why it's special:</strong> Imagine you're combining two maps - one showing terrain elevation, another showing population density. You can't just overlay them; you need a smart way to combine the information. The *-product is that smart combination method for mathematical structures. Nicușor Dan proved this combination method actually works properly and follows nice mathematical rules (like a×b = b×a).
+                                </div>
                             </div>
                         </div>
 
@@ -547,6 +721,14 @@
                     <h4>Why Quasi-Projective?</h4>
                     <p>Quasi-projective varieties are open subsets of projective varieties. They provide enough flexibility to work with, while still maintaining good compactification properties.</p>
                 </div>
+
+                <div class="simple-explanation">
+                    <h4>For Non-Mathematicians: Complex Varieties</h4>
+                    <p>These are the "stages" where the mathematical drama happens. Think of them as special curved surfaces or spaces with interesting shapes.</p>
+                    <div class="analogy">
+                        <strong>Real-world comparison:</strong> An elliptic curve (one option above) is like a donut surface. A quadric is like a vase or hourglass. These shapes appear in everything from cryptography (securing your credit card) to string theory (understanding the universe). The paper studies how to do calculus and measurements on these exotic shapes.
+                    </div>
+                </div>
             </div>
 
             <!-- Height Function Calculator -->
@@ -585,6 +767,14 @@
                     <h4>What is a Height Function?</h4>
                     <p>Heights measure the "arithmetic complexity" of points on varieties. The Fubini-Study height uses the standard metric on projective space.</p>
                 </div>
+
+                <div class="simple-explanation">
+                    <h4>For Non-Mathematicians: Height Functions</h4>
+                    <p>A height function is like a "complexity meter" for numbers. Some numbers are simple (like 1, 2, 3), others are complex (like 271,849/138,293).</p>
+                    <div class="analogy">
+                        <strong>Why it matters:</strong> Imagine you're trying to find solutions to an equation. Heights help you understand which solutions are "simple" vs "complicated." In number theory, this is crucial for finding patterns. It's like asking "how difficult is this number to write down?" The calculator above computes this "difficulty score" for points in space.
+                    </div>
+                </div>
             </div>
 
             <!-- Igusa Zeta Function Explorer -->
@@ -612,6 +802,14 @@
                 <div class="info-box">
                     <h4>Connection to Green Currents</h4>
                     <p>Igusa zeta functions are intimately connected to meromorphic continuation. Their poles reveal geometric information about the singular locus.</p>
+                </div>
+
+                <div class="simple-explanation">
+                    <h4>For Non-Mathematicians: Zeta Functions</h4>
+                    <p>A zeta function is like a "fingerprint" for a mathematical shape. Just like your fingerprint uniquely identifies you, a zeta function uniquely identifies properties of geometric objects.</p>
+                    <div class="analogy">
+                        <strong>The detective work:</strong> When a shape has "singularities" (sharp corners or weird spots), the zeta function reveals where they are and what they're like - without having to look at the entire shape! It's like being able to identify a sculpture by analyzing how sound echoes off it, rather than looking at it directly. The graph above shows how this "echo pattern" changes with different parameters.
+                    </div>
                 </div>
             </div>
 
@@ -690,6 +888,32 @@
     </div>
 
     <script>
+        // Explainer Mode Toggle
+        const explainerToggle = document.getElementById('explainerToggle');
+        const toggleSwitch = document.querySelector('.toggle-switch');
+
+        // Load saved preference
+        const savedMode = localStorage.getItem('explainerMode');
+        if (savedMode === 'simple') {
+            explainerToggle.checked = true;
+            document.body.classList.add('simple-mode');
+        }
+
+        explainerToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('simple-mode');
+                localStorage.setItem('explainerMode', 'simple');
+            } else {
+                document.body.classList.remove('simple-mode');
+                localStorage.setItem('explainerMode', 'technical');
+            }
+        });
+
+        toggleSwitch.addEventListener('click', function() {
+            explainerToggle.checked = !explainerToggle.checked;
+            explainerToggle.dispatchEvent(new Event('change'));
+        });
+
         // Green Current Visualizer
         const gcCanvas = document.getElementById('greenCurrentCanvas');
         const gcCtx = gcCanvas.getContext('2d');
