@@ -356,6 +356,56 @@
             font-family: 'JetBrains Mono', monospace;
             color: var(--accent);
         }
+
+        /* Explanation Mode Styles */
+        .simple-explanation {
+            display: none;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .simple-explanation h4 {
+            color: var(--success);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .simple-explanation p {
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .simple-explanation .analogy {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid var(--warning);
+        }
+
+        .simple-explanation .analogy::before {
+            content: "💡 ";
+            font-size: 1.2rem;
+        }
+
+        body.simple-mode .simple-explanation {
+            display: block;
+        }
+
+        body.simple-mode .formula {
+            opacity: 0.5;
+        }
+
+        body.simple-mode .technical-term {
+            background: var(--warning);
+            color: var(--bg-main);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -365,6 +415,11 @@
             <div class="subtitle">An Interactive Exploration of Arakelov Theory</div>
             <div class="author-info">
                 <strong>Nicușor Dan</strong> | Mathematische Annalen | DOI: 10.1007/s002080100302
+            </div>
+            <div style="margin-top: 1.5rem;">
+                <button id="modeToggle" onclick="toggleExplanationMode()" style="padding: 0.75rem 2rem; font-size: 1rem;">
+                    🎓 Switch to Simple Mode
+                </button>
             </div>
         </header>
 
@@ -385,6 +440,22 @@
                     <li>Explicit formulas for Fubini-Study heights of quadrics</li>
                     <li>Analysis of associated Igusa zeta functions</li>
                 </ul>
+
+                <div class="simple-explanation">
+                    <h4>📚 What is this paper about? (Simple Explanation)</h4>
+                    <p>Imagine you're trying to measure the "size" or "weight" of geometric shapes in a very special way - one that works both for regular shapes and for numbers. This paper develops mathematical tools to do exactly that!</p>
+
+                    <div class="analogy">
+                        <strong>Analogy:</strong> Think of it like creating a universal measuring system that works whether you're measuring the volume of a sphere, the distance between cities, or even abstract mathematical objects. This paper makes those measurements more precise and easier to calculate.
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>In plain words, this paper:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>Creates new mathematical "measuring tools" that can adjust based on parameters (like having a ruler that can change its units)</li>
+                        <li>Proves that certain mathematical operations work consistently (like showing 2+3 equals 3+2)</li>
+                        <li>Provides specific formulas for calculating sizes of geometric objects</li>
+                    </ul>
+                </div>
             </div>
 
             <!-- Green Current Visualizer -->
@@ -427,6 +498,23 @@
                     <h4>What are Green Currents?</h4>
                     <p>Green currents are differential forms that generalize the notion of integration over subvarieties. They play a crucial role in Arakelov geometry by providing a way to work with "arithmetic divisors".</p>
                 </div>
+
+                <div class="simple-explanation">
+                    <h4>🌊 Green Currents - Simple Explanation</h4>
+                    <p><span class="technical-term">Green currents</span> are like mathematical "flows" or "fields" that live on geometric shapes. Think of them like weather patterns on a map, but for mathematical objects!</p>
+
+                    <div class="analogy">
+                        <strong>Analogy:</strong> Imagine a topographic map showing elevation contours. Green currents are similar - they show how a mathematical "height" or "intensity" varies across a shape. The visualization above shows how these patterns change when you adjust the parameters (using the sliders).
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>What you're seeing:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li><strong>Purple dots:</strong> These are "poles" - special points where the current becomes very strong (like infinity)</li>
+                        <li><strong>Green areas:</strong> Regular regions where the current behaves nicely</li>
+                        <li><strong>Cyan areas:</strong> Regions where the current's magnitude is visible</li>
+                        <li><strong>The sliders:</strong> Change the "complex parameter" - like tuning a radio to different frequencies to see different patterns</li>
+                    </ul>
+                </div>
             </div>
 
             <!-- Meromorphic Continuation Explorer -->
@@ -454,6 +542,17 @@
                 <div class="formula">
                     The key insight: A product of currents can be continued from<br>
                     Re(s) >> 0 to the entire complex plane with meromorphic structure
+                </div>
+
+                <div class="simple-explanation">
+                    <h4>🔄 Meromorphic Continuation - Simple Explanation</h4>
+                    <p><span class="technical-term">Meromorphic continuation</span> is like extending a road beyond where it originally ended - but in the world of mathematical functions!</p>
+
+                    <div class="analogy">
+                        <strong>Analogy:</strong> Imagine you have a map that only shows roads in your city. Meromorphic continuation is like discovering that those roads actually continue beyond city limits! The purple dots you see are "obstacles" (poles) where the road has a special feature (like a roundabout), but the road itself continues around them.
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>Why is this important?</strong> Sometimes a mathematical function only "works" in a limited area. This technique lets us extend it to work almost everywhere, revealing hidden patterns and properties. The visualization shows how the function behaves as we add more poles (obstacles).</p>
                 </div>
             </div>
 
@@ -515,6 +614,23 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="simple-explanation">
+                    <h4>⭐ The *-Product - Simple Explanation</h4>
+                    <p>The <span class="technical-term">*-product</span> (star product) is a special way of combining two mathematical objects. Think of it as a sophisticated form of multiplication!</p>
+
+                    <div class="analogy">
+                        <strong>Analogy:</strong> Regular multiplication combines two numbers (3 × 4 = 12). The *-product combines two "Green currents" (those mathematical flows we saw earlier) in a way that preserves important properties. It's like mixing two colors of paint, but following very specific rules to get the right shade!
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>Key properties this paper proves:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li><strong>Commutativity:</strong> Order doesn't matter (A * B = B * A) - just like 3 × 4 = 4 × 3</li>
+                        <li><strong>Associativity:</strong> Grouping doesn't matter ((A * B) * C = A * (B * C)) - just like (2 × 3) × 4 = 2 × (3 × 4)</li>
+                        <li><strong>Well-defined:</strong> It always gives a consistent answer</li>
+                    </ul>
+                    <p style="margin-top: 1rem;">The calculator above lets you experiment with simple examples of this operation!</p>
+                </div>
             </div>
 
             <!-- Complex Variety Visualizer -->
@@ -546,6 +662,24 @@
                 <div class="info-box">
                     <h4>Why Quasi-Projective?</h4>
                     <p>Quasi-projective varieties are open subsets of projective varieties. They provide enough flexibility to work with, while still maintaining good compactification properties.</p>
+                </div>
+
+                <div class="simple-explanation">
+                    <h4>🎨 Complex Varieties - Simple Explanation</h4>
+                    <p><span class="technical-term">Complex quasi-projective varieties</span> are geometric shapes defined by equations, but they live in a space more complex than our regular 3D world!</p>
+
+                    <div class="analogy">
+                        <strong>Analogy:</strong> Think of different surfaces:
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li><strong>Elliptic Curve:</strong> Like a donut surface (torus) - but flattened into 2D</li>
+                            <li><strong>Cubic Surface:</strong> Like a wavy sheet or a saddle surface</li>
+                            <li><strong>Quadric:</strong> Like a sphere or a bowl shape</li>
+                        </ul>
+                    </div>
+
+                    <p style="margin-top: 1rem;">The visualization above shows simplified versions of these shapes. Rotate them using the slider to see them from different angles! These are the "geometric playgrounds" where Green currents live and interact.</p>
+
+                    <p style="margin-top: 1rem;"><strong>"Quasi-projective"</strong> just means these shapes have some "boundary" or "missing parts" - like a sphere with the north pole removed. This gives mathematicians flexibility to work with them.</p>
                 </div>
             </div>
 
@@ -585,6 +719,21 @@
                     <h4>What is a Height Function?</h4>
                     <p>Heights measure the "arithmetic complexity" of points on varieties. The Fubini-Study height uses the standard metric on projective space.</p>
                 </div>
+
+                <div class="simple-explanation">
+                    <h4>📏 Height Functions - Simple Explanation</h4>
+                    <p>A <span class="technical-term">height function</span> measures how "complicated" or "large" a point is. It's like measuring the "size" of coordinates!</p>
+
+                    <div class="analogy">
+                        <strong>Analogy:</strong> Imagine you're describing a location using coordinates. The point (1000, 2000, 3000) involves bigger numbers than (1, 2, 3), so it's "more complex". The height function gives us a single number that captures this complexity.
+                        <br><br>
+                        It's similar to measuring how far a point is from the origin, but in a more sophisticated way that works for geometric objects, not just regular space!
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>Try it yourself:</strong> Enter different coordinate values above and see how the height changes. Larger numbers generally give larger heights!</p>
+
+                    <p style="margin-top: 1rem;"><strong>Why is this useful?</strong> In number theory, heights help mathematicians understand which solutions to equations are "simpler" or "more natural" - simpler solutions have smaller heights.</p>
+                </div>
             </div>
 
             <!-- Igusa Zeta Function Explorer -->
@@ -612,6 +761,21 @@
                 <div class="info-box">
                     <h4>Connection to Green Currents</h4>
                     <p>Igusa zeta functions are intimately connected to meromorphic continuation. Their poles reveal geometric information about the singular locus.</p>
+                </div>
+
+                <div class="simple-explanation">
+                    <h4>🔢 Igusa Zeta Functions - Simple Explanation</h4>
+                    <p><span class="technical-term">Igusa zeta functions</span> are special mathematical functions that encode information about the "singularities" (special/problematic points) of geometric shapes.</p>
+
+                    <div class="analogy">
+                        <strong>Analogy:</strong> Imagine scanning a surface to find bumps, holes, or sharp corners. The Igusa zeta function is like a "scanner" that produces a signal (the curve you see above) that contains coded information about all those special features.
+                        <br><br>
+                        The peaks and valleys in the visualization tell us where the interesting geometric features are!
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>What the visualization shows:</strong> As you move the slider, you're changing the "scanning frequency" (the parameter s). Different frequencies reveal different aspects of the geometric structure, much like different MRI scan settings reveal different tissue types.</p>
+
+                    <p style="margin-top: 1rem;"><strong>Connection to this paper:</strong> The paper uses these zeta functions to help understand and extend Green currents. The zeta function's special points (poles) tell us important information about the geometry!</p>
                 </div>
             </div>
 
@@ -651,6 +815,27 @@
                             <li>Residue theory</li>
                         </ul>
                     </div>
+                </div>
+
+                <div class="simple-explanation">
+                    <h4>📖 Mathematical Foundations - Simple Summary</h4>
+                    <p>This paper builds on three main mathematical areas. Here's what they mean in simple terms:</p>
+
+                    <div style="display: grid; gap: 1rem; margin-top: 1rem;">
+                        <div class="analogy">
+                            <strong>🏛️ Arakelov Theory</strong> - A bridge between two worlds: algebra (solving equations with numbers) and geometry (studying shapes). It's like having a universal translator that lets these two fields talk to each other!
+                        </div>
+
+                        <div class="analogy">
+                            <strong>🌊 Green Currents</strong> - Mathematical objects that describe "flows" or "distributions" on shapes. Think of them like temperature distributions on a surface, but more abstract. They help measure and compare geometric properties.
+                        </div>
+
+                        <div class="analogy">
+                            <strong>🔄 Meromorphic Functions</strong> - Functions that work "almost everywhere" but have a few special points (poles) where they blow up to infinity. Like a mostly smooth road with a few speed bumps that you need to navigate around.
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 1rem;">This paper's innovation is showing how to combine these three concepts to create new tools for measuring and understanding mathematical objects!</p>
                 </div>
             </div>
 
@@ -1137,6 +1322,28 @@
         drawMeromorphic();
         drawVariety();
         drawZeta();
+
+        // Explanation Mode Toggle
+        let isSimpleMode = false;
+
+        function toggleExplanationMode() {
+            isSimpleMode = !isSimpleMode;
+            const body = document.body;
+            const toggleButton = document.getElementById('modeToggle');
+
+            if (isSimpleMode) {
+                body.classList.add('simple-mode');
+                toggleButton.textContent = '🎓 Switch to Advanced Mode';
+                toggleButton.style.background = 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)';
+            } else {
+                body.classList.remove('simple-mode');
+                toggleButton.textContent = '🎓 Switch to Simple Mode';
+                toggleButton.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+            }
+
+            // Smooth scroll to top when toggling
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
