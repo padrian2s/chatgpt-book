@@ -93,20 +93,20 @@
             text-decoration: none;
             font-size: 0.8rem;
             font-family: system-ui, sans-serif;
-            border-left: 3px solid transparent;
+            
             transition: all 0.2s;
         }
 
         .sidebar a:hover {
             background: var(--gray-800);
             color: white;
-            border-left-color: var(--primary);
+            
         }
 
         .sidebar a.active {
             background: var(--gray-800);
             color: var(--primary);
-            border-left-color: var(--primary);
+            
         }
 
         .sidebar a .ch {
@@ -199,7 +199,7 @@
         /* Stats Bar */
         .stats-bar {
             background: var(--gray-800);
-            padding: 25px 60px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-around;
             flex-wrap: wrap;
@@ -278,7 +278,7 @@
             padding: 25px;
             background: var(--gray-50);
             border-radius: 12px;
-            border-left: 4px solid var(--primary);
+            
         }
 
         .subsection h3 {
@@ -291,18 +291,18 @@
         /* Paragraph Blocks */
         .para {
             margin-bottom: 25px;
-            border-left: 4px solid var(--gray-200);
+            
             padding-left: 20px;
             transition: border-color 0.3s;
             cursor: pointer;
         }
 
         .para:hover {
-            border-left-color: var(--primary);
+            
         }
 
         .para.expanded {
-            border-left-color: var(--accent);
+            
         }
 
         .para-text {
@@ -398,7 +398,7 @@
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 0.9rem;
             overflow-x: auto;
-            border-left: 4px solid var(--accent);
+            
         }
 
         .code-box .label {
@@ -427,7 +427,7 @@
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 1.1rem;
             text-align: center;
-            border-left: 4px solid var(--secondary);
+            
         }
 
         .formula-box .label {
@@ -508,7 +508,7 @@
         /* Algorithm Box */
         .algorithm-box {
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border-left: 4px solid var(--secondary);
+            
             padding: 20px;
             border-radius: 0 10px 10px 0;
             margin: 20px 0;
@@ -564,7 +564,7 @@
         /* Use Case Box */
         .use-case {
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border-left: 4px solid var(--accent);
+            
             padding: 20px;
             border-radius: 0 10px 10px 0;
             margin: 20px 0;
@@ -579,7 +579,7 @@
         /* Warning Box */
         .warning-box {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            border-left: 4px solid var(--warning);
+            
             padding: 20px;
             border-radius: 0 10px 10px 0;
             margin: 20px 0;
@@ -634,7 +634,7 @@
             background: var(--gray-800);
             padding: 15px;
             border-radius: 8px;
-            border-left: 4px solid var(--primary);
+            
         }
 
         .glossary-term {
@@ -697,10 +697,10 @@
             .sidebar.open { transform: translateX(0); }
             .menu-toggle { display: block; }
             .main-content { margin-left: 0; }
-            .hero { padding: 60px 25px; }
+            .hero { padding: 16px 12px; }
             .hero h1 { font-size: 1.8rem; }
             .stats-bar { padding: 20px 25px; }
-            .content { padding: 30px 20px; }
+            .content { padding: 12px 8px; }
             .progress { left: 0; }
             .specs-section { margin: 0 -20px; padding: 40px 20px; }
         }
