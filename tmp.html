@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Is Vibe Coding Safe? – HTML Infographic (v2)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-alt: #020617;
+      --panel: #020617;
+      --panel-alt: #020617;
+      --accent: #38bdf8;
+      --accent2: #a855f7;
+      --danger: #f97373;
+      --safe: #4ade80;
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --border: rgba(148,163,184,0.25);
+      --radius: 22px;
+      --shadow: 0 20px 50px rgba(15,23,42,0.9);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #111827 0, #020617 45%, #000 100%);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .frame {
+      min-height: 100vh;
+      padding: 28px 12px 32px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .canvas {
+      width: 100%;
+      max-width: 1120px;
+      padding: 2px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.3), rgba(168,85,247,0.15));
+    }
+
+    .inner {
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at top, #020617 0, #020617 55%, #000 100%);
+      padding: 24px 18px 22px;
+      box-shadow: var(--shadow);
+    }
+
+    /* HEADER */
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+      gap: 18px;
+      margin-bottom: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 880px) {
+      header {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .title-block {
+      padding: 14px 14px 12px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.12), rgba(15,23,42,0.95));
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15,23,42,0.95);
+    }
+
+    .tag span.icon {
+      font-size: 1rem;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.7rem, 3vw, 2.3rem);
+      color: #f9fafb;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--text-soft);
+      max-width: 580px;
+    }
+
+    .meta-block {
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px dashed rgba(148,163,184,0.6);
+      background: radial-gradient(circle at top right, rgba(168,85,247,0.12), rgba(15,23,42,0.96));
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .meta-line {
+      margin-bottom: 6px;
+    }
+
+    .meta-label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.68rem;
+      color: rgba(148,163,184,0.9);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.95);
+      font-size: 0.78rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(56,189,248,0.7);
+    }
+
+    .danger-dot {
+      background: var(--danger);
+      box-shadow: 0 0 10px rgba(248,113,113,0.8);
+    }
+
+    .safe-dot {
+      background: var(--safe);
+      box-shadow: 0 0 10px rgba(74,222,128,0.8);
+    }
+
+    .meta-strong {
+      color: #e5e7eb;
+    }
+
+    /* GRID LAYOUT */
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.35fr) minmax(0, 1.3fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 980px) {
+      main {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      border-radius: var(--radius);
+      border: 1px solid rgba(55,65,81,0.9);
+      background:
+        linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.95));
+      padding: 13px 13px 11px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(56,189,248,0.16), transparent 65%);
+      mix-blend-mode: screen;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 8px;
+    }
+
+    .panel-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .panel-badge {
+      font-size: 0.72rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.55);
+      background: rgba(15,23,42,0.96);
+      color: var(--text-soft);
+    }
+
+    .panel-body {
+      position: relative;
+      z-index: 1;
+    }
+
+    .text-sm {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      line-height: 1.55;
+      margin-bottom: 6px;
+    }
+
+    .list {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+    }
+
+    .list li {
+      margin-bottom: 3px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .stat-card {
+      border-radius: 14px;
+      border: 1px solid rgba(55,65,81,0.95);
+      padding: 7px 8px 6px;
+      background: rgba(15,23,42,0.98);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-soft);
+      margin-bottom: 3px;
+    }
+
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .stat-sub {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      margin-top: 2px;
+    }
+
+    .stat-danger {
+      color: var(--danger);
+    }
+
+    .stat-safe {
+      color: var(--safe);
+    }
+
+    .callout {
+      margin-top: 7px;
+      border-radius: 14px;
+      border: 1px dashed rgba(56,189,248,0.6);
+      padding: 7px 8px;
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.12), rgba(15,23,42,0.98));
+    }
+
+    .callout strong {
+      color: #e5e7eb;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .chip {
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.55);
+      background: rgba(15,23,42,0.98);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-soft);
+    }
+
+    .chip-danger {
+      border-color: rgba(248,113,113,0.7);
+      color: #fecaca;
+    }
+
+    .chip-safe {
+      border-color: rgba(74,222,128,0.7);
+      color: #bbf7d0;
+    }
+
+    .bar-block {
+      margin-top: 6px;
+    }
+
+    .bar-label {
+      font-size: 0.76rem;
+      color: var(--text-soft);
+      margin-bottom: 2px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(31,41,55,0.95);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      position: absolute;
+      inset: 0;
+      width: 0;
+      border-radius: 999px;
+      transform-origin: left;
+    }
+
+    .bar-fill.red {
+      background: linear-gradient(90deg, var(--danger), var(--accent2));
+      transform: scaleX(0.83);
+    }
+
+    .bar-fill.green {
+      background: linear-gradient(90deg, var(--safe), var(--accent));
+      transform: scaleX(0.61);
+    }
+
+    .bar-fill.tiny {
+      background: linear-gradient(90deg, var(--safe), var(--accent));
+      transform: scaleX(0.105);
+    }
+
+    .bar-caption {
+      margin-top: 2px;
+      font-size: 0.72rem;
+      color: var(--text-soft);
+    }
+
+    .footer {
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(55,65,81,0.9);
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .footer strong {
+      color: #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="canvas">
+      <div class="inner">
+        <!-- HEADER -->
+        <header>
+          <div class="title-block">
+            <div class="tag-row">
+              <div class="tag"><span class="icon">🧪</span>SUSVIBES Benchmark</div>
+              <div class="tag"><span class="icon">🧑‍💻</span>Agent-Generated Code</div>
+            </div>
+            <h1>Is Vibe Coding Safe?</h1>
+            <p class="subtitle">
+              <strong>Vibe coding</strong> = “describe the feature in natural language, let the AI agent do all the coding”.
+              The paper behind SUSVIBES checks a scary question: when the agent’s code <em>passes the tests</em>,
+              how often is it secretly <strong>vulnerable</strong>?
+            </p>
+          </div>
+
+          <div class="meta-block">
+            <div class="meta-line">
+              <span class="meta-label">Study</span>
+              <div class="meta-pill">
+                <span class="dot"></span>
+                “Is Vibe Coding Safe? Benchmarking Vulnerability of Agent-Generated Code in Real-World Tasks”
+              </div>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Setup</span>
+              <span>
+                Python OSS, <span class="meta-strong">108 projects</span>, <span class="meta-strong">200</span> feature tasks,
+                <span class="meta-strong">77 CWE</span> types. Agents edit real repos and are graded on
+                <span class="meta-strong">functionality</span> and <span class="meta-strong">security</span>.
+              </span>
+            </div>
+            <div class="meta-line">
+              <span class="meta-label">Big Picture</span>
+              <span>
+                Passing unit tests ≠ safe deployment. Vibe coding today behaves like an enthusiastic junior engineer:
+                <span class="meta-strong">productive, but very capable of shipping vulnerabilities.</span>
+              </span>
+            </div>
+          </div>
+        </header>
+
+        <!-- MAIN GRID -->
+        <main>
+          <!-- PANEL 1: What is vibe coding? -->
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span class="dot"></span>
+                1. What is “vibe coding”?
+              </div>
+              <div class="panel-badge">Paradigm</div>
+            </div>
+            <div class="panel-body">
+              <p class="text-sm">
+                You write an issue like “Add 2FA to login”, and an AI agent:
+              </p>
+              <ul class="list">
+                <li>Reads the repo, navigates files & tests.</li>
+                <li>Writes or edits code across multiple modules.</li>
+                <li>Runs tests, shows you a patch you mostly skim.</li>
+              </ul>
+              <div class="callout">
+                <strong>Usage in the wild:</strong> Surveys show ~3/4 of developers use vibe coding,
+                and frontier labs report using it for <em>production</em> code.
+              </div>
+              <div class="chips">
+                <div class="chip">
+                  <span class="dot"></span>
+                  Tools: Cursor, Claude Code, OpenHands-style agents
+                </div>
+                <div class="chip chip-danger">
+                  <span class="danger-dot"></span>
+                  Most users lack deep security expertise
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- PANEL 2: How SUSVIBES works -->
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span class="dot"></span>
+                2. How SUSVIBES tests agents
+              </div>
+              <div class="panel-badge">Benchmark Design</div>
+            </div>
+            <div class="panel-body">
+              <p class="text-sm">
+                SUSVIBES turns <strong>real security bugs</strong> into vibe-coding tasks.
+                For each task:
+              </p>
+              <ul class="list">
+                <li>Find a commit that fixes an actual vulnerability.</li>
+                <li>Rewind one commit, mask the implementation of a feature.</li>
+                <li>Use an LLM to write a realistic issue text (“Please implement X…”).</li>
+              </ul>
+
+              <div class="stat-grid">
+                <div class="stat-card">
+                  <div class="stat-label">Tasks</div>
+                  <div class="stat-value">200</div>
+                  <div class="stat-sub">Feature requests in real repos</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Projects</div>
+                  <div class="stat-value">108</div>
+                  <div class="stat-sub">10 domains (web, data, tooling…)</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">CWE Types</div>
+                  <div class="stat-value">77</div>
+                  <div class="stat-sub">Broad vulnerability coverage</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Patch Size</div>
+                  <div class="stat-value">~172</div>
+                  <div class="stat-sub">changed LOC per task</div>
+                </div>
+              </div>
+
+              <div class="callout">
+                <strong>Evaluation:</strong> after the agent’s patch, they run
+                <strong>functional tests</strong> (does it work?) and
+                <strong>security tests</strong> (is it exploitable?).
+              </div>
+            </div>
+          </section>
+
+          <!-- PANEL 3: Headline results -->
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span class="dot"></span>
+                3. Headline Results
+              </div>
+              <div class="panel-badge">SWE-Agent + Claude 4 Sonnet</div>
+            </div>
+            <div class="panel-body">
+              <p class="text-sm">
+                Two main metrics:
+                <strong>FUNCPASS</strong> = functional tests pass;
+                <strong>SECPASS</strong> = both functional & security tests pass.
+              </p>
+
+              <div class="stat-grid">
+                <div class="stat-card">
+                  <div class="stat-label">Functional pass</div>
+                  <div class="stat-value stat-safe">61%</div>
+                  <div class="stat-sub">Agent’s feature appears to “work”.</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Secure & functional</div>
+                  <div class="stat-value stat-danger">10.5%</div>
+                  <div class="stat-sub">Passes both functional & security tests.</div>
+                </div>
+              </div>
+
+              <div class="bar-block">
+                <div class="bar-label">Functionally correct patches that are actually vulnerable</div>
+                <div class="bar">
+                  <div class="bar-fill red"></div>
+                </div>
+                <div class="bar-caption">
+                  ≈<strong>83%</strong> of “working” patches secretly embed vulnerabilities.
+                </div>
+              </div>
+
+              <div class="callout">
+                <strong>Interpretation:</strong> if you accept agent code because
+                “tests pass”, odds are ~4 out of 5 that you are still shipping a security bug.
+              </div>
+            </div>
+          </section>
+
+          <!-- PANEL 4: Example bug -->
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span class="dot"></span>
+                4. Example: Django timing side-channel
+              </div>
+              <div class="panel-badge">Real Vulnerability</div>
+            </div>
+            <div class="panel-body">
+              <p class="text-sm">
+                Task: implement <code>verify_password()</code> in Django auth.
+                The secure fix keeps execution time similar whether or not
+                a username exists.
+              </p>
+              <ul class="list">
+                <li>Agent’s version returns early when password is unusable.</li>
+                <li>For non-existent users, it exits faster than for real users.</li>
+                <li>Attacker can measure timing & enumerate valid usernames.</li>
+              </ul>
+              <div class="callout">
+                <strong>Lesson:</strong> A tiny control-flow tweak (an early return)
+                — totally plausible in vibe coding — can re-introduce a timing side-channel
+                that’s invisible to ordinary unit tests.
+              </div>
+            </div>
+          </section>
+
+          <!-- PANEL 5: CWE landscape -->
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span class="dot"></span>
+                5. Vulnerability Landscape
+              </div>
+              <div class="panel-badge">CWE Coverage</div>
+            </div>
+            <div class="panel-body">
+              <p class="text-sm">
+                SUSVIBES covers <strong>77 distinct CWE types</strong>:
+                injection, access control, path traversal, crypto misuse, etc.
+              </p>
+              <div class="callout">
+                <strong>Key insight:</strong> models and agents have
+                <em>different</em> blind spots. About
+                <strong>58% of CWE types</strong> where one system is relatively “careful”
+                are <em>not</em> the same for another.
+              </div>
+              <div class="chips">
+                <div class="chip chip-safe">
+                  <span class="safe-dot"></span>
+                  Some CWEs often handled correctly
+                </div>
+                <div class="chip chip-danger">
+                  <span class="danger-dot"></span>
+                  Many CWEs where vulnerabilities slip through
+                </div>
+                <div class="chip">
+                  <span class="dot"></span>
+                  No single “always safe” agent or model
+                </div>
+              </div>
+              <p class="text-sm" style="margin-top: 6px;">
+                Agents tested: e.g. SWE-Agent, OpenHands, Claude Code
+                with models like Claude 4, Kimi K2, Gemini 2.5 Pro.
+              </p>
+            </div>
+          </section>
+
+          <!-- PANEL 6: Mitigations & what to do -->
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span class="dot"></span>
+                6. Can prompts “fix” the problem?
+              </div>
+              <div class="panel-badge">Mitigations & Advice</div>
+            </div>
+            <div class="panel-body">
+              <p class="text-sm">
+                The authors tried richer security prompts:
+              </p>
+              <ul class="list">
+                <li><strong>Self-selection:</strong> agent lists relevant CWE risks, then codes.</li>
+                <li><strong>Oracle CWE:</strong> the benchmark tells the agent the exact CWE to avoid.</li>
+              </ul>
+
+              <div class="bar-block">
+                <div class="bar-label">Functional pass rate</div>
+                <div class="bar">
+                  <div class="bar-fill green"></div>
+                </div>
+                <div class="bar-caption">
+                  Extra security prompting often <strong>reduces</strong> functionality (fewer tasks solved),
+                  but still leaves many vulnerabilities.
+                </div>
+              </div>
+
+              <div class="bar-block">
+                <div class="bar-label">Secure & functional (SECPASS)</div>
+                <div class="bar">
+                  <div class="bar-fill tiny"></div>
+                </div>
+                <div class="bar-caption">
+                  Even with hints, secure-success rate stays low (~10.5%).
+                </div>
+              </div>
+
+              <div class="callout">
+                <strong>Practical guidance:</strong>
+                <ul class="list">
+                  <li>Use vibe coding as a <strong>drafting tool</strong>, not an autopilot to prod.</li>
+                  <li>Add dedicated security tests, SAST/DAST checks, and human review.</li>
+                  <li>Never ship agent-written auth/crypto/payment code without expert eyes.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- FOOTER -->
+        <div class="footer">
+          <span>
+            <strong>Bottom line:</strong>
+            today’s vibe coding is incredibly useful, but nowhere near “secure by default”.
+            Functional tests alone give a dangerously false sense of safety.
+          </span>
+          <span>
+            Think of the agent as a smart junior dev:
+            <strong>great for speed, terrible as your only security layer.</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
